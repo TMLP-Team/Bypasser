@@ -3,5 +3,5 @@ name=Template Module
 version=v1
 versionCode=1
 author=topjohnwu
-description=A short description
+description=This is a developing Magisk module for bypassing Android environment detection related to TMLP. The abbreviation "TMLP" stands for anything related to Twrp, Magisk, LSPosed, and Plugins. 
 updateJson=https://github.com/TMLP-Team/Bypasser/update.json
