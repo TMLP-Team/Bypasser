@@ -4,4 +4,4 @@ version=v1
 versionCode=1
 author=topjohnwu
 description=A short description
-template=3
+updateJson=https://github.com/TMLP-Team/Bypasser/update.json
