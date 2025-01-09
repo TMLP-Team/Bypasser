@@ -23,7 +23,7 @@ versionCode=${moduleVersion}\n\
 author=TMLP Team\n\
 description=This is a developing Magisk module for bypassing Android environment detection related to TMLP. The abbreviation \"TMLP\" stands for anything related to Twrp, Magisk, LSPosed, and Plugins. \n\
 updateJson=https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Update.json"
-zipFolderPath="./Release"
+zipFolderPath="Release"
 zipFileName="${moduleName}_v${moduleVersion}.zip"
 zipFilePath="${zipFolderPath}/${zipFileName}"
 
@@ -103,7 +103,7 @@ updateFilePath="${updateFolderPath}/${updateFileName}"
 updateContent="{\n\
 	\"version\":\"v${moduleVersion}\", \n\
 	\"versionCode\":${moduleVersion}, \n\
-	\"zipUrl\":\"https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Release/${zipFilePath}\", \n\
+	\"zipUrl\":\"https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/${zipFilePath}\", \n\
 	\"changelog\":\"https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/${changelogFilePath}\"\n\
 }"
 if [[ ! -d "${updateFolderPath}" ]]; then
