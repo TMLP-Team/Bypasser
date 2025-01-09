@@ -68,7 +68,7 @@ if [[ ! -d "${changelogFolderPath}" ]]; then
 fi
 if [[ -d "${changelogFolderPath}" ]]; then
 	echo "Successfully created the log folder path \"${changelogFolderPath}\". "
-	echo -e "# Changelog_v${moduleVersion}\n" > "${changelogFilePath}"
+	echo -e "# ${moduleName}_v${moduleVersion}\n" > "${changelogFilePath}"
 	if [[ 0 == $? && -e "${changelogFilePath}" ]]; then
 		echo "Successfully created the log \"${changelogFilePath}\". "
 		if [[ $# -ge 1 ]]; then
