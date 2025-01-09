@@ -60,7 +60,7 @@ fi
 
 # Log #
 changelogFolderPath="Changelog"
-changelogFileName="Changelog_v${moduleVersion}.md"
+changelogFileName="${moduleName}_v${moduleVersion}.md"
 changelogFilePath="${changelogFolderPath}/${changelogFileName}"
 
 if [[ ! -d "${changelogFolderPath}" ]]; then
