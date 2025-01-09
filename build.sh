@@ -2,6 +2,7 @@
 
 # Module #
 moduleName="Bypasser"
+moduleId="bypasser"
 moduleVersion=`date +%Y%m%d%H`
 moduleFolderPath="${PWD}"
 
@@ -16,8 +17,8 @@ fi
 srcFolderPath="src"
 propFileName="module.prop"
 propFilePath="${srcFolderPath}/${propFileName}"
-propContent="id=Bypasser\n\
-name=Bypasser\n\
+propContent="id=${moduleId}\n\
+name=${moduleName}\n\
 version=v${moduleVersion}\n\
 versionCode=${moduleVersion}\n\
 author=TMLP Team\n\
@@ -37,8 +38,7 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 		fi
 		if [ -d "${zipFolderPath}" ]; then
 			echo "Successfully created the ZIP folder path \"${zipFolderPath}\". "
-			echo "$$ zip -9 -T -j -ll -r -v \"${zipFilePath}\" \"${srcFolderPath}\""
-			zip -9 -T -j -ll -r -v "${zipFilePath}" "${srcFolderPath}"
+			(cd "${srcFolderPath}" && zip -J -ll -r -v - *) > "${zipFilePath}"
 			if [[ 0 == $? && -e "${zipFilePath}" ]]; then
 				echo "Successfully packed the ${moduleName} Magisk module to \"${zipFilePath}\" via the ``zip`` command! "
 			else

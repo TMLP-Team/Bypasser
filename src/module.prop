@@ -1,7 +1,7 @@
-id=Bypasser
+id=bypasser
 name=Bypasser
-version=v2025010921
-versionCode=2025010921
+version=v2025010922
+versionCode=2025010922
 author=TMLP Team
 description=This is a developing Magisk module for bypassing Android environment detection related to TMLP. The abbreviation "TMLP" stands for anything related to Twrp, Magisk, LSPosed, and Plugins. 
 updateJson=https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Update.json
