@@ -3,9 +3,10 @@
 # Module #
 moduleName="Bypasser"
 moduleVersion=`date +%Y%m%d%H`
-moduleFolderPath="$PWD"
-if [[ `basename $moduleFolderPath` == $moduleName ]]; then
-	echo "Welcome to the builder for the ``$moduleName`` Magisk Module! "
+moduleFolderPath="${PWD}"
+
+if [[ `basename "${moduleFolderPath}"` == "${moduleName}" ]]; then
+	echo "Welcome to the builder for the ``${moduleName}`` Magisk Module! "
 else
 	echo "The shell script is working in a wrong working directory. "
 	exit 1
@@ -13,64 +14,123 @@ fi
 
 # Pack #
 srcFolderPath="src"
+propFileName="module.prop"
+propFilePath="${srcFolderPath}/${propFileName}"
+propContent="id=Bypasser\n\
+name=Bypasser\n\
+version=v${moduleVersion}\n\
+versionCode=${moduleVersion}\n\
+author=TMLP Team\n\
+description=This is a developing Magisk module for bypassing Android environment detection related to TMLP. The abbreviation \"TMLP\" stands for anything related to Twrp, Magisk, LSPosed, and Plugins. \n\
+updateJson=https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Update.json"
 zipFolderPath="./Release"
 zipFileName="${moduleName}_v${moduleVersion}.zip"
-zipFilePath="$zipFolderPath/$zipFileName"
-if [ -d "$srcFolderPath" ]; then
-	if [ ! -d "$zipFolderPath" ]; then
-		mkdir -p "$zipFolderPath"
-	fi
-	if [ -d "$zipFolderPath" ]; then
-		echo "zip -9 -T -j -ll -r -v \"$zipFilePath\" \"$srcFolderPath\""
-		zip -9 -T -j -ll -r -v "$zipFilePath" "$srcFolderPath"
-		if [[ 0 == $? && -e "$zipFilePath" ]]; then
-			echo "Successfully packed the ${moduleName} Magisk module to \"$zipFilePath\"! "
+zipFilePath="${zipFolderPath}/${zipFileName}"
+
+if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolderPath}/system" ]]; then
+	echo "Sources were found to be packed. "
+	echo -e "${propContent}" > "${propFilePath}"
+	if [[ 0 == $? && -e "${propFilePath}" ]]; then
+		echo "Successfully generated the property file \"${propFilePath}\". "
+		if [ ! -d "${zipFolderPath}" ]; then
+			mkdir -p "${zipFolderPath}"
+		fi
+		if [ -d "${zipFolderPath}" ]; then
+			echo "Successfully created the ZIP folder path \"${zipFolderPath}\". "
+			echo "$$ zip -9 -T -j -ll -r -v \"${zipFilePath}\" \"${srcFolderPath}\""
+			zip -9 -T -j -ll -r -v "${zipFilePath}" "${srcFolderPath}"
+			if [[ 0 == $? && -e "${zipFilePath}" ]]; then
+				echo "Successfully packed the ${moduleName} Magisk module to \"${zipFilePath}\" via the ``zip`` command! "
+			else
+				echo "Failed to pack the ${moduleName} Magisk module to \"${zipFilePath}\" via the ``zip`` command. "
+				exit 2
+			fi
 		else
-			echo "Failed to pack the ${moduleName} Magisk module to \"$zipFilePath\". "
-			exit 2
+			echo "Failed to create the ZIP folder path \"${zipFolderPath}\". "
+			exit 3
 		fi
 	else
-		echo "Failed to create the zip folder path \"$zipFolderPath\". "
-		exit 3
+		echo "Failed to generate the property file \"${propFilePath}\". "
+		exit 4
 	fi
 else
-	echo "No source files are found to be packed. "
-	exit 4
+	echo "No sources were found to be packed. "
+	exit 5
 fi
 
 # Log #
 changelogFolderPath="Changelog"
 changelogFileName="Changelog_v${moduleVersion}.log"
-changelogFilePath="$changelogFolderPath/$changelogFileName"
-if [ ! -d "$changelogFolderPath" ]; then
-	mkdir -p "$changelogFolderPath"
+changelogFilePath="${changelogFolderPath}/${changelogFileName}"
+
+if [[ ! -d "${changelogFolderPath}" ]]; then
+	mkdir -p "${changelogFolderPath}"
 fi
-if [ -d "$changelogFolderPath" ]; then
-	echo -e "# Changelog_v${moduleVersion}\n" > "$changelogFilePath"
-	if [[ 0 == $? && -e "$changelogFilePath" ]]; then
+if [[ -d "${changelogFolderPath}" ]]; then
+	echo "Successfully created the log folder path \"${changelogFolderPath}\". "
+	echo -e "# Changelog_v${moduleVersion}\n" > "${changelogFilePath}"
+	if [[ 0 == $? && -e "${changelogFilePath}" ]]; then
+		echo "Successfully created the log \"${changelogFilePath}\". "
 		if [[ $# -ge 1 ]]; then
 			for arg in "$@"
 			do
-				echo "$arg" >> "$changelogFilePath"
+				echo "${arg}" >> "${changelogFilePath}"
 			done
 		else
 			echo "Please write down your changelog: "
 			read changelog
-			echo "$changelog" >> "$changelogFilePath"
+			echo "${changelog}" >> "${changelogFilePath}"
 		fi
-		if [[ 0 == $? && -e "$changelogFilePath" ]]; then
-			echo "Successfully wrote the change log to \"$changelogFilePath\". "
-			exit 0
+		if [[ 0 == $? && -e "${changelogFilePath}" ]]; then
+			echo "Successfully wrote the change log to \"${changelogFilePath}\". "
 		else
-			echo "Failed to write the change log to \"$changelogFilePath\". "
-			exit 5
+			echo "Failed to write the change log to \"${changelogFilePath}\". "
+			exit 6
 		fi
 	else
-		echo "Failed to create the log \"$changelogFilePath\". "
-		exit 6
+		echo "Failed to create the log \"${changelogFilePath}\". "
+		exit 7
 	fi
 else
-	echo "Failed to create the log folder path \"$changelogFolderPath\". "
-	exit 7
+	echo "Failed to create the log folder path \"${changelogFolderPath}\". "
+	exit 8
 fi
 
+# Update #
+updateFolderPath="."
+updateFileName="Update.json"
+updateFilePath="${updateFolderPath}/${updateFileName}"
+updateContent="{\n\
+	\"version\":\"v${moduleVersion}\", \n\
+	\"versionCode\":${moduleVersion}, \n\
+	\"zipUrl\":\"https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Release/Bypasser_v${moduleVersion}.zip\", \n\
+	\"changelog\":\"https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Changelog/Changelog_v${moduleVersion}.log\"\n\
+}"
+if [[ ! -d "${updateFolderPath}" ]]; then
+	mkdir -p "${updateFolderPath}"
+fi
+if [[ -d "${updateFolderPath}" ]]; then
+	echo "Successfully created the update folder path \"${updateFolderPath}\". "
+	echo -e "$updateContent" > "${updateFilePath}"
+	if [[ 0 == $? && -e "${updateFilePath}" ]]; then
+		echo "Successfully created the update JSON file \"${updateFolderPath}\". "
+	else
+		echo "Failed to create the update JSON file \"${updateFolderPath}\". "
+		exit 9
+	fi
+else
+	echo "Failed to create the update folder path \"${updateFolderPath}\". "
+	exit 10
+fi
+
+# Git #
+git add . && git commit -m "Update (${moduleVersion})" && git push
+if [[ 0 == $? ]]; then
+	echo "Successfully pushed to GitHub. "
+else
+	echo "Failed to push to GitHub. "
+	exit 11
+fi
+
+# Exit #
+exit 0

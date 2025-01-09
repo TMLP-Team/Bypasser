@@ -1,3 +1,3 @@
 #!/system/bin/sh
-echo "Successfully execute the ``action.sh``. \n"
+echo "Successfully execute the ``action.sh``. "
 exit 0
