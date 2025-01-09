@@ -60,7 +60,7 @@ fi
 
 # Log #
 changelogFolderPath="Changelog"
-changelogFileName="Changelog_v${moduleVersion}.log"
+changelogFileName="Changelog_v${moduleVersion}.md"
 changelogFilePath="${changelogFolderPath}/${changelogFileName}"
 
 if [[ ! -d "${changelogFolderPath}" ]]; then
@@ -103,8 +103,8 @@ updateFilePath="${updateFolderPath}/${updateFileName}"
 updateContent="{\n\
 	\"version\":\"v${moduleVersion}\", \n\
 	\"versionCode\":${moduleVersion}, \n\
-	\"zipUrl\":\"https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Release/Bypasser_v${moduleVersion}.zip\", \n\
-	\"changelog\":\"https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Changelog/Changelog_v${moduleVersion}.log\"\n\
+	\"zipUrl\":\"https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Release/${zipFilePath}\", \n\
+	\"changelog\":\"https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/${changelogFilePath}\"\n\
 }"
 if [[ ! -d "${updateFolderPath}" ]]; then
 	mkdir -p "${updateFolderPath}"
