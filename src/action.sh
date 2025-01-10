@@ -1,20 +1,25 @@
 #!/system/bin/sh
+# Welcome #
 EXIT_SUCCESS=0
 EXIT_FAILURE=1
 EOF=127
+moduleName="Bypasser"
+echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
+
+# HMA/HMAL #
 blacklistName="Blacklist"
 whitelistName="Whitelist"
 configFolderPath="/sdcard/Download"
-blacklistConfigFileName="HMAL_Blacklist_Config.json"
+blacklistConfigFileName=".HMAL_Blacklist_Config.json"
 blacklistConfigFilePath="${configFolderPath}/${blacklistConfigFileName}"
-whitelistConfigFileName="HMAL_Whitelist_Config.json"
+whitelistConfigFileName=".HMAL_Whitelist_Config.json"
 whitelistConfigFilePath="${configFolderPath}/${whitelistConfigFileName}"
 
 function getType()
 {
 	if [[ "B" == "$1" || "C" == "$1" || "D" == "$1" ]];
 	then
-		arr=$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Classification/classification$1.txt")
+		arr=$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Classification/classification$1.txt" | sort | uniq)
 		if [[ $? == ${EXIT_SUCCESS} ]];
 		then
 			for pkg in $arr
@@ -33,10 +38,11 @@ function getType()
 	fi
 }
 
-function getListArray()
+function getArray()
 {
 	content=""
-	for package in "$@"
+	arr=$(echo "$@" | sort | uniq)
+	for package in ${arr}
 	do
 		content="${content}\"${package}\","
 	done
@@ -49,9 +55,9 @@ function getListArray()
 		echo ${content}
 		return ${EXIT_FAILURE}
 	fi
-}
+}	
 
-function getBlacklistScopeArray()
+function getBlacklistScopeString()
 {
 	content=""
 	for package in "$@"
@@ -68,7 +74,7 @@ function getBlacklistScopeArray()
 	fi
 }
 
-function getWhitelistScopeArrayC()
+function getWhitelistScopeStringC()
 {
 	content=""
 	for package in "$@"
@@ -85,7 +91,7 @@ function getWhitelistScopeArrayC()
 	fi
 }
 
-function getWhitelistScopeArrayD()
+function getWhitelistScopeStringD()
 {
 	content=""
 	for package in "$@"
@@ -129,27 +135,29 @@ fi
 
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
-	blacklistAppList=$(getListArray ${classificationB})
+	blacklistAppList=$(getArray ${classificationB})
 	if [[ ${returnCodeC} == ${EXIT_SUCCESS} ]];
 	then
-		whitelistScopeList="$(getWhitelistScopeArrayC ${classificationC}),$(getWhitelistScopeArrayD ${classificationD})"
+		whitelistScopeList="$(getWhitelistScopeStringC ${classificationC}),$(getWhitelistScopeStringD ${classificationD})"
 	else
 		whitelistScopeList=""
 	fi
 else
 	blacklistAppList=""
+	whitelistScopeList=""
 fi
 if [[ ${returnCodeD} == ${EXIT_SUCCESS} ]];
 then
-	whitelistAppList=$(getListArray ${classificationD})
+	whitelistAppList=$(getArray ${classificationD})
 	if [[ ${returnCodeC} == ${EXIT_SUCCESS} ]];
 	then
-		blacklistScopeList=$(getBlacklistScopeArray ${classificationC} ${classificationD})
+		blacklistScopeList=$(getBlacklistScopeString ${classificationC} ${classificationD})
 	else
 		blacklistScopeList=""
 	fi
 else
 	whitelistAppList=""
+	blacklistScopeList=""
 fi
 commonConfigContent="{\"configVersion\":90,\"forceMountData\":true,\"templates\":{\"${blacklistName}\":{\"isWhitelist\":false,\"appList\":[${blacklistAppList}]},\"${whitelistName}\":{\"isWhitelist\":true,\"appList\":[${whitelistAppList}]}},"
 blacklistConfigContent="${commonConfigContent}\"scope\":{${blacklistScopeList}}}"
@@ -168,7 +176,7 @@ then
 	then
 		echo "Successfully generated the config file \"${blacklistConfigFilePath}\". "
 	else
-		exitCode=1
+		exitCode=$[exitCode+1]
 		echo "Failed to generate the config file \"${blacklistConfigFilePath}\". "
 	fi
 	echo "${whitelistConfigContent}" > "${whitelistConfigFilePath}"
@@ -176,13 +184,77 @@ then
 	then
 		echo "Successfully generated the config file \"${whitelistConfigFilePath}\". "
 	else
-		exitCode=2
+		exitCode=$[exitCode+2]
 		echo "Failed to generate the config file \"${whitelistConfigFilePath}\". "
 	fi
 else
-	exitCode=3
+	exitCode=$[exitCode+3]
 	echo "Failed to create the folder \"${configFolderPath}\". "
 fi
+echo ""
 
+# Tricky Store #
+trickyStoreFolderPath="../../tricky_store"
+trickyStoreTargetFileName="target.txt"
+trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
+allAppList=$(getArray ${classificationB} ${classificationC} ${classificationD})
+if [[ -e "${trickyStoreFolderPath}" ]];
+then
+	echo "The tricky store folder was found at \"${trickyStoreFolderPath}\". "
+	abortFlag=0
+	if [[ -e "${trickyStoreTargetFilePath}" ]];
+	then
+		echo "The tricky store target file was found at \"${trickyStoreTargetFilePath}\". "
+		mv "${trickyStoreTargetFilePath}" "${trickyStoreTargetFilePath}.bak"
+		if [[ 0 == $? ]];
+		then
+			echo "Successfully packed the backup. "
+		else
+			abortFlag=1
+			echo "Failed to pack the backup. "
+		fi
+	else
+		echo "No tricky store target files were detected. "
+	fi
+	if [[ 0 == ${abortFlag} ]];
+	then
+		echo "com.google.android.gms" > "${trickyStoreTargetFilePath}"
+		if [[ 0 == $? && -e "${trickyStoreTargetFilePath}" ]];
+		then
+			echo "Successfully created the new tricky store target file at \"${trickyStoreTargetFilePath}\". "
+			cnt=1
+			for package in ${allAppList}
+			do
+				echo "$package" >> "${trickyStoreTargetFilePath}"
+				cnt=$[cnt+1]
+			done
+			if [[ 0 == $? && -e "${trickyStoreTargetFilePath}" ]];
+			then
+				echo "Successfully wrote $cnt target(s) to \"${trickyStoreTargetFilePath}\". "
+			else
+				exitCode=$[exitCode+4]
+				echo "Failed to write to \"${trickyStoreTargetFilePath}\". "
+			fi
+		else
+			exitCode=$[exitCode+8]
+			echo "Failed to create the new tricky store target file at \"${trickyStoreTargetFilePath}\". "
+			if [[ -e "${trickyStoreTargetFilePath}.bak" ]];
+			then
+				mv "${trickyStoreTargetFilePath}.bak" "${trickyStoreTargetFilePath}"
+				if [[ 0 == $? && -e "${trickyStoreTargetFilePath}" ]];
+				then
+					echo "Successfully restore the file. "
+				else
+					echo "Failed to restore the file. "
+				fi
+			fi
+		fi
+	fi
+else
+	exitCode=$[exitCode+12]
+	echo "No tricky store folders were detected. "
+fi
+
+# Exit #
 echo "Finished executing the \`\`action.sh\`\` (${exitCode}). "
 exit ${exitCode}
