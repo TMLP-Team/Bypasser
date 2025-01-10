@@ -221,7 +221,7 @@ then
 		if [[ 0 == $? && -e "${trickyStoreTargetFilePath}" ]];
 		then
 			echo "Successfully created the new tricky store target file at \"${trickyStoreTargetFilePath}\". "
-			echo  ${classificationB}  ${classificationC}  ${classificationD} | sort | uniq >> "${trickyStoreTargetFilePath}"
+			echo  ${classificationB}  ${classificationC}  ${classificationD} | sort | uniq | tr " " "\n" >> "${trickyStoreTargetFilePath}"
 			if [[ 0 == $? && -e "${trickyStoreTargetFilePath}" ]];
 			then
 				cnt=$(wc -l "${trickyStoreTargetFilePath}")
