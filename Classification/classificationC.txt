@@ -1,0 +1,14 @@
+com.byxiaorun.detector
+com.daxiaamu.op7mutools
+com.reveny.nativecheck
+com.sefu.vmessfree
+com.tsng.applistdetector
+com.zhenxi.hunter
+icu.nullptr.nativetest
+io.github.huskydg.memorydetector
+io.github.vvb2060.keyattestation
+io.github.vvb2060.magiskdetector
+io.github.vvb2060.mahoshojo
+me.garfieldhan.holmes
+ml.w568w.checkxposed
+rikka.safetynetchecker
