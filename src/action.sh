@@ -176,7 +176,7 @@ then
 	then
 		echo "Successfully generated the config file \"${blacklistConfigFilePath}\". "
 	else
-		exitCode=$[exitCode+1]
+		exitCode=$(expr $exitCode + 1)
 		echo "Failed to generate the config file \"${blacklistConfigFilePath}\". "
 	fi
 	echo "${whitelistConfigContent}" > "${whitelistConfigFilePath}"
@@ -184,11 +184,11 @@ then
 	then
 		echo "Successfully generated the config file \"${whitelistConfigFilePath}\". "
 	else
-		exitCode=$[exitCode+2]
+		exitCode=$(expr $exitCode + 2)
 		echo "Failed to generate the config file \"${whitelistConfigFilePath}\". "
 	fi
 else
-	exitCode=$[exitCode+3]
+	exitCode=$(expr $exitCode + 3)
 	echo "Failed to create the folder \"${configFolderPath}\". "
 fi
 echo ""
@@ -197,7 +197,6 @@ echo ""
 trickyStoreFolderPath="../../tricky_store"
 trickyStoreTargetFileName="target.txt"
 trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
-allAppList=$(getArray ${classificationB} ${classificationC} ${classificationD})
 if [[ -e "${trickyStoreFolderPath}" ]];
 then
 	echo "The tricky store folder was found at \"${trickyStoreFolderPath}\". "
@@ -222,21 +221,17 @@ then
 		if [[ 0 == $? && -e "${trickyStoreTargetFilePath}" ]];
 		then
 			echo "Successfully created the new tricky store target file at \"${trickyStoreTargetFilePath}\". "
-			cnt=1
-			for package in ${allAppList}
-			do
-				echo "$package" >> "${trickyStoreTargetFilePath}"
-				cnt=$[cnt+1]
-			done
+			echo  ${classificationB}  ${classificationC}  ${classificationD} | sort | uniq >> "${trickyStoreTargetFilePath}"
 			if [[ 0 == $? && -e "${trickyStoreTargetFilePath}" ]];
 			then
+				cnt=$(wc -l "${trickyStoreTargetFilePath}")
 				echo "Successfully wrote $cnt target(s) to \"${trickyStoreTargetFilePath}\". "
 			else
-				exitCode=$[exitCode+4]
+				exitCode=$(expr $exitCode + 4)
 				echo "Failed to write to \"${trickyStoreTargetFilePath}\". "
 			fi
 		else
-			exitCode=$[exitCode+8]
+			exitCode=$(expr $exitCode + 8)
 			echo "Failed to create the new tricky store target file at \"${trickyStoreTargetFilePath}\". "
 			if [[ -e "${trickyStoreTargetFilePath}.bak" ]];
 			then
@@ -251,7 +246,7 @@ then
 		fi
 	fi
 else
-	exitCode=$[exitCode+12]
+	exitCode=$(expr $exitCode + 12)
 	echo "No tricky store folders were detected. "
 fi
 
