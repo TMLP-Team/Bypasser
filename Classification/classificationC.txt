@@ -4,6 +4,7 @@ com.reveny.nativecheck
 com.sefu.vmessfree
 com.tsng.applistdetector
 com.zhenxi.hunter
+icu.nullptr.applistdetector
 icu.nullptr.nativetest
 io.github.huskydg.memorydetector
 io.github.vvb2060.keyattestation
