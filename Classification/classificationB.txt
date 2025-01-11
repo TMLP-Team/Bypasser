@@ -50,6 +50,7 @@ com.wovow.youtubehelper
 com.yuanwofei.cardemulator.pro
 com.zidongdianji
 fuck.location
+icu.nullptr.applistdetector
 io.github.a13e300.ksuwebui
 io.github.auag0.imnotadeveloper
 io.github.huskydg.magisk
