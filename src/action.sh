@@ -5,6 +5,7 @@ EXIT_FAILURE=1
 EOF=127
 moduleName="Bypasser"
 echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
+echo ""
 
 # HMA/HMAL #
 blacklistName="Blacklist"
@@ -249,6 +250,7 @@ else
 	exitCode=$(expr $exitCode + 12)
 	echo "No tricky store folders were detected. "
 fi
+echo ""
 
 # Exit #
 echo "Finished executing the \`\`action.sh\`\` (${exitCode}). "
