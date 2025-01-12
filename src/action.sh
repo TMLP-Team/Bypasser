@@ -7,6 +7,15 @@ moduleName="Bypasser"
 echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
 echo ""
 
+function cleanCache()
+{
+	sync
+	echo 3 > /proc/sys/vm/drop_caches
+	return 0
+}
+
+cleanCache
+
 # HMA/HMAL #
 blacklistName="Blacklist"
 whitelistName="Whitelist"
@@ -252,6 +261,11 @@ else
 fi
 echo ""
 
+# Shamiko #
+shamikoInstallationFolderPath="../shamiko"
+shamikoConfigFolderPath="/data/adb/shamiko/"
+
 # Exit #
+cleanCache
 echo "Finished executing the \`\`action.sh\`\` (${exitCode}). "
 exit ${exitCode}
