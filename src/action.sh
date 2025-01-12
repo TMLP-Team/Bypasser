@@ -18,6 +18,7 @@ cleanCache
 echo ""
 
 # HMA/HMAL (0b00000XX) #
+echo "# HMA/HMAL (0b00000XX) #"
 blacklistName="Blacklist"
 whitelistName="Whitelist"
 configFolderPath="/sdcard/Download"
@@ -208,6 +209,7 @@ fi
 echo ""
 
 # Tricky Store (0b000XX00) #
+echo "# Tricky Store (0b000XX00) #"
 trickyStoreFolderPath="../../tricky_store"
 trickyStoreTargetFileName="target.txt"
 trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
@@ -266,6 +268,7 @@ fi
 echo ""
 
 # Shamiko (0b00X0000) #
+echo "# Shamiko (0b00X0000) #"
 shamikoInstallationFolderPath="../zygisk_shamiko"
 shamikoConfigFolderPath="/data/adb/shamiko"
 shamikoWhitelistConfigFileName="whitelist"
@@ -292,6 +295,7 @@ else
 fi
 
 # Update (0bXX00000) #
+echo "# Update (0bXX00000) #"
 shellContent=$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/action.sh")
 if [[ ${EXIT_SUCCESS} == $? && ! -z "${shellContent}" ]];
 then
