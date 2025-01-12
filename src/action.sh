@@ -266,7 +266,7 @@ fi
 echo ""
 
 # Shamiko (0b00X0000) #
-shamikoInstallationFolderPath="../shamiko"
+shamikoInstallationFolderPath="../zygisk_shamiko"
 shamikoConfigFolderPath="/data/adb/shamiko"
 shamikoWhitelistConfigFileName="whitelist"
 shamikoWhitelistConfigFilePath="${shamikoConfigFolderPath}/${shamikoWhitelistConfigFileName}"
