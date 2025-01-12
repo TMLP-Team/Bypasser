@@ -5,8 +5,6 @@ EXIT_FAILURE=1
 EOF=255
 exitCode=0
 moduleName="Bypasser"
-echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
-echo ""
 
 function cleanCache()
 {
@@ -15,7 +13,9 @@ function cleanCache()
 	return 0
 }
 
+echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
 cleanCache
+echo ""
 
 # HMA/HMAL (0b00000XX) #
 blacklistName="Blacklist"
@@ -182,7 +182,7 @@ if [[ -d "${configFolderPath}" ]];
 then
 	echo "Successfully created the folder \"${configFolderPath}\". "
 	echo "${blacklistConfigContent}" > "${blacklistConfigFilePath}"
-	if [[ ${EXIT_SUCCESS} == ${?} && -e "${blacklistConfigFilePath}" ]];
+	if [[ ${EXIT_SUCCESS} == $? && -e "${blacklistConfigFilePath}" ]];
 	then
 		echo "Successfully generated the config file \"${blacklistConfigFilePath}\". "
 	else
@@ -190,7 +190,7 @@ then
 		echo "Failed to generate the config file \"${blacklistConfigFilePath}\". "
 	fi
 	echo "${whitelistConfigContent}" > "${whitelistConfigFilePath}"
-	if [[ ${EXIT_SUCCESS} == ${?} && -e "${whitelistConfigFilePath}" ]];
+	if [[ ${EXIT_SUCCESS} == $? && -e "${whitelistConfigFilePath}" ]];
 	then
 		echo "Successfully generated the config file \"${whitelistConfigFilePath}\". "
 	else
@@ -232,14 +232,14 @@ then
 	if [[ ${EXIT_SUCCESS} == ${abortFlag} ]];
 	then
 		echo "com.google.android.gms" > "${trickyStoreTargetFilePath}"
-		if [[ ${EXIT_SUCCESS} == ${?} && -e "${trickyStoreTargetFilePath}" ]];
+		if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}" ]];
 		then
 			echo "Successfully created the new tricky store target file at \"${trickyStoreTargetFilePath}\". "
-			echo  ${classificationB}  ${classificationC}  ${classificationD} | sort | uniq | tr " " "\n" >> "${trickyStoreTargetFilePath}"
-			if [[ ${EXIT_SUCCESS} == ${?} && -e "${trickyStoreTargetFilePath}" ]];
+			echo -e "${classificationB}\n${classificationC}\n${classificationD}" | sort | uniq >> "${trickyStoreTargetFilePath}"
+			if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}" ]];
 			then
-				cnt=$(wc -l "${trickyStoreTargetFilePath}")
-				echo "Successfully wrote $cnt target(s) to \"${trickyStoreTargetFilePath}\". "
+				cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
+				echo "Successfully wrote ${cnt} target(s) to \"${trickyStoreTargetFilePath}\". "
 			else
 				exitCode=$(expr $exitCode + 4)
 				echo "Failed to write to \"${trickyStoreTargetFilePath}\". "
@@ -250,7 +250,7 @@ then
 			if [[ -e "${trickyStoreTargetFilePath}.bak" ]];
 			then
 				mv "${trickyStoreTargetFilePath}.bak" "${trickyStoreTargetFilePath}"
-				if [[ ${EXIT_SUCCESS} == ${?} && -e "${trickyStoreTargetFilePath}" ]];
+				if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}" ]];
 				then
 					echo "Successfully restore the file. "
 				else
@@ -273,11 +273,11 @@ shamikoWhitelistConfigFilePath="${shamikoConfigFolderPath}/${shamikoWhitelistCon
 if [[ -d "${shamikoInstallationFolderPath}" ]];
 then
 	echo "The shamiko installation folder was found at \"${shamikoInstallationFolderPath}\". "
-	if [[ ! -d "${shamikoConfigFolderPath}" || -z "$(ls -1A "${shamikoConfigFolderPath}")" ]]; then
+	if [[ ! -d "${shamikoConfigFolderPath}" || -z "$(ls -1A "${shamikoConfigFolderPath}")" ]];
 	then
 		echo "The shamiko configuration folder at \"${shamikoConfigFolderPath}\" did not exist or was detected to be empty. "
 		touch "${shamikoWhitelistConfigFilePath}"
-		if [[ ${EXIT_SUCCESS} == ${?} && -e "${shamikoWhitelistConfigFilePath}" ]];
+		if [[ ${EXIT_SUCCESS} == $? && -e "${shamikoWhitelistConfigFilePath}" ]];
 		then
 			echo "Successfully created the whitelist config file \"${shamikoWhitelistConfigFilePath}\". "
 		else
@@ -293,15 +293,15 @@ fi
 
 # Update (0bXX00000) #
 shellContent=$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/action.sh")
-if [[ ${EXIT_SUCCESS} == ${?} && ! -z "${shellContent}" ]];
+if [[ ${EXIT_SUCCESS} == $? && ! -z "${shellContent}" ]];
 then
 	echo "Successfully fetched the latest \`\`action.sh\`\` from GitHub. "
 	cp -fp "${0}" "${0}.bak"
-	if [[ ${EXIT_SUCCESS} == ${?} && -e "${0}.bak" ]];
+	if [[ ${EXIT_SUCCESS} == $? && -e "${0}.bak" ]];
 	then
 		echo "Successfully copied \`\`action.sh\`\` to \`\`action.sh.bak\`\`. "
 		echo "${shellContent}" > "${0}"
-		if [[ ${EXIT_SUCCESS} == ${?} ]];
+		if [[ ${EXIT_SUCCESS} == $? ]];
 		then
 			echo "Successfully updated \`\`action.sh\`\`. "
 		else
@@ -316,6 +316,7 @@ else
 	exitCode=$(expr $exitCode + 96)
 	echo "Failed to fetch the latest \`\`action.sh\`\` from GitHub. "
 fi
+echo ""
 
 # Exit #
 cleanCache
