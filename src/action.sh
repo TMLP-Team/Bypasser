@@ -2,7 +2,8 @@
 # Welcome #
 EXIT_SUCCESS=0
 EXIT_FAILURE=1
-EOF=127
+EOF=255
+exitCode=0
 moduleName="Bypasser"
 echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
 echo ""
@@ -16,7 +17,7 @@ function cleanCache()
 
 cleanCache
 
-# HMA/HMAL #
+# HMA/HMAL (0b00000XX) #
 blacklistName="Blacklist"
 whitelistName="Whitelist"
 configFolderPath="/sdcard/Download"
@@ -173,7 +174,6 @@ commonConfigContent="{\"configVersion\":90,\"forceMountData\":true,\"templates\"
 blacklistConfigContent="${commonConfigContent}\"scope\":{${blacklistScopeList}}}"
 whitelistConfigContent="${commonConfigContent}\"scope\":{${whitelistScopeList}}}"
 
-exitCode=0
 if [[ ! -d "${configFolderPath}" ]];
 then
 	mkdir -p "${configFolderPath}"
@@ -182,7 +182,7 @@ if [[ -d "${configFolderPath}" ]];
 then
 	echo "Successfully created the folder \"${configFolderPath}\". "
 	echo "${blacklistConfigContent}" > "${blacklistConfigFilePath}"
-	if [[ 0 == ${?} && -e "${blacklistConfigFilePath}" ]];
+	if [[ ${EXIT_SUCCESS} == ${?} && -e "${blacklistConfigFilePath}" ]];
 	then
 		echo "Successfully generated the config file \"${blacklistConfigFilePath}\". "
 	else
@@ -190,7 +190,7 @@ then
 		echo "Failed to generate the config file \"${blacklistConfigFilePath}\". "
 	fi
 	echo "${whitelistConfigContent}" > "${whitelistConfigFilePath}"
-	if [[ 0 == ${?} && -e "${whitelistConfigFilePath}" ]];
+	if [[ ${EXIT_SUCCESS} == ${?} && -e "${whitelistConfigFilePath}" ]];
 	then
 		echo "Successfully generated the config file \"${whitelistConfigFilePath}\". "
 	else
@@ -201,9 +201,13 @@ else
 	exitCode=$(expr $exitCode + 3)
 	echo "Failed to create the folder \"${configFolderPath}\". "
 fi
+if [[ -z "${blacklistAppList}" || -z "${blacklistScopeList}" || -z "${whitelistAppList}" || -z "${whitelistScopeList}" ]];
+then
+	echo "At least one list was empty. Please check the configurations generated before importing. "
+fi
 echo ""
 
-# Tricky Store #
+# Tricky Store (0b000XX00) #
 trickyStoreFolderPath="../../tricky_store"
 trickyStoreTargetFileName="target.txt"
 trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
@@ -215,7 +219,7 @@ then
 	then
 		echo "The tricky store target file was found at \"${trickyStoreTargetFilePath}\". "
 		mv "${trickyStoreTargetFilePath}" "${trickyStoreTargetFilePath}.bak"
-		if [[ 0 == $? ]];
+		if [[ ${EXIT_SUCCESS} == $? ]];
 		then
 			echo "Successfully packed the backup. "
 		else
@@ -225,14 +229,14 @@ then
 	else
 		echo "No tricky store target files were detected. "
 	fi
-	if [[ 0 == ${abortFlag} ]];
+	if [[ ${EXIT_SUCCESS} == ${abortFlag} ]];
 	then
 		echo "com.google.android.gms" > "${trickyStoreTargetFilePath}"
-		if [[ 0 == $? && -e "${trickyStoreTargetFilePath}" ]];
+		if [[ ${EXIT_SUCCESS} == ${?} && -e "${trickyStoreTargetFilePath}" ]];
 		then
 			echo "Successfully created the new tricky store target file at \"${trickyStoreTargetFilePath}\". "
 			echo  ${classificationB}  ${classificationC}  ${classificationD} | sort | uniq | tr " " "\n" >> "${trickyStoreTargetFilePath}"
-			if [[ 0 == $? && -e "${trickyStoreTargetFilePath}" ]];
+			if [[ ${EXIT_SUCCESS} == ${?} && -e "${trickyStoreTargetFilePath}" ]];
 			then
 				cnt=$(wc -l "${trickyStoreTargetFilePath}")
 				echo "Successfully wrote $cnt target(s) to \"${trickyStoreTargetFilePath}\". "
@@ -246,7 +250,7 @@ then
 			if [[ -e "${trickyStoreTargetFilePath}.bak" ]];
 			then
 				mv "${trickyStoreTargetFilePath}.bak" "${trickyStoreTargetFilePath}"
-				if [[ 0 == $? && -e "${trickyStoreTargetFilePath}" ]];
+				if [[ ${EXIT_SUCCESS} == ${?} && -e "${trickyStoreTargetFilePath}" ]];
 				then
 					echo "Successfully restore the file. "
 				else
@@ -261,9 +265,57 @@ else
 fi
 echo ""
 
-# Shamiko #
+# Shamiko (0b00X0000) #
 shamikoInstallationFolderPath="../shamiko"
-shamikoConfigFolderPath="/data/adb/shamiko/"
+shamikoConfigFolderPath="/data/adb/shamiko"
+shamikoWhitelistConfigFileName="whitelist"
+shamikoWhitelistConfigFilePath="${shamikoConfigFolderPath}/${shamikoWhitelistConfigFileName}"
+if [[ -d "${shamikoInstallationFolderPath}" ]];
+then
+	echo "The shamiko installation folder was found at \"${shamikoInstallationFolderPath}\". "
+	if [[ ! -d "${shamikoConfigFolderPath}" || -z "$(ls -1A "${shamikoConfigFolderPath}")" ]]; then
+	then
+		echo "The shamiko configuration folder at \"${shamikoConfigFolderPath}\" did not exist or was detected to be empty. "
+		touch "${shamikoWhitelistConfigFilePath}"
+		if [[ ${EXIT_SUCCESS} == ${?} && -e "${shamikoWhitelistConfigFilePath}" ]];
+		then
+			echo "Successfully created the whitelist config file \"${shamikoWhitelistConfigFilePath}\". "
+		else
+			echo "Failed to create the whitelist config file \"${shamikoWhitelistConfigFilePath}\". "
+			exitCode=$(expr $exitCode + 16)
+		fi
+	else
+		echo "The shamiko configuration folder at \"${shamikoConfigFolderPath}\" was detected not to be empty. "
+	fi
+else
+	echo "No shamiko installation folders were found. "
+fi
+
+# Update (0bXX00000) #
+shellContent=$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/action.sh")
+if [[ ${EXIT_SUCCESS} == ${?} && ! -z "${shellContent}" ]];
+then
+	echo "Successfully fetched the latest \`\`action.sh\`\` from GitHub. "
+	cp -fp "${0}" "${0}.bak"
+	if [[ ${EXIT_SUCCESS} == ${?} && -e "${0}.bak" ]];
+	then
+		echo "Successfully copied \`\`action.sh\`\` to \`\`action.sh.bak\`\`. "
+		echo "${shellContent}" > "${0}"
+		if [[ ${EXIT_SUCCESS} == ${?} ]];
+		then
+			echo "Successfully updated \`\`action.sh\`\`. "
+		else
+			exitCode=$(expr $exitCode + 32)
+			echo "Failed to update \`\`action.sh\`\`. "
+		fi
+	else
+		exitCode=$(expr $exitCode + 64)
+		echo "Failed to copy \`\`action.sh\`\` to \`\`action.sh.bak\`\`. "
+	fi
+else
+	exitCode=$(expr $exitCode + 96)
+	echo "Failed to fetch the latest \`\`action.sh\`\` from GitHub. "
+fi
 
 # Exit #
 cleanCache
