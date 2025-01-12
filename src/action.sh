@@ -293,6 +293,7 @@ then
 else
 	echo "No shamiko installation folders were found. "
 fi
+echo ""
 
 # Update (0bXX00000) #
 echo "# Update (0bXX00000) #"
