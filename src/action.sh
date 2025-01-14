@@ -232,7 +232,7 @@ echo ""
 
 # Tricky Store (0b000X00) #
 echo "# Tricky Store (0b000X00) #"
-trickyStoreFolderPath="../../modules/tricky_store"
+trickyStoreFolderPath="../../tricky_store"
 trickyStoreTargetFileName="target.txt"
 trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
 if [[ -e "${trickyStoreFolderPath}" ]];
