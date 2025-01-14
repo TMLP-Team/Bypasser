@@ -5,6 +5,7 @@ EXIT_FAILURE=1
 EOF=255
 exitCode=0
 moduleName="Bypasser"
+cd "$(dirname "$0")"
 
 function cleanCache()
 {
@@ -14,11 +15,12 @@ function cleanCache()
 }
 
 echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
+echo "The current working directory is \"$(pwd)\". "
 cleanCache
 echo ""
 
-# HMA/HMAL (0b00000XX) #
-echo "# HMA/HMAL (0b00000XX) #"
+# HMA/HMAL (0b0000XX) #
+echo "# HMA/HMAL (0b0000XX) #"
 blacklistName="Blacklist"
 whitelistName="Whitelist"
 configFolderPath="/sdcard/Download"
@@ -31,14 +33,21 @@ function getType()
 {
 	if [[ "B" == "$1" || "C" == "$1" || "D" == "$1" ]];
 	then
-		arr=$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Classification/classification$1.txt" | sort | uniq)
+		arr="$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Classification/classification$1.txt" | sort | uniq)"
 		if [[ $? == ${EXIT_SUCCESS} ]];
 		then
-			for pkg in $arr
+			echoFlag=0
+			for pkg in "${arr}"
 			do
-				if echo "${pkg}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
+				if echo -n "${pkg}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
 				then
-					echo "${pkg}"
+					if [[ 1 == ${echoFlag} ]];
+					then
+						echo -e -n "\n${pkg}"
+					else
+						echo -n "${pkg}"
+						echoFlag=1
+					fi
 				fi
 			done
 			return ${EXIT_SUCCESS}
@@ -53,18 +62,18 @@ function getType()
 function getArray()
 {
 	content=""
-	arr=$(echo "$@" | sort | uniq)
-	for package in ${arr}
+	arr="$(echo -n "$@" | sort | uniq)"
+	for package in "${arr}"
 	do
 		content="${content}\"${package}\","
 	done
 	if [[ "${content}" == *, ]];
 	then
-		content=${content%,}
-		echo ${content}
+		content="${content%,}"
+		echo -n "${content}"
 		return ${EXIT_SUCCESS}
 	else
-		echo ${content}
+		echo -n "${content}"
 		return ${EXIT_FAILURE}
 	fi
 }	
@@ -72,17 +81,17 @@ function getArray()
 function getBlacklistScopeString()
 {
 	content=""
-	arr=$(echo "$@" | sort | uniq)
+	arr="$(echo -n "$@" | sort | uniq)"
 	for package in "${arr}"
 	do
 		content="${content}\"${package}\":{\"useWhitelist\":false,\"excludeSystemApps\":false,\"applyTemplates\":[\"${blacklistName}\"],\"extraAppList\":[]},"
 	done
 	if [[ "${content}" == *, ]]; then
-		content=${content%,}
-		echo ${content}
+		content="${content%,}"
+		echo -n "${content}"
 		return ${EXIT_SUCCESS}
 	else
-		echo ${content}
+		echo -n "${content}"
 		return ${EXIT_FAILURE}
 	fi
 }
@@ -90,17 +99,17 @@ function getBlacklistScopeString()
 function getWhitelistScopeStringC()
 {
 	content=""
-	arr=$(echo "$@" | sort | uniq)
+	arr="$(echo "$@" | sort | uniq)"
 	for package in "${arr}"
 	do
 		content="${content}\"${package}\":{\"useWhitelist\":true,\"excludeSystemApps\":true,\"applyTemplates\":[\"${whitelistName}\"],\"extraAppList\":[\"${package}\"]},"
 	done
 	if [[ "${content}" == *, ]]; then
-		content=${content%,}
-		echo ${content}
+		content="${content%,}"
+		echo -n "${content}"
 		return ${EXIT_SUCCESS}
 	else
-		echo ${content}
+		echo -n "${content}"
 		return ${EXIT_FAILURE}
 	fi
 }
@@ -108,51 +117,61 @@ function getWhitelistScopeStringC()
 function getWhitelistScopeStringD()
 {
 	content=""
-	arr=$(echo "$@" | sort | uniq)
+	arr="$(echo "$@" | sort | uniq)"
 	for package in "${arr}"
 	do
 		content="${content}\"${package}\":{\"useWhitelist\":true,\"excludeSystemApps\":true,\"applyTemplates\":[\"${whitelistName}\"],\"extraAppList\":[]},"
 	done
 	if [[ "${content}" == *, ]]; then
-		content=${content%,}
-		echo ${content}
+		content="${content%,}"
+		echo -n "${content}"
 		return ${EXIT_SUCCESS}
 	else
-		echo ${content}
+		echo -n "${content}"
 		return ${EXIT_FAILURE}
 	fi
 }
 
-classificationB=$(getType "B")
+classificationB="$(getType "B")"
 returnCodeB=$?
-classificationC=$(getType "C")
+lengthB=$(echo -n "$classificationB" | wc -l)
+classificationC="$(getType "C")"
 returnCodeC=$?
-classificationD=$(getType "D")
+lengthC=$(echo -n "$classificationC" | wc -l)
+classificationD="$(getType "D")"
 returnCodeD=$?
+lengthD=$(echo -n "$classificationD" | wc -l)
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
-	echo "Successfully fetched $(echo "$classificationB" | wc -l) package name(s) of Type \$B\$. "
+	echo "Successfully fetched ${lengthB} package name(s) of Type \$B\$. "
 else
 	echo "Failed to fetch package names of Type \$B\$. "
 fi
 if [[ ${returnCodeC} == ${EXIT_SUCCESS} ]];
 then
-	echo "Successfully fetched $(echo "$classificationC" | wc -l) package name(s) of Type \$C\$. "
+	echo "Successfully fetched ${lengthC} package name(s) of Type \$C\$. "
 else
 	echo "Failed to fetch package names of Type \$C\$. "
 fi
 if [[ ${returnCodeD} == ${EXIT_SUCCESS} ]];
 then
-	echo "Successfully fetched $(echo "$classificationD" | wc -l) package name(s) of Type \$D\$. "
+	echo "Successfully fetched ${lengthD} package name(s) of Type \$D\$. "
 else
 	echo "Failed to fetch package names of Type \$D\$. "
 fi
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
-	blacklistAppList=$(getArray ${classificationB})
+	blacklistAppList="$(getArray "${classificationB}")"
 	if [[ ${returnCodeC} == ${EXIT_SUCCESS} ]];
 	then
-		whitelistScopeList="$(getWhitelistScopeStringC ${classificationC}),$(getWhitelistScopeStringD ${classificationD})"
+		whitelistScopeListC="$(getWhitelistScopeStringC "${classificationC}")"
+		whitelistScopeListD="$(getWhitelistScopeStringD "${classificationD}")"
+		if [[ -z "${whitelistScopeListC}" ]];
+		then
+			whitelistScopeList="${whitelistScopeListD}"
+		else
+			whitelistScopeList="${whitelistScopeListC},${whitelistScopeListD}"
+		fi
 	else
 		whitelistScopeList=""
 	fi
@@ -165,7 +184,8 @@ then
 	whitelistAppList=$(getArray ${classificationD})
 	if [[ ${returnCodeC} == ${EXIT_SUCCESS} ]];
 	then
-		blacklistScopeList=$(getBlacklistScopeString ${classificationC} ${classificationD})
+		classificationCD="$(echo -e -n "${classificationC}\n${classificationD}")"
+		blacklistScopeList="$(getBlacklistScopeString "${classificationCD}")"
 	else
 		blacklistScopeList=""
 	fi
@@ -184,24 +204,24 @@ fi
 if [[ -d "${configFolderPath}" ]];
 then
 	echo "Successfully created the folder \"${configFolderPath}\". "
-	echo "${blacklistConfigContent}" > "${blacklistConfigFilePath}"
+	echo -n "${blacklistConfigContent}" > "${blacklistConfigFilePath}"
 	if [[ ${EXIT_SUCCESS} == $? && -e "${blacklistConfigFilePath}" ]];
 	then
 		echo "Successfully generated the config file \"${blacklistConfigFilePath}\". "
 	else
-		exitCode=$(expr $exitCode + 1)
+		exitCode=$(expr $exitCode \| 1)
 		echo "Failed to generate the config file \"${blacklistConfigFilePath}\". "
 	fi
-	echo "${whitelistConfigContent}" > "${whitelistConfigFilePath}"
+	echo -n "${whitelistConfigContent}" > "${whitelistConfigFilePath}"
 	if [[ ${EXIT_SUCCESS} == $? && -e "${whitelistConfigFilePath}" ]];
 	then
 		echo "Successfully generated the config file \"${whitelistConfigFilePath}\". "
 	else
-		exitCode=$(expr $exitCode + 2)
+		exitCode=$(expr $exitCode \| 2)
 		echo "Failed to generate the config file \"${whitelistConfigFilePath}\". "
 	fi
 else
-	exitCode=$(expr $exitCode + 3)
+	exitCode=$(expr $exitCode \| 3)
 	echo "Failed to create the folder \"${configFolderPath}\". "
 fi
 if [[ -z "${blacklistAppList}" || -z "${blacklistScopeList}" || -z "${whitelistAppList}" || -z "${whitelistScopeList}" ]];
@@ -210,67 +230,48 @@ then
 fi
 echo ""
 
-# Tricky Store (0b000XX00) #
-echo "# Tricky Store (0b000XX00) #"
+# Tricky Store (0b000X00) #
+echo "# Tricky Store (0b000X00) #"
 trickyStoreFolderPath="../../../modules/tricky_store"
 trickyStoreTargetFileName="target.txt"
 trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
 if [[ -e "${trickyStoreFolderPath}" ]];
 then
 	echo "The tricky store folder was found at \"${trickyStoreFolderPath}\". "
-	abortFlag=0
+	abortFlag=${EXIT_SUCCESS}
 	if [[ -e "${trickyStoreTargetFilePath}" ]];
 	then
 		echo "The tricky store target file was found at \"${trickyStoreTargetFilePath}\". "
-		mv "${trickyStoreTargetFilePath}" "${trickyStoreTargetFilePath}.bak"
-		if [[ ${EXIT_SUCCESS} == $? ]];
+		cp -fp "${trickyStoreTargetFilePath}" "${trickyStoreTargetFilePath}.bak"
+		if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}.bak" ]];
 		then
-			echo "Successfully packed the backup. "
+			echo "Successfully copied \"${trickyStoreTargetFilePath}\" to \"${trickyStoreTargetFilePath}.bak\". "
 		else
-			abortFlag=1
-			echo "Failed to pack the backup. "
+			abortFlag=${EXIT_FAILURE}
+			echo "Failed to copy \"${trickyStoreTargetFilePath}\" to \"${trickyStoreTargetFilePath}.bak\". "
 		fi
 	else
-		echo "No tricky store target files were detected. "
+		echo "The copying has been skipped since no tricky store target files were detected. "
 	fi
 	if [[ ${EXIT_SUCCESS} == ${abortFlag} ]];
 	then
-		echo "com.google.android.gms" > "${trickyStoreTargetFilePath}"
-		if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}" ]];
+		echo -e -n "com.google.android.gms\n$(echo -e -n "${classificationB}\n${classificationC}\n${classificationD}" | sort | uniq)" > "${trickyStoreTargetFilePath}"
+		cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
+		if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}" && ${cnt} == $(expr ${lengthB} + ${lengthC} + ${lengthD} + 1) ]];
 		then
-			echo "Successfully created the new tricky store target file at \"${trickyStoreTargetFilePath}\". "
-			echo -e "${classificationB}\n${classificationC}\n${classificationD}" | sort | uniq >> "${trickyStoreTargetFilePath}"
-			if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}" ]];
-			then
-				cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
-				echo "Successfully wrote ${cnt} target(s) to \"${trickyStoreTargetFilePath}\". "
-			else
-				exitCode=$(expr $exitCode + 4)
-				echo "Failed to write to \"${trickyStoreTargetFilePath}\". "
-			fi
+			echo "Successfully wrote ${cnt} target(s) to \"${trickyStoreTargetFilePath}\". "
 		else
-			exitCode=$(expr $exitCode + 8)
-			echo "Failed to create the new tricky store target file at \"${trickyStoreTargetFilePath}\". "
-			if [[ -e "${trickyStoreTargetFilePath}.bak" ]];
-			then
-				mv "${trickyStoreTargetFilePath}.bak" "${trickyStoreTargetFilePath}"
-				if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}" ]];
-				then
-					echo "Successfully restore the file. "
-				else
-					echo "Failed to restore the file. "
-				fi
-			fi
+			exitCode=$(expr $exitCode \| 4)
+			echo "Failed to write to \"${trickyStoreTargetFilePath}\". "
 		fi
 	fi
 else
-	exitCode=$(expr $exitCode + 12)
 	echo "No tricky store folders were detected. "
 fi
 echo ""
 
-# Shamiko (0b00X0000) #
-echo "# Shamiko (0b00X0000) #"
+# Shamiko (0b00X000) #
+echo "# Shamiko (0b00X000) #"
 shamikoInstallationFolderPath="../../modules/zygisk_shamiko"
 shamikoConfigFolderPath="../../../shamiko"
 shamikoWhitelistConfigFileName="whitelist"
@@ -286,8 +287,8 @@ then
 		then
 			echo "Successfully created the whitelist config file \"${shamikoWhitelistConfigFilePath}\". "
 		else
+			exitCode=$(expr $exitCode \| 8)
 			echo "Failed to create the whitelist config file \"${shamikoWhitelistConfigFilePath}\". "
-			exitCode=$(expr $exitCode + 16)
 		fi
 	else
 		echo "The shamiko configuration folder at \"${shamikoConfigFolderPath}\" was detected not to be empty. "
@@ -297,8 +298,8 @@ else
 fi
 echo ""
 
-# Update (0bXX00000) #
-echo "# Update (0bXX00000) #"
+# Update (0bXX0000) #
+echo "# Update (0bXX0000) #"
 shellContent=$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/action.sh")
 if [[ ${EXIT_SUCCESS} == $? && ! -z "${shellContent}" ]];
 then
@@ -307,20 +308,20 @@ then
 	if [[ ${EXIT_SUCCESS} == $? && -e "${0}.bak" ]];
 	then
 		echo "Successfully copied \`\`action.sh\`\` to \`\`action.sh.bak\`\`. "
-		echo "${shellContent}" > "${0}"
+		echo -n "${shellContent}" > "${0}"
 		if [[ ${EXIT_SUCCESS} == $? ]];
 		then
 			echo "Successfully updated \`\`action.sh\`\`. "
 		else
-			exitCode=$(expr $exitCode + 32)
+			exitCode=$(expr $exitCode \| 16)
 			echo "Failed to update \`\`action.sh\`\`. "
 		fi
 	else
-		exitCode=$(expr $exitCode + 64)
+		exitCode=$(expr $exitCode \| 32)
 		echo "Failed to copy \`\`action.sh\`\` to \`\`action.sh.bak\`\`. "
 	fi
 else
-	exitCode=$(expr $exitCode + 96)
+	exitCode=$(expr $exitCode \| 48)
 	echo "Failed to fetch the latest \`\`action.sh\`\` from GitHub. "
 fi
 echo ""
