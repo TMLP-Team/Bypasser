@@ -254,14 +254,16 @@ then
 	fi
 	if [[ ${EXIT_SUCCESS} == ${abortFlag} ]];
 	then
-		echo -e -n "com.google.android.gms\n$(echo -e -n "${classificationB}\n${classificationC}\n${classificationD}" | sort | uniq)" > "${trickyStoreTargetFilePath}"
+		echo -e -n "com.google.android.gms\n$(echo -e -n "${classificationB}\n${classificationC}\n${classificationD}" | sort | uniq)\n" > "${trickyStoreTargetFilePath}"
 		if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}" ]];
 		then
 			cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
 			echo "Successfully wrote ${cnt} target(s) to \"${trickyStoreTargetFilePath}\". "
 			expectedCount= $(expr 1 + ${lengthB} + ${lengthC} + ${lengthD})
-			if [[ ${cnt} != ${expectedCount} ]];
+			if [[ ${cnt} == ${expectedCount} ]];
 			then
+				echo "Successfully checked \"${trickyStoreTargetFilePath}\" (${cnt} = ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD}). "
+			else
 				exitCode=$(expr $exitCode \| 4)
 				echo "Failed to check \"${trickyStoreTargetFilePath}\" (${cnt} != ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD}). "
 			fi
