@@ -3,9 +3,9 @@ EXIT_SUCCESS=0
 EXIT_FAILURE=1
 EOF=255
 moduleName=Bypasser
-ui_print "Welcome to the installer of the ${moduleName} Magisk Module! "
 cd "${MODPATH}"
-ui_print "Current working directory is \"$(pwd)\". "
+ui_print "Welcome to the installer of the ${moduleName} Magisk Module! "
+ui_print "The current working directory is \"$(pwd)\". "
 
 # Magisk #
 if ! $BOOTMODE;
