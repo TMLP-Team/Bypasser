@@ -134,13 +134,13 @@ function getWhitelistScopeStringD()
 
 classificationB="$(getType "B")"
 returnCodeB=$?
-lengthB=$(echo -n "$classificationB" | wc -l)
+lengthB=$(echo "$classificationB" | wc -l)
 classificationC="$(getType "C")"
 returnCodeC=$?
-lengthC=$(echo -n "$classificationC" | wc -l)
+lengthC=$(echo "$classificationC" | wc -l)
 classificationD="$(getType "D")"
 returnCodeD=$?
-lengthD=$(echo -n "$classificationD" | wc -l)
+lengthD=$(echo "$classificationD" | wc -l)
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully fetched ${lengthB} package name(s) of Type \$B\$. "
@@ -196,7 +196,6 @@ fi
 commonConfigContent="{\"configVersion\":90,\"forceMountData\":true,\"templates\":{\"${blacklistName}\":{\"isWhitelist\":false,\"appList\":[${blacklistAppList}]},\"${whitelistName}\":{\"isWhitelist\":true,\"appList\":[${whitelistAppList}]}},"
 blacklistConfigContent="${commonConfigContent}\"scope\":{${blacklistScopeList}}}"
 whitelistConfigContent="${commonConfigContent}\"scope\":{${whitelistScopeList}}}"
-
 if [[ ! -d "${configFolderPath}" ]];
 then
 	mkdir -p "${configFolderPath}"
@@ -260,10 +259,11 @@ then
 		then
 			cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
 			echo "Successfully wrote ${cnt} target(s) to \"${trickyStoreTargetFilePath}\". "
-			if [[ ${cnt} != $(4 + expr ${lengthB} + ${lengthC} + ${lengthD}) ]];
+			expectedCount= $(expr 1 + ${lengthB} + ${lengthC} + ${lengthD})
+			if [[ ${cnt} != ${expectedCount} ]];
 			then
 				exitCode=$(expr $exitCode \| 4)
-				echo "Failed to check \"${trickyStoreTargetFilePath}\" (${cnt} != 4 + ${lengthB} + ${lengthC} + ${lengthD}). "
+				echo "Failed to check \"${trickyStoreTargetFilePath}\" (${cnt} != ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD}). "
 			fi
 		else
 			exitCode=$(expr $exitCode \| 4)
