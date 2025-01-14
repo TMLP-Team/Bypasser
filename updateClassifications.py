@@ -42,6 +42,19 @@ class Classification:
 				return (True, r.text)
 		except BaseException as e:
 			return (False, str(e))
+	def configureSet(self:object, s:set|tuple|list, updateSwitch:bool = True) -> bool:
+		if isinstance(s, (set, tuple, list)) and isinstance(updateSwitch, bool):
+			if not updateSwitch:
+				self.__s.clear()
+			originalSize = len(self.__s)
+			self.__s.update(s)
+			currentSize = len(self.__s)
+			sizeDelta = currentSize - originalSize
+			print("Successfully updated {0} package name(s). ".format(sizeDelta))
+			return True
+		else:
+			print("The parameters passed are in wrong types. ")
+			return False
 	def configureFile(self:object, filePath:str, updateSwitch:bool = True) -> bool:
 		if isinstance(filePath, str) and isinstance(updateSwitch, bool):
 			content = self.__getTxt(filePath)

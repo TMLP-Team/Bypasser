@@ -256,10 +256,15 @@ then
 	if [[ ${EXIT_SUCCESS} == ${abortFlag} ]];
 	then
 		echo -e -n "com.google.android.gms\n$(echo -e -n "${classificationB}\n${classificationC}\n${classificationD}" | sort | uniq)" > "${trickyStoreTargetFilePath}"
-		cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
-		if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}" && ${cnt} == $(expr ${lengthB} + ${lengthC} + ${lengthD} + 1) ]];
+		if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}" ]];
 		then
 			echo "Successfully wrote ${cnt} target(s) to \"${trickyStoreTargetFilePath}\". "
+			cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
+			if [[ ${cnt} != $(expr ${lengthB} + ${lengthC} + ${lengthD} + 1) ]];
+			then
+				exitCode=$(expr $exitCode \| 4)
+				echo "Failed to check \"${trickyStoreTargetFilePath}\" (${cnt} != ${lengthB} + ${lengthC} + ${lengthD} + 1). "
+			fi
 		else
 			exitCode=$(expr $exitCode \| 4)
 			echo "Failed to write to \"${trickyStoreTargetFilePath}\". "
