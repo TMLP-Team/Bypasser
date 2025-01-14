@@ -14,7 +14,7 @@ fi
 
 # Action #
 chmod +x ./action.sh
-actionStrings=$(cd "/data/adb/modules" && "${currentWorkingDirectory}/action.sh")
+actionStrings=$(./action.sh)
 exitCode=$?
 if [[ ${EXIT_SUCCESS} == ${exitCode} ]];
 then

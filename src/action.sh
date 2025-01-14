@@ -72,7 +72,8 @@ function getArray()
 function getBlacklistScopeString()
 {
 	content=""
-	for package in "$@"
+	arr=$(echo "$@" | sort | uniq)
+	for package in "${arr}"
 	do
 		content="${content}\"${package}\":{\"useWhitelist\":false,\"excludeSystemApps\":false,\"applyTemplates\":[\"${blacklistName}\"],\"extraAppList\":[]},"
 	done
@@ -89,7 +90,8 @@ function getBlacklistScopeString()
 function getWhitelistScopeStringC()
 {
 	content=""
-	for package in "$@"
+	arr=$(echo "$@" | sort | uniq)
+	for package in "${arr}"
 	do
 		content="${content}\"${package}\":{\"useWhitelist\":true,\"excludeSystemApps\":true,\"applyTemplates\":[\"${whitelistName}\"],\"extraAppList\":[\"${package}\"]},"
 	done
@@ -106,7 +108,8 @@ function getWhitelistScopeStringC()
 function getWhitelistScopeStringD()
 {
 	content=""
-	for package in "$@"
+	arr=$(echo "$@" | sort | uniq)
+	for package in "${arr}"
 	do
 		content="${content}\"${package}\":{\"useWhitelist\":true,\"excludeSystemApps\":true,\"applyTemplates\":[\"${whitelistName}\"],\"extraAppList\":[]},"
 	done
@@ -144,7 +147,6 @@ then
 else
 	echo "Failed to fetch package names of Type \$D\$. "
 fi
-
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
 	blacklistAppList=$(getArray ${classificationB})
@@ -210,7 +212,7 @@ echo ""
 
 # Tricky Store (0b000XX00) #
 echo "# Tricky Store (0b000XX00) #"
-trickyStoreFolderPath="../../tricky_store"
+trickyStoreFolderPath="../../../modules/tricky_store"
 trickyStoreTargetFileName="target.txt"
 trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
 if [[ -e "${trickyStoreFolderPath}" ]];
@@ -269,8 +271,8 @@ echo ""
 
 # Shamiko (0b00X0000) #
 echo "# Shamiko (0b00X0000) #"
-shamikoInstallationFolderPath="../zygisk_shamiko"
-shamikoConfigFolderPath="/data/adb/shamiko"
+shamikoInstallationFolderPath="../../modules/zygisk_shamiko"
+shamikoConfigFolderPath="../../../shamiko"
 shamikoWhitelistConfigFileName="whitelist"
 shamikoWhitelistConfigFilePath="${shamikoConfigFolderPath}/${shamikoWhitelistConfigFileName}"
 if [[ -d "${shamikoInstallationFolderPath}" ]];
