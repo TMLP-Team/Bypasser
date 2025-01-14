@@ -405,7 +405,6 @@ master.alarmshell.android
 me.bingyue.IceCore
 me.bmax.apatch
 me.documenthook
-me.garfieldhan.hiapatch
 me.hd.hookgg
 me.hd.hookwzry
 me.hoshino.novpndetect
@@ -420,6 +419,7 @@ me.rhunk.snapenhance
 me.simplehook
 me.sleep.vip
 me.teble.xposed.autodaily
+me.weishu.kernelsu
 me.zhenxin.thisreallylite
 ml.pyshivam.imeimasker
 mobi.acpm.inspeckage

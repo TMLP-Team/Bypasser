@@ -18,7 +18,7 @@ EXIT_FAILURE = 1
 EOF = (-1)
 
 
-class ClassificationB:
+class Classification:
 	def __init__(self:object, s:tuple|list|set|None = None) -> object:
 		self.__s = set(s) if isinstance(s, (tuple, list, set)) else set()
 		self.__pattern = "^[A-Za-z][A-Za-z0-9_]*(?:\\.[A-Za-z][A-Za-z0-9_]*)+$"
@@ -82,6 +82,8 @@ class ClassificationB:
 		else:
 			print("The parameters passed are in wrong types. ")
 			return False
+	def intersection(self:object, other:object) -> set:
+		return other.intersection(self.__s)
 	def writeTo(self:object, filePath:str, encoding:str = "utf-8") -> bool:
 		try:
 			with open(filePath, "w", encoding = encoding) as f:
@@ -105,18 +107,45 @@ def gitPush() -> bool:
 	return True
 
 def main() -> int:
-	filePath = "Classification/classificationB.txt"
+	# Update $B$ #
+	filePathB = "Classification/classificationB.txt"
 	url = "https://modules.lsposed.org/modules.json"
-	classificationB = ClassificationB()
-	bRet = classificationB.configureFile(filePath)
+	classificationB, classificationC, classificationD = Classification(), Classification(), Classification()
+	bRet = classificationB.configureFile(filePathB)
 	bRet = classificationB.configureUrl(url) and bRet
-	bRet = classificationB.writeTo(filePath) and bRet
-	try:
-		choice = input("Would you like to upload the file \"{0}\" to GitHub via ``git push`` [Yn]? ").upper() not in ("N", "NO", "0", "FALSE")
-	except:
-		choice = True
-	if choice:
-		bRet = gitPush() and bRet
+	bRet = classificationB.writeTo(filePathB) and bRet
+	
+	# Compute Intersections #
+	filePathC = "Classification/classificationC.txt"
+	bRet = classificationC.configureFile(filePathC)
+	filePathD = "Classification/classificationD.txt"
+	bRet = classificationD.configureFile(filePathD)
+	setBC = classificationB.intersection(classificationC)
+	setBD = classificationB.intersection(classificationD)
+	setCD = classificationC.intersection(classificationD)
+	if setBC:
+		print("There {0} in both Classification $B$ and Classification $C$. ".format("are {0} elements".format(len(setBC)) if len(setBC) > 1 else "is {0} element".format(len(setBC))))
+		print(setBC)
+		bRet = False
+	if setBD:
+		print("There {0} in both Classification $B$ and Classification $D$. ".format("are {0} elements".format(len(setBD)) if len(setBD) > 1 else "is {0} element".format(len(setBD))))
+		print(setBD)
+		bRet = False
+	if setCD:
+		print("There {0} in both Classification $C$ and Classification $D$. ".format("are {0} elements".format(len(setCD)) if len(setCD) > 1 else "is {0} element".format(len(setCD))))
+		print(setCD)
+		bRet = False
+	
+	# Git Push #
+	if bRet:
+		try:
+			choice = input("Would you like to upload the file \"{0}\" to GitHub via ``git push`` [Yn]? ").upper() not in ("N", "NO", "0", "FALSE")
+		except:
+			choice = True
+		if choice:
+			bRet = gitPush()
+	
+	# Exit #
 	iRet = EXIT_SUCCESS if bRet else EXIT_FAILURE
 	print("Please press the enter key to exit ({0}). ".format(iRet))
 	try:
