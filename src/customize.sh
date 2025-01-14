@@ -5,7 +5,7 @@ EOF=255
 moduleName=Bypasser
 cd "${MODPATH}"
 ui_print "Welcome to the installer of the ${moduleName} Magisk Module! "
-ui_print "This absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
+ui_print "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
 ui_print "The current working directory is \"$(pwd)\". "
 
 # Magisk #

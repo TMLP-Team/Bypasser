@@ -15,6 +15,7 @@ function cleanCache()
 }
 
 echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
+echo "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
 echo "The current working directory is \"$(pwd)\". "
 cleanCache
 echo ""
