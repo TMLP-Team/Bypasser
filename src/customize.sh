@@ -3,7 +3,7 @@ EXIT_SUCCESS=0
 EXIT_FAILURE=1
 EOF=255
 moduleName=Bypasser
-currentWorkingDirectory=$(pwd)
+cd "${MODPATH}"
 ui_print "Welcome to the installer of the ${moduleName} Magisk Module! "
 
 # Magisk #
