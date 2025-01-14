@@ -37,15 +37,15 @@ function getType()
 		if [[ $? == ${EXIT_SUCCESS} ]];
 		then
 			echoFlag=0
-			for pkg in "${arr}"
+			for package in ${arr}
 			do
-				if echo -n "${pkg}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
+				if echo -n "${package}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
 				then
 					if [[ 1 == ${echoFlag} ]];
 					then
-						echo -e -n "\n${pkg}"
+						echo -e -n "\n${package}"
 					else
-						echo -n "${pkg}"
+						echo -n "${package}"
 						echoFlag=1
 					fi
 				fi
@@ -63,7 +63,7 @@ function getArray()
 {
 	content=""
 	arr="$(echo -n "$@" | sort | uniq)"
-	for package in "${arr}"
+	for package in ${arr}
 	do
 		content="${content}\"${package}\","
 	done
@@ -82,7 +82,7 @@ function getBlacklistScopeString()
 {
 	content=""
 	arr="$(echo -n "$@" | sort | uniq)"
-	for package in "${arr}"
+	for package in ${arr}
 	do
 		content="${content}\"${package}\":{\"useWhitelist\":false,\"excludeSystemApps\":false,\"applyTemplates\":[\"${blacklistName}\"],\"extraAppList\":[]},"
 	done
@@ -100,7 +100,7 @@ function getWhitelistScopeStringC()
 {
 	content=""
 	arr="$(echo "$@" | sort | uniq)"
-	for package in "${arr}"
+	for package in ${arr}
 	do
 		content="${content}\"${package}\":{\"useWhitelist\":true,\"excludeSystemApps\":true,\"applyTemplates\":[\"${whitelistName}\"],\"extraAppList\":[\"${package}\"]},"
 	done
@@ -118,7 +118,7 @@ function getWhitelistScopeStringD()
 {
 	content=""
 	arr="$(echo "$@" | sort | uniq)"
-	for package in "${arr}"
+	for package in ${arr}
 	do
 		content="${content}\"${package}\":{\"useWhitelist\":true,\"excludeSystemApps\":true,\"applyTemplates\":[\"${whitelistName}\"],\"extraAppList\":[]},"
 	done
