@@ -113,9 +113,9 @@ if [[ -d "${updateFolderPath}" ]]; then
 	echo "Successfully created the update folder path \"${updateFolderPath}\". "
 	echo -e "$updateContent" > "${updateFilePath}"
 	if [[ 0 == $? && -e "${updateFilePath}" ]]; then
-		echo "Successfully created the update JSON file \"${updateFolderPath}\". "
+		echo "Successfully created the update JSON file \"${updateFilePath}\". "
 	else
-		echo "Failed to create the update JSON file \"${updateFolderPath}\". "
+		echo "Failed to create the update JSON file \"${updateFilePath}\". "
 		exit 9
 	fi
 else
