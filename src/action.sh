@@ -259,7 +259,7 @@ then
 		then
 			cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
 			echo "Successfully wrote ${cnt} target(s) to \"${trickyStoreTargetFilePath}\". "
-			expectedCount= $(expr 1 + ${lengthB} + ${lengthC} + ${lengthD})
+			expectedCount=$(expr 1 + ${lengthB} + ${lengthC} + ${lengthD})
 			if [[ ${cnt} == ${expectedCount} ]];
 			then
 				echo "Successfully checked \"${trickyStoreTargetFilePath}\" (${cnt} = ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD}). "
