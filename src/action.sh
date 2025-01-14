@@ -232,7 +232,7 @@ echo ""
 
 # Tricky Store (0b000X00) #
 echo "# Tricky Store (0b000X00) #"
-trickyStoreFolderPath="../../../modules/tricky_store"
+trickyStoreFolderPath="../../modules/tricky_store"
 trickyStoreTargetFileName="target.txt"
 trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
 if [[ -e "${trickyStoreFolderPath}" ]];
@@ -273,7 +273,7 @@ echo ""
 # Shamiko (0b00X000) #
 echo "# Shamiko (0b00X000) #"
 shamikoInstallationFolderPath="../../modules/zygisk_shamiko"
-shamikoConfigFolderPath="../../../shamiko"
+shamikoConfigFolderPath="../../shamiko"
 shamikoWhitelistConfigFileName="whitelist"
 shamikoWhitelistConfigFilePath="${shamikoConfigFolderPath}/${shamikoWhitelistConfigFileName}"
 if [[ -d "${shamikoInstallationFolderPath}" ]];

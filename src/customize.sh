@@ -5,6 +5,7 @@ EOF=255
 moduleName=Bypasser
 cd "${MODPATH}"
 ui_print "Welcome to the installer of the ${moduleName} Magisk Module! "
+ui_print "This absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
 ui_print "The current working directory is \"$(pwd)\". "
 
 # Magisk #
@@ -14,14 +15,16 @@ then
 fi
 
 # Action #
+logFilePath="${TMPDIR}/${moduleName}.log"
 chmod +x ./action.sh
 actionStrings=$(./action.sh)
 exitCode=$?
+echo -n "$actionStrings" > "${logFilePath}"
 if [[ ${EXIT_SUCCESS} == ${exitCode} ]];
 then
-	ui_print "Successfully executed the \`\`action.sh\`\`. "
+	ui_print "Successfully executed the \`\`action.sh\`\` (${exitCode}). "
 else
-	ui_print "Warning: The execution of \`\`action.sh\`\` returned a non-zero exit code (${exitCode}). "
+	ui_print "Warning: The execution of \`\`action.sh\`\` returned a non-zero exit code (${exitCode}). See \"${logFilePath}\" for details. "
 fi
 if [[ -z "${MAGISK_VER_CODE}" ]];
 then
