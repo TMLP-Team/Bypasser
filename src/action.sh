@@ -258,12 +258,12 @@ then
 		echo -e -n "com.google.android.gms\n$(echo -e -n "${classificationB}\n${classificationC}\n${classificationD}" | sort | uniq)" > "${trickyStoreTargetFilePath}"
 		if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}" ]];
 		then
-			echo "Successfully wrote ${cnt} target(s) to \"${trickyStoreTargetFilePath}\". "
 			cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
-			if [[ ${cnt} != $(expr ${lengthB} + ${lengthC} + ${lengthD} + 1) ]];
+			echo "Successfully wrote ${cnt} target(s) to \"${trickyStoreTargetFilePath}\". "
+			if [[ ${cnt} != $(4 + expr ${lengthB} + ${lengthC} + ${lengthD}) ]];
 			then
 				exitCode=$(expr $exitCode \| 4)
-				echo "Failed to check \"${trickyStoreTargetFilePath}\" (${cnt} != ${lengthB} + ${lengthC} + ${lengthD} + 1). "
+				echo "Failed to check \"${trickyStoreTargetFilePath}\" (${cnt} != 4 + ${lengthB} + ${lengthC} + ${lengthD}). "
 			fi
 		else
 			exitCode=$(expr $exitCode \| 4)
