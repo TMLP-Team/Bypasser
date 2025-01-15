@@ -25,11 +25,15 @@ function getKeyPress()
 	then
 		if echo "${pressString}" | grep -q "KEY_VOLUMEUP";
 		then
-			echo "The [+] was pressed (${pressCode}). "
+			echo "The [+] was pressed. "
 			return ${VK_UP}
 		elif echo "${pressString}" | grep -q "KEY_VOLUMEDOWN";
 		then
-			echo "The [-] was pressed (${pressCode}). "
+			echo "The [-] was pressed. "
+			return ${VK_DOWN}
+		elif echo "${pressString}" | grep -q "ABS_MT_TRACKING_ID";
+		then
+			echo "The screen was pressed. "
 			return ${VK_DOWN}
 		else
 			echo "The following event occurred. "
