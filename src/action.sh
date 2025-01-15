@@ -143,10 +143,11 @@ function getBlacklistScopeStringC()
 function getBlacklistScopeStringD()
 {
 	content=""
-	arr="$(echo -n "$@" | sort | uniq)"
+	arr="$(echo -n "$1" | sort | uniq)"
+	extraAppList="$(getArray "$(echo -n "$2" | sort | uniq)")"
 	for package in ${arr}
 	do
-		content="${content}\"${package}\":{\"useWhitelist\":false,\"excludeSystemApps\":false,\"applyTemplates\":[\"${blacklistName}\"],\"extraAppList\":[]},"
+		content="${content}\"${package}\":{\"useWhitelist\":false,\"excludeSystemApps\":false,\"applyTemplates\":[\"${blacklistName}\"],\"extraAppList\":[${extraAppList}]},"
 	done
 	if [[ "${content}" == *, ]]; then
 		content="${content%,}"
