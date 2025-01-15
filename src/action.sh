@@ -69,7 +69,7 @@ whitelistConfigFilePath="${configFolderPath}/${whitelistConfigFileName}"
 
 function getType()
 {
-	if [[ "B" == "$1" || "C" == "$1" || "D" == "$1" ]];
+	if [[ $# == 1 && ("B" == "$1" || "C" == "$1" || "D" == "$1") ]];
 	then
 		arr="$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Classification/classification$1.txt" | sort | uniq)"
 		if [[ $? == ${EXIT_SUCCESS} ]];
@@ -99,99 +99,110 @@ function getType()
 
 function getArray()
 {
-	content=""
-	arr="$(echo -n "$@" | sort | uniq)"
-	for package in ${arr}
-	do
-		content="${content}\"${package}\","
-	done
-	if [[ "${content}" == *, ]];
+	if [[ $# == 1 ]];
 	then
-		content="${content%,}"
-		echo -n "${content}"
-		return ${EXIT_SUCCESS}
+		content=""
+		arr="$(echo -n "$1" | sort | uniq)"
+		for package in ${arr}
+		do
+			content="${content}\"${package}\","
+		done
+		if [[ "${content}" == *, ]];
+		then
+			content="${content%,}"
+			echo -n "${content}"
+			return ${EXIT_SUCCESS}
+		else
+			echo -n "${content}"
+			return ${EXIT_FAILURE}
+		fi
 	else
-		echo -n "${content}"
-		return ${EXIT_FAILURE}
+		echo -n ""
+		return ${EOF}
 	fi
 }	
 
 function getBlacklistScopeStringC()
 {
-	content=""
-	arr="$(echo -n "$@" | sort | uniq)"
-	totalLength="$(echo "${arr}" | wc -l)"
-	headIndex=0
-	tailIndex=$(expr ${totalLength} - ${headIndex} - 1)
-	for package in ${arr}
-	do
-		extraAppList="$(getArray "$(echo -e -n "$(echo -n "${arr}" | head -${headIndex})\n$(echo -n "${arr}" | tail -${tailIndex})")")"
-		headIndex=$(expr ${headIndex} + 1)
-		tailIndex=$(expr ${tailIndex} - 1)
-		content="${content}\"${package}\":{\"useWhitelist\":false,\"excludeSystemApps\":false,\"applyTemplates\":[\"${blacklistName}\"],\"extraAppList\":[${extraAppList}]},"
-	done
-	if [[ "${content}" == *, ]]; then
-		content="${content%,}"
-		echo -n "${content}"
-		return ${EXIT_SUCCESS}
+	if [[ $# == 1 ]];
+	then
+		content=""
+		arr="$(echo -n "$1" | sort | uniq)"
+		totalLength="$(echo "${arr}" | wc -l)"
+		headIndex=0
+		tailIndex=$(expr ${totalLength} - ${headIndex} - 1)
+		for package in ${arr}
+		do
+			extraAppList="$(getArray "$(echo -e -n "$(echo -n "${arr}" | head -${headIndex})\n$(echo -n "${arr}" | tail -${tailIndex})")")"
+			headIndex=$(expr ${headIndex} + 1)
+			tailIndex=$(expr ${tailIndex} - 1)
+			content="${content}\"${package}\":{\"useWhitelist\":false,\"excludeSystemApps\":false,\"applyTemplates\":[\"${blacklistName}\"],\"extraAppList\":[${extraAppList}]},"
+		done
+		if [[ "${content}" == *, ]]; then
+			content="${content%,}"
+			echo -n "${content}"
+			return ${EXIT_SUCCESS}
+		else
+			echo -n "${content}"
+			return ${EXIT_FAILURE}
+		fi
 	else
-		echo -n "${content}"
-		return ${EXIT_FAILURE}
+		echo -n ""
+		return ${EOF}
 	fi
 }
 
 function getBlacklistScopeStringD()
 {
-	content=""
-	arr="$(echo -n "$1" | sort | uniq)"
-	extraAppList="$(getArray "$(echo -n "$2" | sort | uniq)")"
-	for package in ${arr}
-	do
-		content="${content}\"${package}\":{\"useWhitelist\":false,\"excludeSystemApps\":false,\"applyTemplates\":[\"${blacklistName}\"],\"extraAppList\":[${extraAppList}]},"
-	done
-	if [[ "${content}" == *, ]]; then
-		content="${content%,}"
-		echo -n "${content}"
-		return ${EXIT_SUCCESS}
+	if [[ $# == 2 ]];
+	then
+		content=""
+		arr="$(echo -n "$1" | sort | uniq)"
+		extraAppList="$(getArray "$(echo -n "$2" | sort | uniq)")"
+		for package in ${arr}
+		do
+			content="${content}\"${package}\":{\"useWhitelist\":false,\"excludeSystemApps\":false,\"applyTemplates\":[\"${blacklistName}\"],\"extraAppList\":[${extraAppList}]},"
+		done
+		if [[ "${content}" == *, ]]; then
+			content="${content%,}"
+			echo -n "${content}"
+			return ${EXIT_SUCCESS}
+		else
+			echo -n "${content}"
+			return ${EXIT_FAILURE}
+		fi
 	else
-		echo -n "${content}"
-		return ${EXIT_FAILURE}
+		echo -n ""
+		return ${EOF}
 	fi
 }
 
-function getWhitelistScopeStringC()
+function getWhitelistScopeString()
 {
-	content=""
-	arr="$(echo "$@" | sort | uniq)"
-	for package in ${arr}
-	do
-		content="${content}\"${package}\":{\"useWhitelist\":true,\"excludeSystemApps\":true,\"applyTemplates\":[\"${whitelistName}\"],\"extraAppList\":[\"${package}\"]},"
-	done
-	if [[ "${content}" == *, ]]; then
-		content="${content%,}"
-		echo -n "${content}"
-		return ${EXIT_SUCCESS}
+	if [[ $# == 2 ]];
+	then
+		content=""
+		arrC="$(echo "$1" | sort | uniq)"
+		arrD="$(echo "$2" | sort | uniq)"
+		for package in ${arrC}
+		do
+			content="${content}\"${package}\":{\"useWhitelist\":true,\"excludeSystemApps\":true,\"applyTemplates\":[\"${whitelistName}\"],\"extraAppList\":[\"${package}\"]},"
+		done
+		for package in ${arrD}
+		do
+			content="${content}\"${package}\":{\"useWhitelist\":true,\"excludeSystemApps\":true,\"applyTemplates\":[\"${whitelistName}\"],\"extraAppList\":[]},"
+		done
+		if [[ "${content}" == *, ]]; then
+			content="${content%,}"
+			echo -n "${content}"
+			return ${EXIT_SUCCESS}
+		else
+			echo -n "${content}"
+			return ${EXIT_FAILURE}
+		fi
 	else
-		echo -n "${content}"
-		return ${EXIT_FAILURE}
-	fi
-}
-
-function getWhitelistScopeStringD()
-{
-	content=""
-	arr="$(echo "$@" | sort | uniq)"
-	for package in ${arr}
-	do
-		content="${content}\"${package}\":{\"useWhitelist\":true,\"excludeSystemApps\":true,\"applyTemplates\":[\"${whitelistName}\"],\"extraAppList\":[]},"
-	done
-	if [[ "${content}" == *, ]]; then
-		content="${content%,}"
-		echo -n "${content}"
-		return ${EXIT_SUCCESS}
-	else
-		echo -n "${content}"
-		return ${EXIT_FAILURE}
+		echo -n ""
+		return ${EOF}
 	fi
 }
 
@@ -208,47 +219,41 @@ if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully fetched ${lengthB} package name(s) of Type \$B\$. "
 else
+	classificationB=""
+	lengthB=0
 	echo "Failed to fetch package names of Type \$B\$. "
 fi
 if [[ ${returnCodeC} == ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully fetched ${lengthC} package name(s) of Type \$C\$. "
 else
+	classificationC=""
+	lengthC=0
 	echo "Failed to fetch package names of Type \$C\$. "
 fi
 if [[ ${returnCodeD} == ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully fetched ${lengthD} package name(s) of Type \$D\$. "
 else
+	classificationD=""
+	lengthD=0
 	echo "Failed to fetch package names of Type \$D\$. "
 fi
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
 	blacklistAppList="$(getArray "${classificationB}")"
-	if [[ ${returnCodeC} == ${EXIT_SUCCESS} ]];
-	then
-		whitelistScopeListC="$(getWhitelistScopeStringC "${classificationC}")"
-		whitelistScopeListD="$(getWhitelistScopeStringD "${classificationD}")"
-		if [[ -z "${whitelistScopeListC}" ]];
-		then
-			whitelistScopeList="${whitelistScopeListD}"
-		else
-			whitelistScopeList="${whitelistScopeListC},${whitelistScopeListD}"
-		fi
-	else
-		whitelistScopeList=""
-	fi
+	whitelistScopeList="$(getWhitelistScopeString "${classificationC}" "${classificationD}")"
 else
 	blacklistAppList=""
 	whitelistScopeList=""
 fi
 if [[ ${returnCodeD} == ${EXIT_SUCCESS} ]];
 then
-	whitelistAppList=$(getArray ${classificationD})
+	whitelistAppList=$(getArray "${classificationD}")
 	if [[ ${returnCodeC} == ${EXIT_SUCCESS} ]];
 	then
 		blacklistScopeListC="$(getBlacklistScopeStringC "${classificationC}")"
-		blacklistScopeListD="$(getBlacklistScopeStringD "${classificationD}")"
+		blacklistScopeListD="$(getBlacklistScopeStringD "${classificationD}" "${classificationC}")"
 		if [[ -z "${blacklistScopeListC}" ]];
 		then
 			blacklistScopeList="${blacklistScopeListD}"
