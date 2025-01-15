@@ -348,6 +348,7 @@ then
 			lines="$(echo -e -n "${lines}\n$(echo -n "${classificationD}")")"
 		fi
 		lines=$(echo -n "${lines}" | sort | uniq)
+		echo "${lines}" > "${trickyStoreTargetFilePath}"
 		if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}" ]];
 		then
 			cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
