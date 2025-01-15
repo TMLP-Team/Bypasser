@@ -334,7 +334,20 @@ then
 	fi
 	if [[ ${EXIT_SUCCESS} == ${abortFlag} ]];
 	then
-		echo -e "com.google.android.gms\n$(echo -e -n "${classificationB}\n${classificationC}\n${classificationD}" | sort | uniq)" > "${trickyStoreTargetFilePath}"
+		lines="$(echo -n "com.google.android.gms")"
+		if [[ ! -z "${classificationB}" ]];
+		then
+			lines="$(echo -e -n "${lines}\n$(echo -n "${classificationB}")")"
+		fi
+		if [[ ! -z "${classificationC}" ]];
+		then
+			lines="$(echo -e -n "${lines}\n$(echo -n "${classificationC}")")"
+		fi
+		if [[ ! -z "${classificationD}" ]];
+		then
+			lines="$(echo -e -n "${lines}\n$(echo -n "${classificationD}")")"
+		fi
+		lines=$(echo -n "${lines}" | sort | uniq)
 		if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}" ]];
 		then
 			cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
