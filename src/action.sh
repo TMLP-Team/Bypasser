@@ -79,7 +79,29 @@ function getArray()
 	fi
 }	
 
-function getBlacklistScopeString()
+function getBlacklistScopeStringC()
+{
+	content=""
+	arr="$(echo -n "$@" | sort | uniq)"
+	totalLength="$(echo "${arr}" | wc -l)"
+	headIndex=0
+	for package in ${arr}
+	do
+		tailIndex=$(expr ${totalLength} - ${headIndex} - 1)
+		extraAppList="$(getArray "$(echo -e -n "$(echo -n "${arr}" | head -${headIndex})\n$(echo -n "${arr}" | tail -${tailIndex})")")"
+		content="${content}\"${package}\":{\"useWhitelist\":false,\"excludeSystemApps\":false,\"applyTemplates\":[\"${blacklistName}\"],\"extraAppList\":[${extraAppList}]},"
+	done
+	if [[ "${content}" == *, ]]; then
+		content="${content%,}"
+		echo -n "${content}"
+		return ${EXIT_SUCCESS}
+	else
+		echo -n "${content}"
+		return ${EXIT_FAILURE}
+	fi
+}
+
+function getBlacklistScopeStringD()
 {
 	content=""
 	arr="$(echo -n "$@" | sort | uniq)"
@@ -185,8 +207,14 @@ then
 	whitelistAppList=$(getArray ${classificationD})
 	if [[ ${returnCodeC} == ${EXIT_SUCCESS} ]];
 	then
-		classificationCD="$(echo -e -n "${classificationC}\n${classificationD}")"
-		blacklistScopeList="$(getBlacklistScopeString "${classificationCD}")"
+		blacklistScopeListC="$(getBlacklistScopeStringC "${classificationC}")"
+		blacklistScopeListD="$(getBlacklistScopeStringD "${classificationD}")"
+		if [[ -z "${blacklistScopeListC}" ]];
+		then
+			blacklistScopeList="${blacklistScopeListD}"
+		else
+			blacklistScopeList="${blacklistScopeListC},${blacklistScopeListD}"
+		fi
 	else
 		blacklistScopeList=""
 	fi
@@ -255,7 +283,7 @@ then
 	fi
 	if [[ ${EXIT_SUCCESS} == ${abortFlag} ]];
 	then
-		echo -e -n "com.google.android.gms\n$(echo -e -n "${classificationB}\n${classificationC}\n${classificationD}" | sort | uniq)\n" > "${trickyStoreTargetFilePath}"
+		echo -e "com.google.android.gms\n$(echo -e -n "${classificationB}\n${classificationC}\n${classificationD}" | sort | uniq)" > "${trickyStoreTargetFilePath}"
 		if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}" ]];
 		then
 			cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)

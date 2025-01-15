@@ -22,6 +22,14 @@ class Classification:
 	def __init__(self:object, s:tuple|list|set|None = None) -> object:
 		self.__s = set(s) if isinstance(s, (tuple, list, set)) else set()
 		self.__pattern = "^[A-Za-z][A-Za-z0-9_]*(?:\\.[A-Za-z][A-Za-z0-9_]*)+$"
+		self.__exclusionList = ["com.google.android.gms"]
+	def __exclude(self:object) -> int:
+		cnt = 0
+		for package in self.__exclusionList:
+			if package in self.__s:
+				self.__s.remove(package)
+				cnt += 1
+		return cnt
 	def __getTxt(self:object, filePath:str) -> str|None: # get ``*.txt`` content
 		for coding in ("utf-8", "ANSI", "utf-16", "gbk"): # codings (add more codings here if necessary)
 			try:
@@ -46,8 +54,10 @@ class Classification:
 		if isinstance(s, (set, tuple, list)) and isinstance(updateSwitch, bool):
 			if not updateSwitch:
 				self.__s.clear()
+			self.__exclude()
 			originalSize = len(self.__s)
 			self.__s.update(s)
+			self.__exclude()
 			currentSize = len(self.__s)
 			sizeDelta = currentSize - originalSize
 			print("Successfully updated {0} package name(s). ".format(sizeDelta))
@@ -61,9 +71,11 @@ class Classification:
 			if isinstance(content, str):
 				if not updateSwitch:
 					self.__s.clear()
+				self.__exclude()
 				originalSize = len(self.__s)
 				for line in content.splitlines():
 					self.__s.update(findall(self.__pattern, line))
+				self.__exclude()
 				currentSize = len(self.__s)
 				sizeDelta = currentSize - originalSize
 				print("Successfully updated {0} package name(s) from the file \"{1}\". ".format(sizeDelta, filePath))
@@ -79,12 +91,14 @@ class Classification:
 			if status:
 				if not updateSwitch:
 					self.__s.clear()
+				self.__exclude()
 				originalSize = len(self.__s)
 				vector = loads(content)
 				if isinstance(vector, list):
 					for v in vector:
 						if isinstance(v, dict) and "name" in v:
 							self.__s.update(findall(self.__pattern, v["name"]))
+				self.__exclude()
 				currentSize = len(self.__s)
 				sizeDelta = currentSize - originalSize
 				print("Successfully updated {0} package name(s) from the URL \"{1}\". ".format(sizeDelta, url))
