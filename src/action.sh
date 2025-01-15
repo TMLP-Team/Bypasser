@@ -21,10 +21,8 @@ function getKeyPress()
 	timeout=5
 	read -r -t ${timeout} pressString < <(getevent -ql)
 	pressCode=$?
-	if [[ 142 == ${pressCode} ]];
+	if [[ ${EXIT_SUCCESS} == ${pressCode} ]];
 	then
-		return ${pressCode}
-	else
 		if echo "${pressString}" | grep -q "KEY_VOLUMEUP";
 		then
 			echo "The [+] was pressed (${pressCode}). "
@@ -34,9 +32,12 @@ function getKeyPress()
 			echo "The [-] was pressed (${pressCode}). "
 			return ${VK_DOWN}
 		else
-			echo "The \"${pressString}\" was pressed (${pressCode}). "
-			return ${EOF}
+			echo "The following event occurred. "
+			echo "${pressString}"
+			return ${EXIT_FAILURE}
 		fi
+	else
+		return ${EOF}
 	fi
 }
 
