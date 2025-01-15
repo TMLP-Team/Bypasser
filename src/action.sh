@@ -3,6 +3,8 @@
 readonly EXIT_SUCCESS=0
 readonly EXIT_FAILURE=1
 readonly EOF=255
+readonly VK_POWER=13
+readonly VK_SCREEN=20
 readonly VK_UP=38
 readonly VK_DOWN=40
 readonly moduleName="Bypasser"
@@ -31,12 +33,16 @@ function getKeyPress()
 		then
 			echo "The [-] was pressed. "
 			return ${VK_DOWN}
+		elif echo "${pressString}" | grep -q "KEY_POWER";
+		then
+			echo "The power key was pressed. "
+			return ${VK_POWER}
 		elif echo "${pressString}" | grep -q "ABS_MT_TRACKING_ID";
 		then
 			echo "The screen was pressed. "
-			return ${VK_DOWN}
+			return ${VK_SCREEN}
 		else
-			echo "The following event occurred. "
+			echo "The following unknown event occurred. "
 			echo "${pressString}"
 			return ${EXIT_FAILURE}
 		fi
