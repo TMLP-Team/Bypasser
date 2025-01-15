@@ -27,14 +27,14 @@ function getKeyPress()
 	else
 		if echo "${pressString}" | grep -q "KEY_VOLUMEUP";
 		then
-			echo "The [+] was pressed. "
+			echo "The [+] was pressed (${pressCode}). "
 			return ${VK_UP}
 		elif echo "${pressString}" | grep -q "KEY_VOLUMEDOWN";
 		then
-			echo "The [-] was pressed. "
+			echo "The [-] was pressed (${pressCode}). "
 			return ${VK_DOWN}
 		else
-			echo "The \"${pressString}\" was pressed. "
+			echo "The \"${pressString}\" was pressed (${pressCode}). "
 			return ${EOF}
 		fi
 	fi
