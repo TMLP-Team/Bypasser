@@ -1,10 +1,12 @@
 #!/system/bin/sh
 # Welcome #
-EXIT_SUCCESS=0
-EXIT_FAILURE=1
-EOF=255
+readonly EXIT_SUCCESS=0
+readonly EXIT_FAILURE=1
+readonly EOF=255
+readonly VK_UP=38
+readonly VK_DOWN=40
+readonly moduleName="Bypasser"
 exitCode=0
-moduleName="Bypasser"
 cd "$(dirname "$0")"
 
 function cleanCache()
@@ -12,6 +14,30 @@ function cleanCache()
 	sync
 	echo 3 > /proc/sys/vm/drop_caches
 	return 0
+}
+
+function getKeyPress()
+{
+	timeout=5
+	read -r -t ${timeout} pressString < <(getevent -ql)
+	pressCode=$?
+	if [[ 142 == ${pressCode} ]];
+	then
+		return ${pressCode}
+	else
+		if echo "${pressString}" | grep -q "KEY_VOLUMEUP";
+		then
+			echo "The [+] was pressed. "
+			return ${VK_UP}
+		elif echo "${pressString}" | grep -q "KEY_VOLUMEDOWN";
+		then
+			echo "The [-] was pressed. "
+			return ${VK_DOWN}
+		else
+			echo "The \"${pressString}\" was pressed. "
+			return ${EOF}
+		fi
+	fi
 }
 
 echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
@@ -293,10 +319,10 @@ then
 			expectedCount=$(expr 1 + ${lengthB} + ${lengthC} + ${lengthD})
 			if [[ ${cnt} == ${expectedCount} ]];
 			then
-				echo "Successfully checked \"${trickyStoreTargetFilePath}\" (${cnt} = ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD}). "
+				echo "Successfully verified \"${trickyStoreTargetFilePath}\" (${cnt} = ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD}). "
 			else
 				exitCode=$(expr $exitCode \| 4)
-				echo "Failed to check \"${trickyStoreTargetFilePath}\" (${cnt} != ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD}). "
+				echo "Failed to verify \"${trickyStoreTargetFilePath}\" (${cnt} != ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD}). "
 			fi
 		else
 			exitCode=$(expr $exitCode \| 4)
@@ -365,6 +391,7 @@ fi
 echo ""
 
 # Exit #
+getKeyPress
 cleanCache
 echo "Finished executing the \`\`action.sh\`\` (${exitCode}). "
 exit ${exitCode}
