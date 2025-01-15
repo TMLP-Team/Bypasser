@@ -1,6 +1,5 @@
 com.androidfung.drminfo
 com.byxiaorun.detector
-com.daxiaamu.op7mutools
 com.henrikherzig.playintegritychecker
 com.reveny.nativecheck
 com.sefu.vmessfree

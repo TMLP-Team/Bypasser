@@ -104,6 +104,7 @@ com.coderstory.toolkit
 com.coolest.toolbox
 com.crossbowffs.quotelock
 com.darkeyes.tricks
+com.daxiaamu.op7mutools
 com.demo.serendipity
 com.demo.tl_ing
 com.dingda.adfree
