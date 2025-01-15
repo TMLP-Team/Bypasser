@@ -85,11 +85,12 @@ function getBlacklistScopeStringC()
 	arr="$(echo -n "$@" | sort | uniq)"
 	totalLength="$(echo "${arr}" | wc -l)"
 	headIndex=0
+	tailIndex=$(expr ${totalLength} - ${headIndex} - 1)
 	for package in ${arr}
 	do
-		tailIndex=$(expr ${totalLength} - ${headIndex} - 1)
 		extraAppList="$(getArray "$(echo -e -n "$(echo -n "${arr}" | head -${headIndex})\n$(echo -n "${arr}" | tail -${tailIndex})")")"
 		headIndex=$(expr ${headIndex} + 1)
+		tailIndex=$(expr ${tailIndex} - 1)
 		content="${content}\"${package}\":{\"useWhitelist\":false,\"excludeSystemApps\":false,\"applyTemplates\":[\"${blacklistName}\"],\"extraAppList\":[${extraAppList}]},"
 	done
 	if [[ "${content}" == *, ]]; then
