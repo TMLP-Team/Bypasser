@@ -69,28 +69,34 @@ whitelistConfigFilePath="${configFolderPath}/${whitelistConfigFileName}"
 
 function getType()
 {
-	if [[ $# == 1 && ("B" == "$1" || "C" == "$1" || "D" == "$1") ]];
+	if [[ $# == 1 ]];
 	then
-		arr="$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Classification/classification$1.txt" | sort | uniq)"
-		if [[ $? == ${EXIT_SUCCESS} ]];
+		if [[ "B" == "$1" || "C" == "$1" || "D" == "$1" ]];
 		then
-			echoFlag=0
-			for package in ${arr}
-			do
-				if echo -n "${package}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
-				then
-					if [[ 1 == ${echoFlag} ]];
+			arr="$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Classification/classification$1.txt")"
+			if [[ $? == ${EXIT_SUCCESS} ]];
+			then
+				arr="$(echo -n ${arr} | sort | uniq)"
+				echoFlag=0
+				for package in ${arr}
+				do
+					if echo -n "${package}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
 					then
-						echo -e -n "\n${package}"
-					else
-						echo -n "${package}"
-						echoFlag=1
+						if [[ 1 == ${echoFlag} ]];
+						then
+							echo -e -n "\n${package}"
+						else
+							echo -n "${package}"
+							echoFlag=1
+						fi
 					fi
-				fi
-			done
-			return ${EXIT_SUCCESS}
+				done
+				return ${EXIT_SUCCESS}
+			else
+				return $?
+			fi
 		else
-			return $?
+			return ${EOF}
 		fi
 	else
 		return ${EOF}
