@@ -128,6 +128,7 @@ com.fastmo.xhs
 com.fkzhang.qqxposed
 com.fkzhang.wechatxposed
 com.fkzhang.wxencoder
+com.follow.clash
 com.fuck.android.rimet
 com.fuck.snotes
 com.fuckcoolapk
