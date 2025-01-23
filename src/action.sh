@@ -240,8 +240,10 @@ then
 			echo "Directory: $(basename "$item")"
 			for subdir in "$item"/*;
 			do
-				if [ -d "$subdir" ]; then
-					echo "  Subdirectory: $(basename "$subdir")"
+				if [ -d "$subdir" ];
+				then
+					packageName=$(basename "$subdir" | cut -d '-' -f 1)
+					echo "  Package Name: ${packageName}. "
 				fi
 			done
 		fi
