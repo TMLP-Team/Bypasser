@@ -59,6 +59,7 @@ echo ""
 
 # HMA/HMAL (0b0000XX) #
 echo "# HMA/HMAL (0b0000XX) #"
+dataAppFolder="/data/app"
 blacklistName="Blacklist"
 whitelistName="Whitelist"
 configFolderPath="/sdcard/Download"
@@ -224,6 +225,27 @@ lengthD=$(echo "$classificationD" | wc -l)
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully fetched ${lengthB} package name(s) of Type \$B\$. "
+	for item in "${dataAppFolder}/"*
+	do
+		if [ -f "$item" ];
+		then
+			if [[ "$item" == *.apk ]];
+			then
+				echo "An APK File is detected: $(basename "$item"). "
+			else
+				echo "A file was found that should not exist: ${item}. "
+			fi
+		elif [[ -d "$item" ]];
+		then
+			echo "Directory: $(basename "$item")"
+			for subdir in "$item"/*;
+			do
+				if [ -d "$subdir" ]; then
+					echo "  Subdirectory: $(basename "$subdir")"
+				fi
+			done
+		fi
+	done
 else
 	classificationB=""
 	lengthB=0
@@ -284,7 +306,7 @@ if [[ -d "${configFolderPath}" ]];
 then
 	echo "Successfully created the folder \"${configFolderPath}\". "
 	echo -n "${blacklistConfigContent}" > "${blacklistConfigFilePath}"
-	if [[ ${EXIT_SUCCESS} == $? && -e "${blacklistConfigFilePath}" ]];
+	if [[ ${EXIT_SUCCESS} == $? && -f "${blacklistConfigFilePath}" ]];
 	then
 		echo "Successfully generated the config file \"${blacklistConfigFilePath}\". "
 	else
@@ -292,7 +314,7 @@ then
 		echo "Failed to generate the config file \"${blacklistConfigFilePath}\". "
 	fi
 	echo -n "${whitelistConfigContent}" > "${whitelistConfigFilePath}"
-	if [[ ${EXIT_SUCCESS} == $? && -e "${whitelistConfigFilePath}" ]];
+	if [[ ${EXIT_SUCCESS} == $? && -f "${whitelistConfigFilePath}" ]];
 	then
 		echo "Successfully generated the config file \"${whitelistConfigFilePath}\". "
 	else
@@ -314,15 +336,15 @@ echo "# Tricky Store (0b000X00) #"
 trickyStoreFolderPath="../../tricky_store"
 trickyStoreTargetFileName="target.txt"
 trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
-if [[ -e "${trickyStoreFolderPath}" ]];
+if [[ -f "${trickyStoreFolderPath}" ]];
 then
 	echo "The tricky store folder was found at \"${trickyStoreFolderPath}\". "
 	abortFlag=${EXIT_SUCCESS}
-	if [[ -e "${trickyStoreTargetFilePath}" ]];
+	if [[ -f "${trickyStoreTargetFilePath}" ]];
 	then
 		echo "The tricky store target file was found at \"${trickyStoreTargetFilePath}\". "
 		cp -fp "${trickyStoreTargetFilePath}" "${trickyStoreTargetFilePath}.bak"
-		if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}.bak" ]];
+		if [[ ${EXIT_SUCCESS} == $? && -f "${trickyStoreTargetFilePath}.bak" ]];
 		then
 			echo "Successfully copied \"${trickyStoreTargetFilePath}\" to \"${trickyStoreTargetFilePath}.bak\". "
 		else
@@ -349,7 +371,7 @@ then
 		fi
 		lines=$(echo -n "${lines}" | sort | uniq)
 		echo "${lines}" > "${trickyStoreTargetFilePath}"
-		if [[ ${EXIT_SUCCESS} == $? && -e "${trickyStoreTargetFilePath}" ]];
+		if [[ ${EXIT_SUCCESS} == $? && -f "${trickyStoreTargetFilePath}" ]];
 		then
 			cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
 			echo "Successfully wrote ${cnt} target(s) to \"${trickyStoreTargetFilePath}\". "
@@ -384,7 +406,7 @@ then
 	then
 		echo "The shamiko configuration folder at \"${shamikoConfigFolderPath}\" did not exist or was detected to be empty. "
 		touch "${shamikoWhitelistConfigFilePath}"
-		if [[ ${EXIT_SUCCESS} == $? && -e "${shamikoWhitelistConfigFilePath}" ]];
+		if [[ ${EXIT_SUCCESS} == $? && -f "${shamikoWhitelistConfigFilePath}" ]];
 		then
 			echo "Successfully created the whitelist config file \"${shamikoWhitelistConfigFilePath}\". "
 		else
@@ -406,7 +428,7 @@ if [[ ${EXIT_SUCCESS} == $? && ! -z "${shellContent}" ]];
 then
 	echo "Successfully fetched the latest \`\`action.sh\`\` from GitHub. "
 	cp -fp "${0}" "${0}.bak"
-	if [[ ${EXIT_SUCCESS} == $? && -e "${0}.bak" ]];
+	if [[ ${EXIT_SUCCESS} == $? && -f "${0}.bak" ]];
 	then
 		echo "Successfully copied \`\`action.sh\`\` to \`\`action.sh.bak\`\`. "
 		echo -n "${shellContent}" > "${0}"
