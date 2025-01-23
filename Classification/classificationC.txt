@@ -8,6 +8,7 @@ com.zhenxi.hunter
 gr.nikolasspyr.integritycheck
 icu.nullptr.applistdetector
 icu.nullptr.nativetest
+id.my.pjm.qbcd_okr_dvii
 io.github.huskydg.memorydetector
 io.github.rabehx.securify
 io.github.vvb2060.keyattestation

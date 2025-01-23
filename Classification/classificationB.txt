@@ -7,6 +7,7 @@ akhil.alltrans
 android.xiaolan.ppxshare.tools
 androidx.top.hyperos.dynamic.notify
 app.neonorbit.chatheadenabler
+app.revanced.manager.flutter
 balti.xposed.pixelifygooglephotos
 be.mygod.oplus.batterywaster
 be.mygod.unmeteredvpn
@@ -64,6 +65,7 @@ com.alex193a.opcameradebug
 com.alex193a.paextender
 com.alex193a.pixelthermometerbtenabler
 com.alex193a.tguseridviewer
+com.alex193a.watweaker
 com.alex193a.xdowngrader
 com.alphi.actvityopenmanager
 com.amanoteam.kanni
@@ -71,6 +73,7 @@ com.amanoteam.nai
 com.amanoteam.nel
 com.amanoteam.sunny
 com.android.patch
+com.android.shell
 com.android1500.androidfaker
 com.android1500.gpssetter
 com.app.catsmoker
@@ -114,6 +117,7 @@ com.douban.fuckad
 com.dr8.xposed.saax
 com.droserasprout.healergram
 com.dualguard
+com.emanuelef.remote_capture
 com.example.installhook
 com.example.ourom
 com.example.vcam
@@ -134,6 +138,7 @@ com.fuck.android.rimet
 com.fuck.snotes
 com.fuckcoolapk
 com.function.mtp
+com.garyodernichts.downgrader
 com.gauravssnl.bypassrootcheck.pro
 com.gauravssnl.mobileradioadaway
 com.gauravssnl.radiobox
@@ -192,12 +197,15 @@ com.keramidas.TitaniumBackup
 com.keramidas.TitaniumBackupAddon
 com.keshav.capturesposed
 com.ketal.bcrfullscreen
+com.ketan.romtools24
+com.ketan.tweakss24pro
 com.kgg.hhvideo
 com.kgg.hlddz
 com.king250.fightoppoinstaller
 com.kooritea.fcmfix
 com.ldq.connect
 com.leo.xposed.xradiant
+com.lexa.fakegps
 com.ljlvink.formhook
 com.ljlvink.stylusplus.xposed
 com.lt2333.simplicitytools
@@ -237,6 +245,8 @@ com.queallytech.disablelogrequest
 com.queallytech.omapi
 com.raincat.dolby_beta
 com.rdstory.miuiperfsaver
+com.reveny.protecttai.bypass
+com.reveny.vbmetafix.service
 com.rifsxd.ksunext
 com.rifsxd.processhook
 com.setoskins.hook
@@ -244,6 +254,7 @@ com.sevtinge.cemiuiler
 com.sevtinge.hyperceiler
 com.shatyuka.killergram
 com.shatyuka.zhiliao
+com.silverlabtm.app.deviceidchanger.free
 com.simo.ssl.killer
 com.simo.tgramhooks
 com.sky.xposed.rimet
@@ -263,8 +274,10 @@ com.th7.cgsportbypass
 com.th7.fcsdk
 com.th7.flinspirer.admin
 com.thinkdifferent.anywebview
+com.three.minit.batteryresources
 com.topjohnwu.magisk
 com.topmiaohan.superlist
+com.tribalfs.gmh
 com.trump.myxposed
 com.tsng.fuckdmzj
 com.tsng.hidemyapplist
@@ -286,6 +299,7 @@ com.wmods.wppenhacer.w4b
 com.wovow.youtubehelper
 com.wrlus.module.fwkdebug
 com.ws.onscripterplus
+com.wubydax.romcontrol.v2
 com.wye4.hookforvip
 com.xchat
 com.xconst.vavatar
@@ -343,6 +357,7 @@ github.zerorooot.copyfenbi
 github.zerorooot.fuckbilibilivote
 github.zerorooot.hidemiuiclipboarddialog
 github.zerorooot.horizontalcontentextension
+gqv.sn.y
 have.fun
 icu.freedomIntrovert.biliSendCommAntifraud
 icu.freedomintrovert.YTSendCommAntiFraud
@@ -408,6 +423,7 @@ master.alarmshell.android
 me.bingyue.IceCore
 me.bmax.apatch
 me.documenthook
+me.garfieldhan.apatch.next
 me.hd.hookgg
 me.hd.hookwzry
 me.hoshino.novpndetect
@@ -444,6 +460,7 @@ net.lonelytransistor.notificationinsystem
 nil.nadph.qnotified
 nnnn.aaaaa.nevercrash
 one.yufz.hmspush
+org.adaway
 org.hello.coolapk
 org.liuyi.mifreeformx
 org.lsposed.daemon
@@ -455,6 +472,7 @@ org.zwanoo.android.speedtest
 pansong291.xposed.quickenergy
 pansong291.xposed.quickenergy.qiufeng
 pansong291.xposed.quickenergy.repair
+pm.rnxhg.rhl.sn
 pokego.pip
 ps.reso.instaeclipse
 pub.chara.disablealttab
