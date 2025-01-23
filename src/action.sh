@@ -227,25 +227,32 @@ then
 	echo "Successfully fetched ${lengthB} package name(s) of Type \$B\$ from GitHub. "
 	for item in "${dataAppFolder}/"*
 	do
-		if [ -f "$item" ];
+		if [ -f "${item}" ];
 		then
-			if [[ "$item" == *.apk ]];
+			if [[ "${item}" == *.apk ]];
 			then
-				echo "An APK File is detected: $(basename "$item"). "
-			else
-				echo "A file was found that should not exist: ${item}. "
-			fi
-		elif [[ -d "$item" ]];
-		then
-			echo "Directory: $(basename "$item")"
-			for subdir in "$item"/*;
-			do
-				if [ -d "$subdir" ];
+				packageName="$(basename "${item}")"
+				if cat "${item}" | strings | grep -q "xposed";
 				then
-					packageName=$(basename "$subdir" | cut -d '-' -f 1)
-					echo "  Package Name: ${packageName}. "
+					echo "Found the string \"xposed\" in \`\`${packageName}\`\`. "
 				fi
-			done
+			else
+				echo "A file that should not exist was found at \"${item}\". "
+			fi
+		elif [[ -d "${item}" ]];
+		then
+			subItems="$(ls -1 "${item}")"
+			if [[ $(echo "${subItems}" | wc -l) == 1 ]];
+			then
+				firstItem="$(echo "${subItems}" | awk "NR==1")"
+				packageName="$(basename "${firstItem}" | cut -d "-" -f 1)"
+				if cat "${item}/${firstItem}/base.apk" | strings | grep -q "xposed";
+				then
+					echo "Found the string \"xposed\" in \`\`${packageName}\`\`. "
+				fi
+			else
+				echo "There are at least 2 items in \"${item}\". "
+			fi
 		fi
 	done
 	classificationB=$(echo -n "${classificationB}" | sort | uniq)
