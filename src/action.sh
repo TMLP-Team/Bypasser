@@ -224,7 +224,7 @@ returnCodeD=$?
 lengthD=$(echo "$classificationD" | wc -l)
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
-	echo "Successfully fetched ${lengthB} package name(s) of Type \$B\$. "
+	echo "Successfully fetched ${lengthB} package name(s) of Type \$B\$ from GitHub. "
 	for item in "${dataAppFolder}/"*
 	do
 		if [ -f "$item" ];
@@ -246,26 +246,29 @@ then
 			done
 		fi
 	done
+	classificationB=$(echo -n "${classificationB}" | sort | uniq)
+	lengthB=$(echo "$classificationB" | wc -l)
+	echo "Successfully fetched ${lengthB} package name(s) of Type \$B\$ from GitHub and the local machine. "
 else
 	classificationB=""
 	lengthB=0
-	echo "Failed to fetch package names of Type \$B\$. "
+	echo "Failed to fetch package names of Type \$B\$ from GitHub. "
 fi
 if [[ ${returnCodeC} == ${EXIT_SUCCESS} ]];
 then
-	echo "Successfully fetched ${lengthC} package name(s) of Type \$C\$. "
+	echo "Successfully fetched ${lengthC} package name(s) of Type \$C\$ from GitHub. "
 else
 	classificationC=""
 	lengthC=0
-	echo "Failed to fetch package names of Type \$C\$. "
+	echo "Failed to fetch package names of Type \$C\$ from GitHub. "
 fi
 if [[ ${returnCodeD} == ${EXIT_SUCCESS} ]];
 then
-	echo "Successfully fetched ${lengthD} package name(s) of Type \$D\$. "
+	echo "Successfully fetched ${lengthD} package name(s) of Type \$D\$ from GitHub. "
 else
 	classificationD=""
 	lengthD=0
-	echo "Failed to fetch package names of Type \$D\$. "
+	echo "Failed to fetch package names of Type \$D\$ from GitHub. "
 fi
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
