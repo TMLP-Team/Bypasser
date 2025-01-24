@@ -100,11 +100,16 @@ else
 fi
 
 # Action #
-if [[ ! -f ./action.sh ]];
+if [[ -f ./action.sh ]];
 then
+	chmod +x ./action.sh
+	if [[ ! -x ./action.sh ]];
+	then
+		abort "The \`\`action.sh\`\` is not executable. "
+	fi
+else
 	abort "The \`\`action.sh\`\` is missing. "
 fi
-chmod +x ./action.sh
 ui_print $(yes "=" | head -n 100 | tr -d '\n')
 actionStrings="$(./action.sh)"
 exitCode=$?
