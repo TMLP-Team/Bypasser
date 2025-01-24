@@ -233,14 +233,9 @@ then
 			then
 				printableStrings="$(cat "${item}" | strings)"
 				packageName="$(basename "${item}")"
-				if echo "${printableStrings}" | grep -q "xposed";
+				if echo "${printableStrings}" | grep -q "xposed_init";
 				then
-					if echo "${printableStrings}" | grep - q "de\\.robv\\.android\\.xposed";
-					then
-						echo -n "Found the string \"de.robv.android.xposed\" in \`\`${packageName}\`\`, "
-					else
-						echo -n "Found the string \"xposed\" in \`\`${packageName}\`\`, "
-					fi
+					echo -n "Found the string \"xposed_init\" in \`\`${packageName}\`\`, "
 					if [[ "${classificationB}" =~ "${packageName}" ]];
 					then
 						echo "which is already in Classification \$B\$. "
@@ -259,14 +254,9 @@ then
 				firstItem="$(echo "${subItems}" | awk "NR==1")"
 				printableStrings="$(cat "${item}/${firstItem}/base.apk" | strings)"
 				packageName="$(basename "${firstItem}" | cut -d "-" -f 1)"
-				if echo "${printableStrings}" | grep -q "xposed";
+				if echo "${printableStrings}" | grep -q "xposed_init";
 				then
-					if echo "${printableStrings}" | grep - q "de\\.robv\\.android\\.xposed";
-					then
-						echo -n "Found the string \"de.robv.android.xposed\" in \`\`${packageName}\`\`, "
-					else
-						echo -n "Found the string \"xposed\" in \`\`${packageName}\`\`, "
-					fi
+					echo -n "Found the string \"xposed_init\" in \`\`${packageName}\`\`, "
 					if [[ "${classificationB}" =~ "${packageName}" ]];
 					then
 						echo "which is already in Classification \$B\$. "

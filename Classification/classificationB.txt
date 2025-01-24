@@ -412,6 +412,7 @@ io.mesalabs.knoxpatch
 io.noisyfox.oplongshotxposed
 it.kapfer.digitalesamt.liberator
 its.madruga.warevamp
+junzi.xposed.hook
 lialh4.ldf
 lin.xposed
 lozn.hookui
