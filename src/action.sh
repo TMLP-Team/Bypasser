@@ -68,7 +68,7 @@ blacklistConfigFilePath="${configFolderPath}/${blacklistConfigFileName}"
 whitelistConfigFileName=".HMAL_Whitelist_Config.json"
 whitelistConfigFilePath="${configFolderPath}/${whitelistConfigFileName}"
 
-function getType()
+function getClassification()
 {
 	if [[ $# == 1 ]];
 	then
@@ -213,28 +213,40 @@ function getWhitelistScopeString()
 	fi
 }
 
-classificationB="$(getType "B")"
+classificationB="$(getClassification "B")"
 returnCodeB=$?
 lengthB=$(echo "$classificationB" | wc -l)
-classificationC="$(getType "C")"
+classificationC="$(getClassification "C")"
 returnCodeC=$?
 lengthC=$(echo "$classificationC" | wc -l)
-classificationD="$(getType "D")"
+classificationD="$(getClassification "D")"
 returnCodeD=$?
 lengthD=$(echo "$classificationD" | wc -l)
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
-	echo "Successfully fetched ${lengthB} package name(s) of Type \$B\$ from GitHub. "
+	echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub. "
 	for item in "${dataAppFolder}/"*
 	do
 		if [ -f "${item}" ];
 		then
 			if [[ "${item}" == *.apk ]];
 			then
+				printableStrings="$(cat "${item}" | strings)"
 				packageName="$(basename "${item}")"
-				if cat "${item}" | strings | grep -q "xposed";
+				if echo "${printableStrings}" | grep -q "xposed";
 				then
-					echo "Found the string \"xposed\" in \`\`${packageName}\`\`. "
+					if echo "${printableStrings}" | grep - q "de\\.robv\\.android\\.xposed";
+					then
+						echo -n "Found the string \"de.robv.android.xposed\" in \`\`${packageName}\`\`, "
+					else
+						echo -n "Found the string \"xposed\" in \`\`${packageName}\`\`, "
+					fi
+					if [[ "${classificationB}" =~ "${packageName}" ]];
+					then
+						echo "which is already in Classification \$B\$. "
+					else
+						echo "which is not in Classification \$B\$. "
+					fi
 				fi
 			else
 				echo "A file that should not exist was found at \"${item}\". "
@@ -245,39 +257,51 @@ then
 			if [[ $(echo "${subItems}" | wc -l) == 1 ]];
 			then
 				firstItem="$(echo "${subItems}" | awk "NR==1")"
+				printableStrings="$(cat "${item}/${firstItem}/base.apk" | strings)"
 				packageName="$(basename "${firstItem}" | cut -d "-" -f 1)"
-				if cat "${item}/${firstItem}/base.apk" | strings | grep -q "xposed";
+				if echo "${printableStrings}" | grep -q "xposed";
 				then
-					echo "Found the string \"xposed\" in \`\`${packageName}\`\`. "
+					if echo "${printableStrings}" | grep - q "de\\.robv\\.android\\.xposed";
+					then
+						echo -n "Found the string \"de.robv.android.xposed\" in \`\`${packageName}\`\`, "
+					else
+						echo -n "Found the string \"xposed\" in \`\`${packageName}\`\`, "
+					fi
+					if [[ "${classificationB}" =~ "${packageName}" ]];
+					then
+						echo "which is already in Classification \$B\$. "
+					else
+						echo "which is not in Classification \$B\$. "
+					fi
 				fi
 			else
-				echo "There are at least 2 items in \"${item}\". "
+				echo "There is at least 1 additional item in \"${item}\", which should not exist. "
 			fi
 		fi
 	done
 	classificationB=$(echo -n "${classificationB}" | sort | uniq)
 	lengthB=$(echo "$classificationB" | wc -l)
-	echo "Successfully fetched ${lengthB} package name(s) of Type \$B\$ from GitHub and the local machine. "
+	echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub and the local machine. "
 else
 	classificationB=""
 	lengthB=0
-	echo "Failed to fetch package names of Type \$B\$ from GitHub. "
+	echo "Failed to fetch package names of Classification \$B\$ from GitHub. "
 fi
 if [[ ${returnCodeC} == ${EXIT_SUCCESS} ]];
 then
-	echo "Successfully fetched ${lengthC} package name(s) of Type \$C\$ from GitHub. "
+	echo "Successfully fetched ${lengthC} package name(s) of Classification \$C\$ from GitHub. "
 else
 	classificationC=""
 	lengthC=0
-	echo "Failed to fetch package names of Type \$C\$ from GitHub. "
+	echo "Failed to fetch package names of Classification \$C\$ from GitHub. "
 fi
 if [[ ${returnCodeD} == ${EXIT_SUCCESS} ]];
 then
-	echo "Successfully fetched ${lengthD} package name(s) of Type \$D\$ from GitHub. "
+	echo "Successfully fetched ${lengthD} package name(s) of Classification \$D\$ from GitHub. "
 else
 	classificationD=""
 	lengthD=0
-	echo "Failed to fetch package names of Type \$D\$ from GitHub. "
+	echo "Failed to fetch package names of Classification \$D\$ from GitHub. "
 fi
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
