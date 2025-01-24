@@ -166,7 +166,7 @@ def main() -> int:
 	# Git Push #
 	if bRet:
 		try:
-			choice = input("Would you like to upload the file \"{0}\" to GitHub via ``git push`` [Yn]? ").upper() not in ("N", "NO", "0", "FALSE")
+			choice = input("Would you like to upload the files to GitHub via ``git`` [Yn]? ").upper() not in ("N", "NO", "0", "FALSE")
 		except:
 			choice = True
 		if choice:

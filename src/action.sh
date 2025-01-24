@@ -233,15 +233,22 @@ then
 			then
 				printableStrings="$(cat "${item}" | strings)"
 				packageName="$(basename "${item}")"
-				if echo "${printableStrings}" | grep -q "xposed_init";
+				packageName="${packageName%.apk}"
+				if echo -n "${packageName}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
 				then
-					echo -n "Found the string \"xposed_init\" in \`\`${packageName}\`\`, "
-					if [[ "${classificationB}" =~ "${packageName}" ]];
+					if echo "${printableStrings}" | grep -q "/xposed/";
 					then
-						echo "which is already in Classification \$B\$. "
-					else
-						echo "which is not in Classification \$B\$. "
+						echo -n "Found the string \"/xposed/" in \`\`${packageName}\`\`, "
+						if [[ "${classificationB}" =~ "${packageName}" ]];
+						then
+							echo "which is already in Classification \$B\$. "
+						else
+							echo "which was not in and has been added to Classification \$B\$. "
+							classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
+						fi
 					fi
+				else
+					echo "Failed to resolve the APK file \"${item}\". "
 				fi
 			else
 				echo "A file that should not exist was found at \"${item}\". "
@@ -254,15 +261,21 @@ then
 				firstItem="$(echo "${subItems}" | awk "NR==1")"
 				printableStrings="$(cat "${item}/${firstItem}/base.apk" | strings)"
 				packageName="$(basename "${firstItem}" | cut -d "-" -f 1)"
-				if echo "${printableStrings}" | grep -q "xposed_init";
+				if echo -n "${packageName}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
 				then
-					echo -n "Found the string \"xposed_init\" in \`\`${packageName}\`\`, "
-					if [[ "${classificationB}" =~ "${packageName}" ]];
+					if echo "${printableStrings}" | grep -q "/xposed/";
 					then
-						echo "which is already in Classification \$B\$. "
-					else
-						echo "which is not in Classification \$B\$. "
+						echo -n "Found the string \"/xposed/" in \`\`${packageName}\`\`, "
+						if [[ "${classificationB}" =~ "${packageName}" ]];
+						then
+							echo "which is already in Classification \$B\$. "
+						else
+							echo "which was not in and has been added to Classification \$B\$. "
+							classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
+						fi
 					fi
+				else
+					echo "Failed to resolve the folder \"${item}\". "
 				fi
 			else
 				echo "There is at least 1 additional item in \"${item}\", which should not exist. "
