@@ -58,14 +58,48 @@ cd "${MODPATH}"
 ui_print "The current working directory is \"$(pwd)\". "
 cleanCache
 
-# Check #
+# Manager #
+readonly MIN_MAGISK_VER_CODE=28000
+readonly MIN_KSU_VER_CODE=11981
+readonly MIN_APATCH_VER_CODE=10927
+
+if $BOOTMODE;
+then
+	if [[ ! -z "${MAGISK_VER_CODE}" ]];
+	then
+		if [[ ${MAGISK_VER_CODE} -ge ${MIN_MAGISK_VER_CODE} ]];
+		then
+			ui_print "The action button is supported (Magisk ${MAGISK_VER_CODE}). "
+		else
+			ui_print "Warning: The action button is not supported (Magisk ${MAGISK_VER_CODE}). You can update dynamic configurations only by flashing this module. Please try to use the latest Magisk manager (>= ${MIN_MAGISK_VER_CODE}). "
+		fi
+	elif [[ "${KSU}" == "true" ]];
+	then
+		if [[ ${KSU_VER_CODE} -ge ${MIN_KSU_VER_CODE} ]];
+		then
+			ui_print "The action button is supported (KSU ${KSU_VER_CODE}). "
+		else
+			ui_print "Warning: The action button is not supported (KSU ${KSU_VER_CODE}). You can update dynamic configurations only by flashing this module. Please try to use the latest KSU manager (>= ${MIN_KSU_VER_CODE}). "
+		fi
+	elif [[ "${APATCH}" == "true" ]];
+	then
+		if [[ ${APATCH_VER_CODE} -ge ${MIN_APATCH_VER_CODE} ]];
+		then
+			ui_print "The action button is supported (Apatch ${APATCH_VER_CODE}). "
+		else
+			ui_print "Warning: The action button is not supported (Apatch ${APATCH_VER_CODE}). You can update dynamic configurations only by flashing this module. Please try to use the latest Apatch manager (>= ${MIN_APATCH_VER_CODE}). "
+		fi
+	else
+		ui_print "Warning: Cannot guarantee whether the action button is supported. You may need to update dynamic configurations by flashing this module. "
+	fi	
+else
+	ui_print "Warning: Installing from recovery does not make sense currently. You may need to update dynamic configurations by flashing this module. "
+fi
+
+# Hash #
 successCount=0
 totalCount=0
 
-if ! $BOOTMODE;
-then
-	ui_print "Warning: Installing from recovery does not make sense currently. "
-fi
 find . -type f ! -name "*.sha512" | while read file;
 do
 	((++totalCount))
@@ -120,17 +154,6 @@ then
 	ui_print "Successfully executed the \`\`action.sh\`\` (${exitCode}). "
 else
 	ui_print "Warning: The execution of \`\`action.sh\`\` returned a non-zero exit code (${exitCode}). "
-fi
-if [[ -z "${MAGISK_VER_CODE}" ]];
-then
-	ui_print "Warning: Cannot guarantee whether the action button is supported. Maybe you can update configurations only by flashing a newer version. "
-else
-	if [[ ${MAGISK_VER_CODE} -ge 28000 ]];
-	then
-		ui_print "The action button is supported (${MAGISK_VER_CODE}). "
-	else
-		ui_print "Warning: The action button is not supported (${MAGISK_VER_CODE}). Maybe you can update configurations only by flashing a newer version. Please try to use the latest manager (Magisk: \${MAGISK_VER_CODE}>= 28000). "
-	fi
 fi
 
 # Finish #
