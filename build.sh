@@ -41,7 +41,7 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 		fi
 		find "${srcFolderPath}" -type f | while read file;
 		do
-			echo "$(sha512sum "${file}" | cut -d " " -f1)" > "${file}.sha512"
+			echo -n "$(sha512sum "${file}" | cut -d " " -f1)" > "${file}.sha512"
 			if [[ 0 == $? && -e "${file}.sha512" ]];
 			then
 				echo "Successfully generated the SHA-512 value file of \"${file}\". "
@@ -49,10 +49,10 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 				echo "Failed to generate the SHA-512 value file of \"${file}\". "
 			fi
 		done
-		if [ ! -d "${zipFolderPath}" ]; then
+		if [[ ! -d "${zipFolderPath}" ]]; then
 			mkdir -p "${zipFolderPath}"
 		fi
-		if [ -d "${zipFolderPath}" ]; then
+		if [[ -d "${zipFolderPath}" ]]; then
 			echo "Successfully created the ZIP folder path \"${zipFolderPath}\". "
 			(cd "${srcFolderPath}" && zip -J -ll -r -v - *) > "${zipFilePath}"
 			if [[ 0 == $? && -f "${zipFilePath}" ]]; then

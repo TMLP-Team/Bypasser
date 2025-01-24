@@ -8,9 +8,8 @@ readonly VK_SCREEN=20
 readonly VK_UP=38
 readonly VK_DOWN=40
 readonly moduleName="Bypasser"
+readonly startTime=$(date +%s%N)
 exitCode=0
-cd "$(dirname "$0")"
-startTime=$(date +%s%N)
 
 function cleanCache()
 {
@@ -52,6 +51,7 @@ function getKeyPress()
 	fi
 }
 
+cd "$(dirname "$0")"
 echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
 echo "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
 echo "The current working directory is \"$(pwd)\". "
@@ -60,14 +60,14 @@ echo ""
 
 # HMA/HMAL (0b0000XX) #
 echo "# HMA/HMAL (0b0000XX) #"
-dataAppFolder="/data/app"
-blacklistName="Blacklist"
-whitelistName="Whitelist"
-configFolderPath="/sdcard/Download"
-blacklistConfigFileName=".HMAL_Blacklist_Config.json"
-blacklistConfigFilePath="${configFolderPath}/${blacklistConfigFileName}"
-whitelistConfigFileName=".HMAL_Whitelist_Config.json"
-whitelistConfigFilePath="${configFolderPath}/${whitelistConfigFileName}"
+readonly dataAppFolder="/data/app"
+readonly blacklistName="Blacklist"
+readonly whitelistName="Whitelist"
+readonly configFolderPath="/sdcard/Download"
+readonly blacklistConfigFileName=".HMAL_Blacklist_Config.json"
+readonly blacklistConfigFilePath="${configFolderPath}/${blacklistConfigFileName}"
+readonly whitelistConfigFileName=".HMAL_Whitelist_Config.json"
+readonly whitelistConfigFilePath="${configFolderPath}/${whitelistConfigFileName}"
 
 function getClassification()
 {
@@ -227,37 +227,13 @@ if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub. "
 	localCount=0
+	folderCount=0
+	fileCount=0
 	for item in "${dataAppFolder}/"*
 	do
-		if [ -f "${item}" ];
+		if [[ -d "${item}" ]];
 		then
-			if [[ "${item}" == *.apk ]];
-			then
-				printableStrings="$(cat "${item}" | strings)"
-				packageName="$(basename "${item}")"
-				packageName="${packageName%.apk}"
-				if echo -n "${packageName}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
-				then
-					if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
-					then
-						localCount=$(expr ${localCount} + 1)
-						echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
-						if [[ "${classificationB}" =~ "${packageName}" ]];
-						then
-							echo "which was already in Classification \$B\$. "
-						else
-							echo "which was not in and has been added to Classification \$B\$. "
-							classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
-						fi
-					fi
-				else
-					echo "Failed to resolve the APK file \"${item}\". "
-				fi
-			else
-				echo "A file that should not exist was found at \"${item}\". "
-			fi
-		elif [[ -d "${item}" ]];
-		then
+			folderCount=$(expr ${folderCount} + 1)
 			subItems="$(ls -1 "${item}")"
 			if [[ $(echo "${subItems}" | wc -l) == 1 ]];
 			then
@@ -284,8 +260,40 @@ then
 			else
 				echo "There is at least 1 additional item in \"${item}\", which should not exist. "
 			fi
+		elif [ -f "${item}" ];
+		then
+			if [[ "${item}" == *.apk ]];
+			then
+				fileCount=$(expr ${fileCount} + 1)
+				printableStrings="$(cat "${item}" | strings)"
+				packageName="$(basename "${item}")"
+				packageName="${packageName%.apk}"
+				if echo -n "${packageName}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
+				then
+					if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
+					then
+						localCount=$(expr ${localCount} + 1)
+						echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
+						if [[ "${classificationB}" =~ "${packageName}" ]];
+						then
+							echo "which was already in Classification \$B\$. "
+						else
+							echo "which was not in and has been added to Classification \$B\$. "
+							classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
+						fi
+					fi
+				else
+					echo "Failed to resolve the APK file \"${item}\". "
+				fi
+			else
+				echo "A file that should not exist was found at \"${item}\". "
+			fi
 		fi
 	done
+	if [[ ${folderCount} -gt 0 ]] && [[ ${fileCount} -gt 0 ]];
+	then
+		echo "A mixture of folders and files was detected in the \"${dataAppFolder}\" folder. "
+	fi
 	classificationB=$(echo -n "${classificationB}" | sort | uniq)
 	lengthB=$(echo "$classificationB" | wc -l)
 	echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub and the local machine. "
@@ -376,9 +384,10 @@ echo ""
 
 # Tricky Store (0b000X00) #
 echo "# Tricky Store (0b000X00) #"
-trickyStoreFolderPath="../../tricky_store"
-trickyStoreTargetFileName="target.txt"
-trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
+readonly trickyStoreFolderPath="../../tricky_store"
+readonly trickyStoreTargetFileName="target.txt"
+readonly trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
+
 if [[ -f "${trickyStoreFolderPath}" ]];
 then
 	echo "The tricky store folder was found at \"${trickyStoreFolderPath}\". "
@@ -438,10 +447,11 @@ echo ""
 
 # Shamiko (0b00X000) #
 echo "# Shamiko (0b00X000) #"
-shamikoInstallationFolderPath="../../modules/zygisk_shamiko"
-shamikoConfigFolderPath="../../shamiko"
-shamikoWhitelistConfigFileName="whitelist"
-shamikoWhitelistConfigFilePath="${shamikoConfigFolderPath}/${shamikoWhitelistConfigFileName}"
+readonly shamikoInstallationFolderPath="../../modules/zygisk_shamiko"
+readonly shamikoConfigFolderPath="../../shamiko"
+readonly shamikoWhitelistConfigFileName="whitelist"
+readonly shamikoWhitelistConfigFilePath="${shamikoConfigFolderPath}/${shamikoWhitelistConfigFileName}"
+
 if [[ -d "${shamikoInstallationFolderPath}" ]];
 then
 	echo "The shamiko installation folder was found at \"${shamikoInstallationFolderPath}\". "
@@ -466,7 +476,8 @@ echo ""
 
 # Update (0bXX0000) #
 echo "# Update (0bXX0000) #"
-shellContent=$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/action.sh")
+readonly actionUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/action.sh"
+shellContent="$(curl -s "${actionUrl}")"
 if [[ ${EXIT_SUCCESS} == $? && ! -z "${shellContent}" ]];
 then
 	echo "Successfully fetched the latest \`\`action.sh\`\` from GitHub. "
