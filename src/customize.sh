@@ -8,6 +8,8 @@ readonly VK_SCREEN=20
 readonly VK_UP=38
 readonly VK_DOWN=40
 readonly moduleName="Bypasser"
+readonly outerSymbolCount=200
+readonly innerSymbolCount=100
 readonly startTime=$(date +%s%N)
 
 function cleanCache()
@@ -51,7 +53,7 @@ function getKeyPress()
 }
 
 ui_print ""
-ui_print $(yes "#" | head -n 120 | tr -d '\n')
+ui_print $(yes "#" | head -n ${outerSymbolCount} | tr -d '\n')
 ui_print "Welcome to the installer of the ${moduleName} Magisk Module! "
 ui_print "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
 cd "${MODPATH}"
@@ -144,11 +146,11 @@ then
 else
 	abort "The \`\`action.sh\`\` is missing. "
 fi
-ui_print $(yes "=" | head -n 100 | tr -d '\n')
+ui_print $(yes "=" | head -n ${innerSymbolCount} | tr -d '\n')
 actionStrings="$(sh ./action.sh)"
 exitCode=$?
 ui_print "${actionStrings}"
-ui_print $(yes "=" | head -n 100 | tr -d '\n')
+ui_print $(yes "=" | head -n ${innerSymbolCount} | tr -d '\n')
 if [[ ${EXIT_SUCCESS} == ${exitCode} ]];
 then
 	ui_print "Successfully executed the \`\`action.sh\`\` (${exitCode}). "
@@ -162,5 +164,5 @@ timeDelta=$(expr ${endTime} - ${startTime})
 getKeyPress
 cleanCache
 ui_print "Finished executing the \`\`customize.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s). "
-ui_print $(yes "#" | head -n 120 | tr -d '\n')
+ui_print $(yes "#" | head -n ${outerSymbolCount} | tr -d '\n')
 ui_print ""
