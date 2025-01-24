@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Module #
 moduleName="Bypasser"
 moduleId="bypasser"
@@ -33,13 +32,23 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 	echo -e "${propContent}" > "${propFilePath}"
 	if [[ 0 == $? && -e "${propFilePath}" ]]; then
 		echo "Successfully generated the property file \"${propFilePath}\". "
+		find "${srcFolderPath}" -type f | while read file;
+		do
+			echo "$(sha512sum "${file}" | cut -d " " -f1)" > "${file}.sha512"
+			if [[ 0 == $? && -e "${file}.sha512" ]];
+			then
+				echo "Successfully generated the SHA-512 value of \"${file}\". "
+			else
+				echo "Failed to generate the SHA-512 value of \"${file}\". "
+			fi
+		done
 		if [ ! -d "${zipFolderPath}" ]; then
 			mkdir -p "${zipFolderPath}"
 		fi
 		if [ -d "${zipFolderPath}" ]; then
 			echo "Successfully created the ZIP folder path \"${zipFolderPath}\". "
 			(cd "${srcFolderPath}" && zip -J -ll -r -v - *) > "${zipFilePath}"
-			if [[ 0 == $? && -e "${zipFilePath}" ]]; then
+			if [[ 0 == $? && -f "${zipFilePath}" ]]; then
 				echo "Successfully packed the ${moduleName} Magisk module to \"${zipFilePath}\" via the ``zip`` command! "
 			else
 				echo "Failed to pack the ${moduleName} Magisk module to \"${zipFilePath}\" via the ``zip`` command. "
@@ -69,7 +78,7 @@ fi
 if [[ -d "${changelogFolderPath}" ]]; then
 	echo "Successfully created the log folder path \"${changelogFolderPath}\". "
 	echo -e "## ${moduleName}_v${moduleVersion}\n" > "${changelogFilePath}"
-	if [[ 0 == $? && -e "${changelogFilePath}" ]]; then
+	if [[ 0 == $? && -f "${changelogFilePath}" ]]; then
 		echo "Successfully created the log \"${changelogFilePath}\". "
 		if [[ $# -ge 1 ]]; then
 			for arg in "$@"
@@ -81,7 +90,7 @@ if [[ -d "${changelogFolderPath}" ]]; then
 			read changelog
 			echo "${changelog}" >> "${changelogFilePath}"
 		fi
-		if [[ 0 == $? && -e "${changelogFilePath}" ]]; then
+		if [[ 0 == $? && -f "${changelogFilePath}" ]]; then
 			echo "Successfully wrote the change log to \"${changelogFilePath}\". "
 		else
 			echo "Failed to write the change log to \"${changelogFilePath}\". "
@@ -112,7 +121,7 @@ fi
 if [[ -d "${updateFolderPath}" ]]; then
 	echo "Successfully created the update folder path \"${updateFolderPath}\". "
 	echo -e "$updateContent" > "${updateFilePath}"
-	if [[ 0 == $? && -e "${updateFilePath}" ]]; then
+	if [[ 0 == $? && -f "${updateFilePath}" ]]; then
 		echo "Successfully created the update JSON file \"${updateFilePath}\". "
 	else
 		echo "Failed to create the update JSON file \"${updateFilePath}\". "
