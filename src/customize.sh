@@ -91,15 +91,16 @@ then
 	find . -type f -name "*.sha512" -delete
 	if [[ 0 == $? ]];
 	then
-		echo "Successfully removed all the previous SHA-512 value files. "
+		echo "Successfully removed all the SHA-512 value files. "
 	else
-		echo "Failed to remove all the previous SHA-512 value files. "
+		echo "Failed to remove all the SHA-512 value files. "
 	fi
 else
 	abort "Failed to verify all the files. "
 fi
 
 # Action #
+ui_print "The current working directory is \"$(pwd)\". $(ls)"
 if [[ ! -f .action.sh ]];
 then
 	abort "The \`\`action.sh\`\` is missing. "

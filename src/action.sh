@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# Welcome #
+# Welcome (0b00000X) #
 readonly EXIT_SUCCESS=0
 readonly EXIT_FAILURE=1
 readonly EOF=255
@@ -58,8 +58,8 @@ echo "The current working directory is \"$(pwd)\". "
 cleanCache
 echo ""
 
-# HMA/HMAL (0b0000XX) #
-echo "# HMA/HMAL (0b0000XX) #"
+# HMA/HMAL (0b0000X0) #
+echo "# HMA/HMAL (0b0000X0) #"
 readonly dataAppFolder="/data/app"
 readonly blacklistName="Blacklist"
 readonly whitelistName="Whitelist"
@@ -361,7 +361,7 @@ then
 	then
 		echo "Successfully generated the config file \"${blacklistConfigFilePath}\". "
 	else
-		exitCode=$(expr $exitCode \| 1)
+		exitCode=$(expr $exitCode \| 2)
 		echo "Failed to generate the config file \"${blacklistConfigFilePath}\". "
 	fi
 	echo -n "${whitelistConfigContent}" > "${whitelistConfigFilePath}"
@@ -373,7 +373,7 @@ then
 		echo "Failed to generate the config file \"${whitelistConfigFilePath}\". "
 	fi
 else
-	exitCode=$(expr $exitCode \| 3)
+	exitCode=$(expr $exitCode \| 2)
 	echo "Failed to create the folder \"${configFolderPath}\". "
 fi
 if [[ -z "${blacklistAppList}" || -z "${blacklistScopeList}" || -z "${whitelistAppList}" || -z "${whitelistScopeList}" ]];
