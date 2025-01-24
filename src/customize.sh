@@ -100,14 +100,13 @@ else
 fi
 
 # Action #
-ui_print "The current working directory is \"$(pwd)\". $(ls)"
-if [[ ! -f .action.sh ]];
+if [[ ! -f ./action.sh ]];
 then
 	abort "The \`\`action.sh\`\` is missing. "
 fi
 chmod +x ./action.sh
 ui_print $(yes "=" | head -n 100 | tr -d '\n')
-actionStrings=$(./action.sh)
+actionStrings="$(./action.sh)"
 exitCode=$?
 ui_print "${actionStrings}"
 ui_print $(yes "=" | head -n 100 | tr -d '\n')
