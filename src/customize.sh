@@ -159,8 +159,9 @@ else
 fi
 
 # Finish #
-endTime=$(date +%s%N)
-timeDelta=$(expr ${endTime} - ${startTime})
+readonly endTime=$(date +%s%N)
+readonly timeDelta=$(expr ${endTime} - ${startTime})
+
 getKeyPress
 cleanCache
 ui_print "Finished executing the \`\`customize.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s). "

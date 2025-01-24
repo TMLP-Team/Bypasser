@@ -504,8 +504,9 @@ fi
 echo ""
 
 # Exit #
-endTime=$(date +%s%N)
-timeDelta=$(expr ${endTime} - ${startTime})
+readonly endTime=$(date +%s%N)
+readonly timeDelta=$(expr ${endTime} - ${startTime})
+
 getKeyPress
 cleanCache
 echo "Finished executing the \`\`action.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s) (${exitCode}). "
