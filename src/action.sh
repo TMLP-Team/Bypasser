@@ -10,6 +10,7 @@ readonly VK_DOWN=40
 readonly moduleName="Bypasser"
 exitCode=0
 cd "$(dirname "$0")"
+startTime=$(date +%s%N)
 
 function cleanCache()
 {
@@ -225,6 +226,7 @@ lengthD=$(echo "$classificationD" | wc -l)
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub. "
+	localCount=0
 	for item in "${dataAppFolder}/"*
 	do
 		if [ -f "${item}" ];
@@ -238,7 +240,8 @@ then
 				then
 					if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
 					then
-						echo -n "Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
+						localCount=$(expr ${localCount} + 1)
+						echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
 						if [[ "${classificationB}" =~ "${packageName}" ]];
 						then
 							echo "which was already in Classification \$B\$. "
@@ -265,7 +268,8 @@ then
 				then
 					if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
 					then
-						echo -n "Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
+						localCount=$(expr ${localCount} + 1)
+						echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
 						if [[ "${classificationB}" =~ "${packageName}" ]];
 						then
 							echo "which was already in Classification \$B\$. "
@@ -489,7 +493,9 @@ fi
 echo ""
 
 # Exit #
+endTime=$(date +%s%N)
+timeDelta=$(expr ${endTime} - ${startTime})
 getKeyPress
 cleanCache
-echo "Finished executing the \`\`action.sh\`\` (${exitCode}). "
+echo "Finished executing the \`\`action.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s) (${exitCode}). "
 exit ${exitCode}
