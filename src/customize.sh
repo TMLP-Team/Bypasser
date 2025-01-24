@@ -68,7 +68,7 @@ then
 fi
 find . -type f ! -name "*.sha512" | while read file;
 do
-	totalCount=$(expr ${totalCount} + 1)
+	((++totalCount))
 	sha512Computed=$(sha512sum "$file" | cut -d " " -f1)
 	sha512FilePath="${file}.sha512"
 	if [[ -f "${sha512FilePath}" ]];
@@ -76,7 +76,7 @@ do
 		sha512Expected="$(cat "${sha512FilePath}")"
 		if [[ "${sha512Computed}" == "${sha512Expected}" ]];
 		then
-			successCount=$(expr ${successCount} + 1)
+			((++successCount))
 			echo "Successfully verified \"${file}\". "
 		else
 			echo "Failed to verify \"${file}\". "
