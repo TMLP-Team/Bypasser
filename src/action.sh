@@ -236,12 +236,12 @@ then
 				packageName="${packageName%.apk}"
 				if echo -n "${packageName}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
 				then
-					if echo "${printableStrings}" | grep -q "/xposed/";
+					if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
 					then
-						echo -n "Found the string \"/xposed/\" in \`\`${packageName}\`\`, "
+						echo -n "Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
 						if [[ "${classificationB}" =~ "${packageName}" ]];
 						then
-							echo "which is already in Classification \$B\$. "
+							echo "which was already in Classification \$B\$. "
 						else
 							echo "which was not in and has been added to Classification \$B\$. "
 							classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
@@ -263,12 +263,12 @@ then
 				packageName="$(basename "${firstItem}" | cut -d "-" -f 1)"
 				if echo -n "${packageName}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
 				then
-					if echo "${printableStrings}" | grep -q "/xposed/";
+					if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
 					then
-						echo -n "Found the string \"/xposed/\" in \`\`${packageName}\`\`, "
+						echo -n "Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
 						if [[ "${classificationB}" =~ "${packageName}" ]];
 						then
-							echo "which is already in Classification \$B\$. "
+							echo "which was already in Classification \$B\$. "
 						else
 							echo "which was not in and has been added to Classification \$B\$. "
 							classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
