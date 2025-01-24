@@ -32,14 +32,21 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 	echo -e "${propContent}" > "${propFilePath}"
 	if [[ 0 == $? && -e "${propFilePath}" ]]; then
 		echo "Successfully generated the property file \"${propFilePath}\". "
+		find "${srcFolderPath}" -type f -name "*.sha512" -delete
+		if [[ 0 == $? ]];
+		then
+			echo "Successfully removed all the previous SHA-512 value files. "
+		else
+			echo "Failed to remove all the previous SHA-512 value files. "
+		fi
 		find "${srcFolderPath}" -type f | while read file;
 		do
 			echo "$(sha512sum "${file}" | cut -d " " -f1)" > "${file}.sha512"
 			if [[ 0 == $? && -e "${file}.sha512" ]];
 			then
-				echo "Successfully generated the SHA-512 value of \"${file}\". "
+				echo "Successfully generated the SHA-512 value file of \"${file}\". "
 			else
-				echo "Failed to generate the SHA-512 value of \"${file}\". "
+				echo "Failed to generate the SHA-512 value file of \"${file}\". "
 			fi
 		done
 		if [ ! -d "${zipFolderPath}" ]; then
