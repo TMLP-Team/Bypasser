@@ -238,7 +238,7 @@ then
 				then
 					if echo "${printableStrings}" | grep -q "/xposed/";
 					then
-						echo -n "Found the string \"/xposed/" in \`\`${packageName}\`\`, "
+						echo -n "Found the string \"/xposed/\" in \`\`${packageName}\`\`, "
 						if [[ "${classificationB}" =~ "${packageName}" ]];
 						then
 							echo "which is already in Classification \$B\$. "
@@ -265,7 +265,7 @@ then
 				then
 					if echo "${printableStrings}" | grep -q "/xposed/";
 					then
-						echo -n "Found the string \"/xposed/" in \`\`${packageName}\`\`, "
+						echo -n "Found the string \"/xposed/\" in \`\`${packageName}\`\`, "
 						if [[ "${classificationB}" =~ "${packageName}" ]];
 						then
 							echo "which is already in Classification \$B\$. "
