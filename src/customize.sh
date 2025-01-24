@@ -135,3 +135,4 @@ getKeyPress
 cleanCache
 ui_print "Finished executing the \`\`customize.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s). "
 ui_print $(yes "#" | head -n 120 | tr -d '\n')
+ui_print ""
