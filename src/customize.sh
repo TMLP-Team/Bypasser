@@ -50,7 +50,8 @@ function getKeyPress()
 	fi
 }
 
-yes "#" | head -n 100 | tr -d '\n'
+ui_print ""
+ui_print $(yes "#" | head -n 100 | tr -d '\n')
 ui_print "Welcome to the installer of the ${moduleName} Magisk Module! "
 ui_print "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
 cd "${MODPATH}"
@@ -100,12 +101,11 @@ fi
 
 # Action #
 chmod +x ./action.sh
-yes "=" | head -n 80 | tr -d '\n'
-ui_print ""
+ui_print $(yes "=" | head -n 80 | tr -d '\n')
 actionStrings=$(./action.sh)
 exitCode=$?
 ui_print "${actionStrings}"
-yes "=" | head -n 80 | tr -d '\n'
+ui_print $(yes "=" | head -n 80 | tr -d '\n')
 if [[ ${EXIT_SUCCESS} == ${exitCode} ]];
 then
 	ui_print "Successfully executed the \`\`action.sh\`\` (${exitCode}). "
@@ -130,4 +130,4 @@ timeDelta=$(expr ${endTime} - ${startTime})
 getKeyPress
 cleanCache
 ui_print "Finished executing the \`\`customize.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s). "
-yes "#" | head -n 100 | tr -d '\n'
+ui_print $(yes "#" | head -n 100 | tr -d '\n')
