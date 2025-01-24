@@ -145,7 +145,7 @@ else
 	abort "The \`\`action.sh\`\` is missing. "
 fi
 ui_print $(yes "=" | head -n 100 | tr -d '\n')
-actionStrings="$(./action.sh)"
+actionStrings="$(sh ./action.sh)"
 exitCode=$?
 ui_print "${actionStrings}"
 ui_print $(yes "=" | head -n 100 | tr -d '\n')
