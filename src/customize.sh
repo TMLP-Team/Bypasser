@@ -97,19 +97,18 @@ else
 	abort "Failed to verify all the files. "
 fi
 
-
 # Action #
-readonly logFilePath="${TMPDIR}/${moduleName}.log"
-
 chmod +x ./action.sh
+ui_print "####################"
 actionStrings=$(./action.sh)
 exitCode=$?
-echo -n "$actionStrings" > "${logFilePath}"
+ui_print "$actionStrings"
+ui_print "####################"
 if [[ ${EXIT_SUCCESS} == ${exitCode} ]];
 then
 	ui_print "Successfully executed the \`\`action.sh\`\` (${exitCode}). "
 else
-	ui_print "Warning: The execution of \`\`action.sh\`\` returned a non-zero exit code (${exitCode}). See \"${logFilePath}\" for temporary details. "
+	ui_print "Warning: The execution of \`\`action.sh\`\` returned a non-zero exit code (${exitCode}). "
 fi
 if [[ -z "${MAGISK_VER_CODE}" ]];
 then
@@ -128,4 +127,4 @@ endTime=$(date +%s%N)
 timeDelta=$(expr ${endTime} - ${startTime})
 getKeyPress
 cleanCache
-echo "Finished executing the \`\`customize.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s). "
+ui_print "Finished executing the \`\`customize.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s). "
