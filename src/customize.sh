@@ -64,7 +64,7 @@ ui_print $(yes "#" | head -n ${outerSymbolCount} | tr -d '\n')
 ui_print "Welcome to the installer of the ${moduleName} Magisk Module! "
 ui_print "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
 chmod 755 "${MODPATH}" && cd "${MODPATH}"
-if [[ $? == ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleId}" ]];
+if [[ $? -eq ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleId}" ]];
 then
 	ui_print "The current working directory is \"$(pwd)\". "
 else
@@ -137,7 +137,7 @@ if [[ ${totalCount} == ${successCount} ]];
 then
 	echo "Successfully verified all the files. "
 	find . -type f -name "*.sha512" -delete
-	if [[ 0 == $? ]];
+	if [[ $? -eq ${EXIT_SUCCESS} ]];
 	then
 		echo "Successfully removed all the SHA-512 value files. "
 	else
@@ -170,7 +170,7 @@ function setPermissions
 }
 
 setPermissions
-if [[ $? == ${EXIT_SUCCESS} ]];
+if [[ $? -eq ${EXIT_SUCCESS} ]];
 then
 	ui_print "Successfully set permissions. "
 else
@@ -187,6 +187,7 @@ then
 else
 	abort "The \`\`action.sh\`\` is missing. "
 fi
+ui_print "Please press the [+] key in the ${defaultTimeout}-th second after you see this message if you want to scan the local applications. "
 ui_print $(yes "=" | head -n ${innerSymbolCount} | tr -d '\n')
 actionStrings="$(sh ./action.sh)"
 exitCode=$?

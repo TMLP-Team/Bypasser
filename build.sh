@@ -74,10 +74,10 @@ zipFilePath="${zipFolderPath}/${zipFileName}"
 if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolderPath}/system" ]]; then
 	echo "Sources were found to be packed. "
 	echo -e "${propContent}" > "${propFilePath}"
-	if [[ 0 == $? && -e "${propFilePath}" ]]; then
+	if [[ $? -eq ${EXIT_SUCCESS} && -e "${propFilePath}" ]]; then
 		echo "Successfully generated the property file \"${propFilePath}\". "
 		find "${srcFolderPath}" -type f -name "*.sha512" -delete
-		if [[ 0 == $? ]];
+		if [[ $? -eq ${EXIT_SUCCESS} ]];
 		then
 			echo "Successfully removed all the previous SHA-512 value files. "
 		else
@@ -86,7 +86,7 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 		find "${srcFolderPath}" -type f | while read file;
 		do
 			echo -n "$(sha512sum "${file}" | cut -d " " -f1)" > "${file}.sha512"
-			if [[ 0 == $? && -e "${file}.sha512" ]];
+			if [[ $? -eq ${EXIT_SUCCESS} && -e "${file}.sha512" ]];
 			then
 				echo "Successfully generated the SHA-512 value file of \"${file}\". "
 			else
@@ -99,7 +99,7 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 		if [[ -d "${zipFolderPath}" ]]; then
 			echo "Successfully created the ZIP folder path \"${zipFolderPath}\". "
 			(cd "${srcFolderPath}" && zip -J -ll -r -v - *) > "${zipFilePath}"
-			if [[ 0 == $? && -f "${zipFilePath}" ]]; then
+			if [[ $? -eq ${EXIT_SUCCESS} && -f "${zipFilePath}" ]]; then
 				echo "Successfully packed the ${moduleName} Magisk module to \"${zipFilePath}\" via the ``zip`` command! "
 			else
 				echo "Failed to pack the ${moduleName} Magisk module to \"${zipFilePath}\" via the ``zip`` command. "
@@ -129,7 +129,7 @@ fi
 if [[ -d "${changelogFolderPath}" ]]; then
 	echo "Successfully created the log folder path \"${changelogFolderPath}\". "
 	echo -e "## ${moduleName}_v${moduleVersion}\n" > "${changelogFilePath}"
-	if [[ 0 == $? && -f "${changelogFilePath}" ]]; then
+	if [[ $? -eq ${EXIT_SUCCESS} && -f "${changelogFilePath}" ]]; then
 		echo "Successfully created the log \"${changelogFilePath}\". "
 		if [[ $# -ge 1 ]]; then
 			for arg in "$@"
@@ -141,7 +141,7 @@ if [[ -d "${changelogFolderPath}" ]]; then
 			read changelog
 			echo "${changelog}" >> "${changelogFilePath}"
 		fi
-		if [[ 0 == $? && -f "${changelogFilePath}" ]]; then
+		if [[ $? -eq ${EXIT_SUCCESS} && -f "${changelogFilePath}" ]]; then
 			echo "Successfully wrote the change log to \"${changelogFilePath}\". "
 		else
 			echo "Failed to write the change log to \"${changelogFilePath}\". "
@@ -172,7 +172,7 @@ fi
 if [[ -d "${updateFolderPath}" ]]; then
 	echo "Successfully created the update folder path \"${updateFolderPath}\". "
 	echo -e "$updateContent" > "${updateFilePath}"
-	if [[ 0 == $? && -f "${updateFilePath}" ]]; then
+	if [[ $? -eq ${EXIT_SUCCESS} && -f "${updateFilePath}" ]]; then
 		echo "Successfully created the update JSON file \"${updateFilePath}\". "
 	else
 		echo "Failed to create the update JSON file \"${updateFilePath}\". "
@@ -192,7 +192,7 @@ fi
 
 # Git #
 git add . && git commit -m "Module Update (${moduleVersion})" && git push
-if [[ 0 == $? ]]; then
+if [[ $? -eq ${EXIT_SUCCESS} ]]; then
 	echo "Successfully pushed to GitHub. "
 else
 	echo "Failed to push to GitHub. "

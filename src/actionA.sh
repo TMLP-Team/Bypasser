@@ -24,7 +24,7 @@ function cleanCache
 echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
 echo "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
 chmod 755 "${actionFolderPath}" && cd "${actionFolderPath}"
-if [[ $? == ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleId}" ]];
+if [[ $? -eq ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleId}" ]];
 then
 	echo "The current working directory is \"$(pwd)\". "
 else
@@ -52,7 +52,7 @@ function getClassification
 		if [[ "B" == "$1" || "C" == "$1" || "D" == "$1" ]];
 		then
 			arr="$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Classification/classification$1.txt")"
-			if [[ $? == ${EXIT_SUCCESS} ]];
+			if [[ $? -eq ${EXIT_SUCCESS} ]];
 			then
 				arr="$(echo -n ${arr} | sort | uniq)"
 				echoFlag=0
@@ -242,7 +242,7 @@ then
 	echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub. "
 	echo "Please press the [+] key in ${defaultTimeout} seconds if you want to scan the local applications. "
 	getTheKeyPressed
-	if [[ ${VK_UP} == $? ]];
+	if [[ $? -eq ${VK_UP} ]];
 	then
 		localCount=0
 		folderCount=0
@@ -376,7 +376,7 @@ if [[ -d "${configFolderPath}" ]];
 then
 	echo "Successfully created the folder \"${configFolderPath}\". "
 	echo -n "${blacklistConfigContent}" > "${blacklistConfigFilePath}"
-	if [[ ${EXIT_SUCCESS} == $? && -f "${blacklistConfigFilePath}" ]];
+	if [[ $? -eq ${EXIT_SUCCESS} && -f "${blacklistConfigFilePath}" ]];
 	then
 		echo "Successfully generated the config file \"${blacklistConfigFilePath}\". "
 	else
@@ -384,7 +384,7 @@ then
 		echo "Failed to generate the config file \"${blacklistConfigFilePath}\". "
 	fi
 	echo -n "${whitelistConfigContent}" > "${whitelistConfigFilePath}"
-	if [[ ${EXIT_SUCCESS} == $? && -f "${whitelistConfigFilePath}" ]];
+	if [[ $? -eq ${EXIT_SUCCESS} && -f "${whitelistConfigFilePath}" ]];
 	then
 		echo "Successfully generated the config file \"${whitelistConfigFilePath}\". "
 	else
@@ -415,7 +415,7 @@ then
 	then
 		echo "The tricky store target file was found at \"${trickyStoreTargetFilePath}\". "
 		cp -fp "${trickyStoreTargetFilePath}" "${trickyStoreTargetFilePath}.bak"
-		if [[ ${EXIT_SUCCESS} == $? && -f "${trickyStoreTargetFilePath}.bak" ]];
+		if [[ $? -eq ${EXIT_SUCCESS} && -f "${trickyStoreTargetFilePath}.bak" ]];
 		then
 			echo "Successfully copied \"${trickyStoreTargetFilePath}\" to \"${trickyStoreTargetFilePath}.bak\". "
 		else
@@ -442,7 +442,7 @@ then
 		fi
 		lines=$(echo -n "${lines}" | sort | uniq)
 		echo "${lines}" > "${trickyStoreTargetFilePath}"
-		if [[ ${EXIT_SUCCESS} == $? && -f "${trickyStoreTargetFilePath}" ]];
+		if [[ $? -eq ${EXIT_SUCCESS} && -f "${trickyStoreTargetFilePath}" ]];
 		then
 			cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
 			echo "Successfully wrote ${cnt} target(s) to \"${trickyStoreTargetFilePath}\". "
@@ -478,7 +478,7 @@ then
 	then
 		echo "The shamiko configuration folder at \"${shamikoConfigFolderPath}\" did not exist or was detected to be empty. "
 		touch "${shamikoWhitelistConfigFilePath}"
-		if [[ ${EXIT_SUCCESS} == $? && -f "${shamikoWhitelistConfigFilePath}" ]];
+		if [[ $? -eq ${EXIT_SUCCESS} && -f "${shamikoWhitelistConfigFilePath}" ]];
 		then
 			echo "Successfully created the whitelist config file \"${shamikoWhitelistConfigFilePath}\". "
 		else
@@ -502,7 +502,7 @@ readonly actionUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/sr
 readonly actionDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/${targetAction}.sha512"
 
 shellDigest="$(curl -s "${actionDigestUrl}")"
-if [[ ${EXIT_SUCCESS} == $? && -n "${shellDigest}" ]];
+if [[ $? -eq ${EXIT_SUCCESS} && -n "${shellDigest}" ]];
 then
 	echo "Successfully fetched the SHA-512 value of the latest \`\`${targetAction}\`\` from GitHub. "
 	if [[ "$(cat "${targetAction}" | sha512sum | cut -d " " -f1)" == "${shellDigest}" ]];
@@ -511,7 +511,7 @@ then
 	else
 		echo "The target action \`\`${targetAction}\`\` is out-of-date and need to be updated. "
 		shellContent="$(curl -s "${actionUrl}")"
-		if [[ ${EXIT_SUCCESS} == $? && -n "${shellContent}" ]];
+		if [[ $? -eq ${EXIT_SUCCESS} && -n "${shellContent}" ]];
 		then
 			echo "Successfully fetched the latest \`\`${targetAction}\`\` from GitHub. "
 			if [[ "$(echo "${shellContent}" | sha512sum | cut -d " " -f1)" == "${shellDigest}" ]];
@@ -519,12 +519,12 @@ then
 				echo "Successfully verified the latest \`\`${targetAction}\`\`. "
 				rm -f "${targetAction}"
 				echo -n "${shellContent}" > "${targetAction}"
-				if [[ ${EXIT_SUCCESS} == $? && -f "${targetAction}" ]];
+				if [[ $? -eq ${EXIT_SUCCESS} && -f "${targetAction}" ]];
 				then
 					echo "Successfully updated \`\`${targetAction}\`\`. "
 					rm -f "${actionPropPath}"
 					echo -n "${targetAB}" > "${actionPropPath}"
-					if [[ ${EXIT_SUCCESS} == $? && -f "${actionPropPath}" ]];
+					if [[ $? -eq ${EXIT_SUCCESS} && -f "${actionPropPath}" ]];
 					then
 						echo "Successfully switched to \`\`${targetAction}\`\` in \"${actionPropPath}\". "
 					else
@@ -574,7 +574,7 @@ function setPermissions
 }
 
 setPermissions
-if [[ $? == ${EXIT_SUCCESS} ]];
+if [[ $? -eq ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully set permissions. "
 else
