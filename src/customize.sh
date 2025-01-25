@@ -56,8 +56,11 @@ ui_print ""
 ui_print $(yes "#" | head -n ${outerSymbolCount} | tr -d '\n')
 ui_print "Welcome to the installer of the ${moduleName} Magisk Module! "
 ui_print "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
-cd "${MODPATH}"
-ui_print "The current working directory is \"$(pwd)\". "
+if chmod 755 "${MODPATH}" && cd "${MODPATH}";
+	ui_print "The current working directory is \"$(pwd)\". "
+else
+	abort "The working directory \"$(pwd)\" is unexpected. "
+fi
 cleanCache
 
 # Manager #
@@ -135,10 +138,39 @@ else
 	abort "Failed to verify all the files. "
 fi
 
+# Permission #
+function setPermissions()
+{
+	returnCode=${EXIT_SUCCESS}
+	find . -type d -exec chmod 755 {} \;
+	if [[ $? != ${EXIT_SUCCESS} ]];
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
+	find . ! -name "*.sh" -type f -exec chmod 444 {} \;
+	if [[ $? != ${EXIT_SUCCESS} ]];
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
+	find . -name "*.sh" -type f -exec chmod 544 {} \;
+	if [[ $? != ${EXIT_SUCCESS} ]];
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
+	return ${returnCode}
+}
+
+setPermissions
+if [[ $? == ${EXIT_SUCCESS} ]];
+then
+	ui_print "Successfully set permissions. "
+else
+	ui_print "Warning: Failed to set permissions. "
+fi
+
 # Action #
 if [[ -f ./action.sh ]];
 then
-	chmod +x ./action.sh
 	if [[ ! -x ./action.sh ]];
 	then
 		abort "The \`\`action.sh\`\` is not executable. "

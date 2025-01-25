@@ -1,15 +1,52 @@
 #!/bin/bash
 # Module #
+readonly EXIT_SUCCESS=0
+readonly EXIT_FAILURE=1
+readonly EOF=255
 moduleName="Bypasser"
 moduleId="bypasser"
-moduleVersion=`date +%Y%m%d%H`
-moduleFolderPath="${PWD}"
+moduleVersion="$(date +%Y%m%d%H)"
+moduleFolderPath="$(dirname "$0")"
 
-if [[ `basename "${moduleFolderPath}"` == "${moduleName}" ]]; then
+function setPermissions()
+{
+	returnCode=${EXIT_SUCCESS}
+	find . -type d -exec chmod 755 {} \;
+	if [[ $? != ${EXIT_SUCCESS} ]];
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
+	find . ! -name "build.sh" ! -name "*.sha512" -type f -exec chmod 644 {} \;
+	if [[ $? != ${EXIT_SUCCESS} ]];
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
+	find . -name "*.sha512" -type f -exec chmod 444 {} \;
+	if [[ $? != ${EXIT_SUCCESS} ]];
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
+	find . -name "build.sh" -type f -exec chmod 744 {} \;
+	if [[ $? != ${EXIT_SUCCESS} ]];
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
+	return ${returnCode}
+}
+
+chmod 755 "${moduleFolderPath}" && cd "${moduleFolderPath}"
+if [[ $? == ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleName}" ]]; then
 	echo "Welcome to the builder for the ``${moduleName}`` Magisk Module! "
 else
-	echo "The shell script is working in a wrong working directory. "
+	echo "The shell script is working in a wrong working directory \"$(pwd)\". "
 	exit 1
+fi
+setPermissions
+if [[ $? == ${EXIT_SUCCESS} ]];
+then
+	echo "Successfully set permissions. "
+else
+	echo "Failed to set permissions. "
 fi
 
 # Pack #
@@ -137,6 +174,13 @@ if [[ -d "${updateFolderPath}" ]]; then
 else
 	echo "Failed to create the update folder path \"${updateFolderPath}\". "
 	exit 10
+fi
+setPermissions
+if [[ $? == ${EXIT_SUCCESS} ]];
+then
+	echo "Successfully set permissions. "
+else
+	echo "Failed to set permissions. "
 fi
 
 # Git #
