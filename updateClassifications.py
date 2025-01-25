@@ -1,5 +1,7 @@
 import os
 from sys import exit
+from datetime import datetime
+from hashlib import sha512
 from json import loads
 from re import findall
 try:
@@ -126,26 +128,54 @@ class Classification:
 		return "\n".join(sorted(self.__s))
 
 
+def updateSHA512(srcFp:str, encoding:str = "utf-8") -> bool:
+	if isinstance(srcFp, str) and os.path.isdir(srcFp) and isinstance(encoding, str):
+		successCnt, totalCnt = 0, 0
+		for root, dirs, files in os.walk(srcFp):
+			for fileName in files:
+				totalCnt += 1
+				filePath = os.path.join(root, fileName)
+				try:
+					with open(filePath, "rb") as f:
+						digest = sha512(f.read()).hexdigest()
+				except BaseException as e:
+					print("[{0}] \"{1}\" -> {2}".format(totalCnt, filePath, e))
+					continue
+				try:
+					with open(filePath + ".sha512", "w", encoding = encoding) as f:
+						f.write(digest)
+					successCnt += 1
+					print("[{0}] \"{1}\" -> {2}".format(totalCnt, filePath, digest))
+				except BaseException as e:
+					print("[{0}] \"{1}\" -> {2}".format(totalCnt, filePath, e))
+		return successCnt == totalCnt
+	else:
+		return False
+
 def gitPush() -> bool:
-	commandlines = ["git add .", "git commit -m Update", "git push"]
+	commandlines = ["git add .", "git commit -m \"Regular Update ({0})\"".format(datetime.now().strftime("%Y%m%d%H%M%S")), "git push"]
 	for commandline in commandlines:
 		if os.system(commandline) != 0:
 			return False
 	return True
 
 def main() -> int:
-	# Update $B$ #
+	# Parameters #
 	filePathB = "Classification/classificationB.txt"
 	url = "https://modules.lsposed.org/modules.json"
+	filePathC = "Classification/classificationC.txt"
+	filePathD = "Classification/classificationD.txt"
+	srcFolderPath = "src"
+	bRet = True
+	
+	# Update $B$ #
 	classificationB, classificationC, classificationD = Classification(), Classification(), Classification()
-	bRet = classificationB.configureFile(filePathB)
+	bRet = classificationB.configureFile(filePathB) and bRet
 	bRet = classificationB.configureUrl(url) and bRet
 	bRet = classificationB.writeTo(filePathB) and bRet
 	
 	# Compute Intersections #
-	filePathC = "Classification/classificationC.txt"
 	bRet = classificationC.configureFile(filePathC)
-	filePathD = "Classification/classificationD.txt"
 	bRet = classificationD.configureFile(filePathD)
 	setBC = classificationB.intersection(classificationC)
 	setBD = classificationB.intersection(classificationD)
@@ -170,7 +200,7 @@ def main() -> int:
 		except:
 			choice = True
 		if choice:
-			bRet = gitPush()
+			bRet = updateSHA512(srcFolderPath) and gitPush()
 	
 	# Exit #
 	iRet = EXIT_SUCCESS if bRet else EXIT_FAILURE

@@ -140,7 +140,7 @@ else
 fi
 
 # Git #
-git add . && git commit -m "Update (${moduleVersion})" && git push
+git add . && git commit -m "Module Update (${moduleVersion})" && git push
 if [[ 0 == $? ]]; then
 	echo "Successfully pushed to GitHub. "
 else
