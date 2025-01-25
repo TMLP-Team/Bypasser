@@ -407,7 +407,7 @@ readonly trickyStoreFolderPath="../../tricky_store"
 readonly trickyStoreTargetFileName="target.txt"
 readonly trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
 
-if [[ -f "${trickyStoreFolderPath}" ]];
+if [[ -d "${trickyStoreFolderPath}" ]];
 then
 	echo "The tricky store folder was found at \"${trickyStoreFolderPath}\". "
 	abortFlag=${EXIT_SUCCESS}
