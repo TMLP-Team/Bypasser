@@ -477,7 +477,10 @@ echo ""
 # Update (0bXX0000) #
 echo "# Update (0bXX0000) #"
 readonly actionUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/action.sh"
+readonly actionDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/action.sh.sha512"
+
 shellContent="$(curl -s "${actionUrl}")"
+shellDigest="$(curl -s "${actionDigestUrl}")"
 if [[ ${EXIT_SUCCESS} == $? && ! -z "${shellContent}" ]];
 then
 	echo "Successfully fetched the latest \`\`action.sh\`\` from GitHub. "
