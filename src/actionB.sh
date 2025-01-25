@@ -517,11 +517,12 @@ then
 			if [[ "$(echo "${shellContent}" | sha512sum | cut -d " " -f1)" == "${shellDigest}" ]];
 			then
 				echo "Successfully verified the latest \`\`${targetAction}\`\`. "
-				(rm -f "${targetAction}") && (echo -n "${shellContent}" > "${targetAction}")
-				if [[ ${EXIT_SUCCESS} == $? && ! -f "${targetAction}" ]];
+				rm -f "${targetAction}"
+				echo -n "${shellContent}" > "${targetAction}"
+				if [[ ${EXIT_SUCCESS} == $? && -f "${targetAction}" ]];
 				then
 					echo "Successfully updated \`\`${targetAction}\`\`. "
-					(rm -f "${actionPropPath}") && (echo -n "${targetAB}" > "${actionPropPath}")
+					rm -f "${actionPropPath}") && (echo -n "${targetAB}" > "${actionPropPath}")
 					if [[ ${EXIT_SUCCESS} == $? && -f "${actionPropPath}" ]];
 					then
 						echo "Successfully switched to \`\`${targetAction}\`\` in \"${actionPropPath}\". "
