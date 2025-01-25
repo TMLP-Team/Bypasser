@@ -153,7 +153,9 @@ def updateSHA512(srcFp:str, encoding:str = "utf-8") -> bool:
 		return False
 
 def gitPush() -> bool:
-	commandlines = ["git add .", "git commit -m \"Regular Update ({0})\"".format(datetime.now().strftime("%Y%m%d%H%M%S")), "git push"]
+	commitMessage = "Regular Update ({0})".format(datetime.now().strftime("%Y%m%d%H%M%S"))
+	print("The commit message is \"{0}\". ".format(commitMessage))
+	commandlines = ["git add .", "git commit -m \"{0}\"".format(commitMessage), "git push"]
 	for commandline in commandlines:
 		if os.system(commandline) != 0:
 			return False
