@@ -130,24 +130,34 @@ class Classification:
 
 def updateSHA512(srcFp:str, encoding:str = "utf-8") -> bool:
 	if isinstance(srcFp, str) and os.path.isdir(srcFp) and isinstance(encoding, str):
-		successCnt, totalCnt = 0, 0
+		successCnt, filePaths = 0, []
 		for root, dirs, files in os.walk(srcFp):
 			for fileName in files:
-				totalCnt += 1
 				filePath = os.path.join(root, fileName)
-				try:
-					with open(filePath, "rb") as f:
-						digest = sha512(f.read()).hexdigest()
-				except BaseException as e:
-					print("[{0:0>2}] \"{1}\" -> {2}".format(totalCnt, filePath, e))
-					continue
-				try:
-					with open(filePath + ".sha512", "w", encoding = encoding) as f:
-						f.write(digest)
-					successCnt += 1
-					print("[{0}] \"{1}\" -> {2}".format(totalCnt, filePath, digest))
-				except BaseException as e:
-					print("[{0}] \"{1}\" -> {2}".format(totalCnt, filePath, e))
+				if os.path.splitext(fileName)[1] == ".sha512":
+					try:
+						os.remove(filePath)
+					except:
+						pass
+				else:
+					filePaths.append(filePath)
+		totalCnt = len(filePaths)
+		length = len(str(totalCnt))
+		for i, filePath in enumerate(filePaths):
+			try:
+				with open(filePath, "rb") as f:
+					digest = sha512(f.read()).hexdigest()
+			except BaseException as e:
+				print("[{{0:0>{0}}}] \"{{1}}\" -> {{2}}".format(length).format(i, filePath, e))
+				continue
+			try:
+				with open(filePath + ".sha512", "w", encoding = encoding) as f:
+					f.write(digest)
+				successCnt += 1
+				print("[{{0:0>{0}}}] \"{{1}}\" -> {{2}}".format(length).format(i, filePath, digest))
+			except BaseException as e:
+				print("[{{0:0>{0}}}] \"{{1}}\" -> {{2}}".format(length).format(i, filePath, e))
+		print("Successfully generated {0} / {1} SHA-512 value file(s) at the success rate of {2:.2f}%. ".format(successCnt, totalCnt, successCnt * 100 / totalCnt) if totalCnt else "No SHA-512 value files were generated. ")
 		return successCnt == totalCnt
 	else:
 		return False
