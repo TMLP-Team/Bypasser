@@ -3,10 +3,10 @@
 readonly EXIT_SUCCESS=0
 readonly EXIT_FAILURE=1
 readonly EOF=255
-moduleName="Bypasser"
-moduleId="bypasser"
-moduleVersion="$(date +%Y%m%d%H)"
-moduleFolderPath="$(dirname "$0")"
+readonly moduleName="Bypasser"
+readonly moduleId="bypasser"
+readonly moduleVersion="$(date +%Y%m%d%H)"
+readonly moduleFolderPath="$(dirname "$0")"
 
 function setPermissions()
 {
@@ -16,7 +16,7 @@ function setPermissions()
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
-	find . ! -name "build.sh" ! -name "*.sha512" -type f -exec chmod 644 {} \;
+	find . ! -name "LICENSE" ! -name "build.sh" ! -name "*.sha512" -type f -exec chmod 644 {} \;
 	if [[ $? != ${EXIT_SUCCESS} ]];
 	then
 		returnCode=${EXIT_FAILURE}
@@ -26,7 +26,12 @@ function setPermissions()
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
-	find . -name "build.sh" -type f -exec chmod 744 {} \;
+	chmod 444 "LICENSE"
+	if [[ $? != ${EXIT_SUCCESS} ]];
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
+	chmod 744 "build.sh"
 	if [[ $? != ${EXIT_SUCCESS} ]];
 	then
 		returnCode=${EXIT_FAILURE}
@@ -34,9 +39,11 @@ function setPermissions()
 	return ${returnCode}
 }
 
+echo "Welcome to the builder for the ``${moduleName}`` Magisk Module! "
+echo "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
 chmod 755 "${moduleFolderPath}" && cd "${moduleFolderPath}"
 if [[ $? == ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleName}" ]]; then
-	echo "Welcome to the builder for the ``${moduleName}`` Magisk Module! "
+	echo "The current working directory is \"$(pwd)\". "
 else
 	echo "The shell script is working in a wrong working directory \"$(pwd)\". "
 	exit 1
