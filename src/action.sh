@@ -58,8 +58,8 @@ echo "The current working directory is \"$(pwd)\". "
 cleanCache
 echo ""
 
-# HMA/HMAL (0b0000X0) #
-echo "# HMA/HMAL (0b0000X0) #"
+# HMA/HMAL (0b000X0) #
+echo "# HMA/HMAL (0b000X0) #"
 readonly dataAppFolder="/data/app"
 readonly blacklistName="Blacklist"
 readonly whitelistName="Whitelist"
@@ -382,8 +382,8 @@ then
 fi
 echo ""
 
-# Tricky Store (0b000X00) #
-echo "# Tricky Store (0b000X00) #"
+# Tricky Store (0b00X00) #
+echo "# Tricky Store (0b00X00) #"
 readonly trickyStoreFolderPath="../../tricky_store"
 readonly trickyStoreTargetFileName="target.txt"
 readonly trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
@@ -445,8 +445,8 @@ else
 fi
 echo ""
 
-# Shamiko (0b00X000) #
-echo "# Shamiko (0b00X000) #"
+# Shamiko (0b0X000) #
+echo "# Shamiko (0b0X000) #"
 readonly shamikoInstallationFolderPath="../../modules/zygisk_shamiko"
 readonly shamikoConfigFolderPath="../../shamiko"
 readonly shamikoWhitelistConfigFileName="whitelist"
@@ -474,34 +474,52 @@ else
 fi
 echo ""
 
-# Update (0bXX0000) #
-echo "# Update (0bXX0000) #"
+# Update (0bX0000) #
+echo "# Update (0bX0000) #"
 readonly actionUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/action.sh"
 readonly actionDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/action.sh.sha512"
 
 shellContent="$(curl -s "${actionUrl}")"
-shellDigest="$(curl -s "${actionDigestUrl}")"
 if [[ ${EXIT_SUCCESS} == $? && ! -z "${shellContent}" ]];
 then
 	echo "Successfully fetched the latest \`\`action.sh\`\` from GitHub. "
-	cp -fp "${0}" "${0}.bak"
-	if [[ ${EXIT_SUCCESS} == $? && -f "${0}.bak" ]];
-	then
-		echo "Successfully copied \`\`action.sh\`\` to \`\`action.sh.bak\`\`. "
-		echo -n "${shellContent}" > "${0}"
-		if [[ ${EXIT_SUCCESS} == $? ]];
+	shellDigest="$(curl -s "${actionDigestUrl}")"
+	if [[ ${EXIT_SUCCESS} == $? && ! -z "${shellDigest}" ]];
+		echo "Successfully fetched the SHA-512 value file of the latest \`\`action.sh\`\` from GitHub. "
+		if [[ "$(echo "${shellContent}" | sha512sum | cut -d " " -f1)" == "${shellDigest}" ]];
 		then
-			echo "Successfully updated \`\`action.sh\`\`. "
+			echo "Successfully verified the latest \`\`action.sh\`\`. "
+			if [[ "$(cat "$0" | sha512sum | cut -d " " -f1)" == "${shellDigest}" ]];
+			then
+				echo "The current \`\`action.sh\`\` is already up-to-date. "
+			else
+				echo "The current \`\`action.sh\`\` is out-of-date and will be updated. "
+				cp -fp "$0" "$0.bak"
+				if [[ ${EXIT_SUCCESS} == $? && -f "$0.bak" ]];
+				then
+					echo "Successfully copied \`\`action.sh\`\` to \`\`action.sh.bak\`\`. "
+					echo -n "${shellContent}" > "$0"
+					if [[ ${EXIT_SUCCESS} == $? ]];
+					then
+						echo "Successfully updated \`\`action.sh\`\`. "
+					else
+						exitCode=$(expr $exitCode \| 16)
+						echo "Failed to update \`\`action.sh\`\`. "
+					fi
+				else
+					exitCode=$(expr $exitCode \| 16)
+					echo "Failed to copy \`\`action.sh\`\` to \`\`action.sh.bak\`\`. "
+				fi
+			fi
 		else
 			exitCode=$(expr $exitCode \| 16)
-			echo "Failed to update \`\`action.sh\`\`. "
+			echo "Failed to verify the latest \`\`action.sh\`\`. "
 		fi
 	else
-		exitCode=$(expr $exitCode \| 32)
-		echo "Failed to copy \`\`action.sh\`\` to \`\`action.sh.bak\`\`. "
+		exitCode=$(expr $exitCode \| 16)
+		echo "Failed to fetch the SHA-512 value file of the latest \`\`action.sh\`\` from GitHub. "
 	fi
-else
-	exitCode=$(expr $exitCode \| 48)
+	exitCode=$(expr $exitCode \| 16)
 	echo "Failed to fetch the latest \`\`action.sh\`\` from GitHub. "
 fi
 echo ""
