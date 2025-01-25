@@ -504,7 +504,7 @@ readonly actionDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/m
 shellDigest="$(curl -s "${actionDigestUrl}")"
 if [[ ${EXIT_SUCCESS} == $? && -n "${shellDigest}" ]];
 then
-	echo "Successfully fetched the SHA-512 value file of the latest \`\`${targetAction}\`\` from GitHub. "
+	echo "Successfully fetched the SHA-512 value of the latest \`\`${targetAction}\`\` from GitHub. "
 	if [[ "$(cat "${targetAction}" | sha512sum | cut -d " " -f1)" == "${shellDigest}" ]];
 	then
 		echo "The target action \`\`${targetAction}\`\` is already up-to-date. "
@@ -546,7 +546,7 @@ then
 	fi
 else
 	exitCode=$(expr ${exitCode} \| 16)
-	echo "Failed to fetch the SHA-512 value file of the latest \`\`${targetAction}\`\` from GitHub. "
+	echo "Failed to fetch the SHA-512 value of the latest \`\`${targetAction}\`\` from GitHub. "
 fi
 echo ""
 
