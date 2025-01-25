@@ -10,6 +10,7 @@ readonly VK_DOWN=40
 readonly moduleName="Bypasser"
 readonly moduleId="bypasser"
 readonly defaultTimeout=5
+readonly actionFolderPath="$(dirname "$0")"
 readonly startTime=$(date +%s%N)
 exitCode=0
 
@@ -22,7 +23,7 @@ function cleanCache
 
 echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
 echo "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
-chmod 755 . && cd "$(dirname "$0")"
+chmod 755 "${actionFolderPath}" && cd "${actionFolderPath}"
 if [[ $? == ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleId}" ]];
 then
 	echo "The current working directory is \"$(pwd)\". "

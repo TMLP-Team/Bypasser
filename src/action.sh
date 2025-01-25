@@ -3,10 +3,11 @@ readonly EXIT_SUCCESS=0
 readonly EXIT_FAILURE=1
 readonly EOF=255
 readonly moduleName="Bypasser"
+readonly moduleId="bypasser"
+readonly actionFolderPath="$(dirname "$0")"
 readonly actionPropPath="action.prop"
 readonly actionAPath="actionA.sh"
 readonly actionBPath="actionB.sh"
-readonly actionFolderPath="$(dirname "$0")"
 
 function setPermissions
 {
@@ -29,7 +30,8 @@ function setPermissions
 	return ${returnCode}
 }
 
-if chmod 755 "${actionFolderPath}" && cd "${actionFolderPath}";
+chmod 755 "${actionFolderPath}" && cd "${actionFolderPath}"
+if [[ $? == ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleId}" ]];
 then
 	setPermissions
 	if [[ -f "${actionPropPath}" ]];
