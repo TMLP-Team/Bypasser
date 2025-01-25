@@ -139,7 +139,7 @@ def updateSHA512(srcFp:str, encoding:str = "utf-8") -> bool:
 					with open(filePath, "rb") as f:
 						digest = sha512(f.read()).hexdigest()
 				except BaseException as e:
-					print("[{0}] \"{1}\" -> {2}".format(totalCnt, filePath, e))
+					print("[{0:0>2}] \"{1}\" -> {2}".format(totalCnt, filePath, e))
 					continue
 				try:
 					with open(filePath + ".sha512", "w", encoding = encoding) as f:
