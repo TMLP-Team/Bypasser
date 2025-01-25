@@ -501,22 +501,22 @@ readonly targetAction="action${targetAB}.sh"
 readonly actionUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/${targetAction}"
 readonly actionDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/${targetAction}.sha512"
 
-shellContent="$(curl -s "${actionUrl}")"
-if [[ ${EXIT_SUCCESS} == $? && ! -z "${shellContent}" ]];
+shellDigest="$(curl -s "${actionDigestUrl}")"
+if [[ ${EXIT_SUCCESS} == $? && ! -z "${shellDigest}" ]];
 then
-	echo "Successfully fetched the latest \`\`${targetAction}\`\` from GitHub. "
-	shellDigest="$(curl -s "${actionDigestUrl}")"
-	if [[ ${EXIT_SUCCESS} == $? && ! -z "${shellDigest}" ]];
+	echo "Successfully fetched the SHA-512 value file of the latest \`\`${targetAction}\`\` from GitHub. "
+	if [[ "$(cat "${targetAction}" | sha512sum | cut -d " " -f1)" == "${shellDigest}" ]];
 	then
-		echo "Successfully fetched the SHA-512 value file of the latest \`\`${targetAction}\`\` from GitHub. "
-		if [[ "$(echo "${shellContent}" | sha512sum | cut -d " " -f1)" == "${shellDigest}" ]];
+		echo "The target action \`\`${targetAction}\`\` is already up-to-date. "
+	else
+		echo "The target action \`\`${targetAction}\`\` is out-of-date and need to be updated. "
+		shellContent="$(curl -s "${actionUrl}")"
+		if [[ ${EXIT_SUCCESS} == $? && ! -z "${shellContent}" ]];
 		then
-			echo "Successfully verified the latest \`\`${targetAction}\`\`. "
-			if [[ "$(cat "${targetAction}" | sha512sum | cut -d " " -f1)" == "${shellDigest}" ]];
+			echo "Successfully fetched the latest \`\`${targetAction}\`\` from GitHub. "
+			if [[ "$(echo "${shellContent}" | sha512sum | cut -d " " -f1)" == "${shellDigest}" ]];
 			then
-				echo "The target action \`\`${targetAction}\`\` is already up-to-date. "
-			else
-				echo "The target action \`\`${targetAction}\`\` is out-of-date and will be updated. "
+				echo "Successfully verified the latest \`\`${targetAction}\`\`. "
 				(rm -f "${targetAction}") && (echo -n "${shellContent}" > "${targetAction}")
 				if [[ ${EXIT_SUCCESS} == $? && ! -f "${targetAction}" ]];
 				then
@@ -533,17 +533,18 @@ then
 					exitCode=$(expr $exitCode \| 16)
 					echo "Failed to update \`\`${targetAction}\`\`. "
 				fi
+			else
+				exitCode=$(expr $exitCode \| 16)
+				echo "Failed to verify the latest \`\`${targetAction}\`\`. "
 			fi
 		else
 			exitCode=$(expr $exitCode \| 16)
-			echo "Failed to verify the latest \`\`${targetAction}\`\`. "
+			echo "Failed to fetch the latest \`\`${targetAction}\`\` from GitHub. "
 		fi
-	else
-		exitCode=$(expr $exitCode \| 16)
-		echo "Failed to fetch the SHA-512 value file of the latest \`\`${targetAction}\`\` from GitHub. "
 	fi
+else
 	exitCode=$(expr $exitCode \| 16)
-	echo "Failed to fetch the latest \`\`${targetAction}\`\` from GitHub. "
+	echo "Failed to fetch the SHA-512 value file of the latest \`\`${targetAction}\`\` from GitHub. "
 fi
 echo ""
 
