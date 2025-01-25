@@ -55,10 +55,11 @@ function getKeyPress
 echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
 echo "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
 chmod 755 . && cd "$(dirname "$0")"
-if [[ $? == ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleId}" ]]; then
+if [[ $? == ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleId}" ]];
+then
 	echo "The current working directory is \"$(pwd)\". "
 else
-	echo "The shell script is working in a wrong working directory \"$(pwd)\". "
+	echo "The working directory \"$(pwd)\" is unexpected. "
 	exitCode=$(expr ${exitCode} \| 1)
 fi
 cleanCache

@@ -8,6 +8,7 @@ readonly VK_SCREEN=20
 readonly VK_UP=38
 readonly VK_DOWN=40
 readonly moduleName="Bypasser"
+readonly moduleId="bypasser"
 readonly outerSymbolCount=200
 readonly innerSymbolCount=100
 readonly startTime=$(date +%s%N)
@@ -56,7 +57,8 @@ ui_print ""
 ui_print $(yes "#" | head -n ${outerSymbolCount} | tr -d '\n')
 ui_print "Welcome to the installer of the ${moduleName} Magisk Module! "
 ui_print "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
-if chmod 755 "${MODPATH}" && cd "${MODPATH}";
+chmod 755 "${MODPATH}" && cd "${MODPATH}"
+if [[ $? == ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleId}" ]];
 then
 	ui_print "The current working directory is \"$(pwd)\". "
 else

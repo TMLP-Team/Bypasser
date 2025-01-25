@@ -45,7 +45,7 @@ chmod 755 "${moduleFolderPath}" && cd "${moduleFolderPath}"
 if [[ $? == ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleName}" ]]; then
 	echo "The current working directory is \"$(pwd)\". "
 else
-	echo "The shell script is working in a wrong working directory \"$(pwd)\". "
+	echo "The working directory \"$(pwd)\" is unexpected. "
 	exit 1
 fi
 setPermissions

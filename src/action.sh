@@ -50,7 +50,7 @@ then
 				exit ${EXIT_SUCCESS}
 			fi
 		else
-			echo "Failed to execute \`\`action.sh\`\` since wrong configurations are detected. "
+			echo "Failed to execute \`\`action.sh\`\` since improper configurations are detected. "
 			echo "Please try to flash the latest version of the ${moduleName} Magisk Module. "
 			exit ${EXIT_FAILURE}
 		fi
