@@ -57,6 +57,7 @@ ui_print $(yes "#" | head -n ${outerSymbolCount} | tr -d '\n')
 ui_print "Welcome to the installer of the ${moduleName} Magisk Module! "
 ui_print "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
 if chmod 755 "${MODPATH}" && cd "${MODPATH}";
+then
 	ui_print "The current working directory is \"$(pwd)\". "
 else
 	abort "The working directory \"$(pwd)\" is unexpected. "
