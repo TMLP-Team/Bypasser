@@ -505,7 +505,7 @@ shellDigest="$(curl -s "${actionDigestUrl}")"
 if [[ $? -eq ${EXIT_SUCCESS} && -n "${shellDigest}" ]];
 then
 	echo "Successfully fetched the SHA-512 value of the latest \`\`${targetAction}\`\` from GitHub. "
-	if [[ "$(cat "${targetAction}" | sha512sum | cut -d " " -f1)" == "${shellDigest}" ]];
+	if [[ "$(sha512sum "${targetAction}" | cut -d " " -f1)" == "${shellDigest}" ]];
 	then
 		echo "The target action \`\`${targetAction}\`\` is already up-to-date. "
 	else
