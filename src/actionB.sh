@@ -509,7 +509,7 @@ then
 	then
 		echo "The target action \`\`${targetAction}\`\` is already up-to-date. "
 	else
-		echo "The target action \`\`${targetAction}\`\` is out-of-date and need to be updated. "
+		echo "The target action \`\`${targetAction}\`\` is out-of-date and needs to be updated. "
 		shellContent="$(curl -s "${actionUrl}")"
 		if [[ $? -eq ${EXIT_SUCCESS} && -n "${shellContent}" ]];
 		then
