@@ -79,7 +79,7 @@ readonly MIN_APATCH_VER_CODE=10927
 
 if $BOOTMODE;
 then
-	if [[ ! -z "${MAGISK_VER_CODE}" ]];
+	if [[ -n "${MAGISK_VER_CODE}" ]];
 	then
 		if [[ ${MAGISK_VER_CODE} -ge ${MIN_MAGISK_VER_CODE} ]];
 		then

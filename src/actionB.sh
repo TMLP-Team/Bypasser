@@ -380,7 +380,7 @@ then
 	then
 		echo "Successfully generated the config file \"${blacklistConfigFilePath}\". "
 	else
-		exitCode=$(expr $exitCode \| 2)
+		exitCode=$(expr ${exitCode} \| 2)
 		echo "Failed to generate the config file \"${blacklistConfigFilePath}\". "
 	fi
 	echo -n "${whitelistConfigContent}" > "${whitelistConfigFilePath}"
@@ -388,11 +388,11 @@ then
 	then
 		echo "Successfully generated the config file \"${whitelistConfigFilePath}\". "
 	else
-		exitCode=$(expr $exitCode \| 2)
+		exitCode=$(expr ${exitCode} \| 2)
 		echo "Failed to generate the config file \"${whitelistConfigFilePath}\". "
 	fi
 else
-	exitCode=$(expr $exitCode \| 2)
+	exitCode=$(expr ${exitCode} \| 2)
 	echo "Failed to create the folder \"${configFolderPath}\". "
 fi
 if [[ -z "${blacklistAppList}" || -z "${blacklistScopeList}" || -z "${whitelistAppList}" || -z "${whitelistScopeList}" ]];
@@ -428,15 +428,15 @@ then
 	if [[ ${EXIT_SUCCESS} == ${abortFlag} ]];
 	then
 		lines="$(echo -n "com.google.android.gms")"
-		if [[ ! -z "${classificationB}" ]];
+		if [[ -n "${classificationB}" ]];
 		then
 			lines="$(echo -e -n "${lines}\n$(echo -n "${classificationB}")")"
 		fi
-		if [[ ! -z "${classificationC}" ]];
+		if [[ -n "${classificationC}" ]];
 		then
 			lines="$(echo -e -n "${lines}\n$(echo -n "${classificationC}")")"
 		fi
-		if [[ ! -z "${classificationD}" ]];
+		if [[ -n "${classificationD}" ]];
 		then
 			lines="$(echo -e -n "${lines}\n$(echo -n "${classificationD}")")"
 		fi
@@ -451,11 +451,11 @@ then
 			then
 				echo "Successfully verified \"${trickyStoreTargetFilePath}\" (${cnt} = ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD}). "
 			else
-				exitCode=$(expr $exitCode \| 4)
+				exitCode=$(expr ${exitCode} \| 4)
 				echo "Failed to verify \"${trickyStoreTargetFilePath}\" (${cnt} != ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD}). "
 			fi
 		else
-			exitCode=$(expr $exitCode \| 4)
+			exitCode=$(expr ${exitCode} \| 4)
 			echo "Failed to write to \"${trickyStoreTargetFilePath}\". "
 		fi
 	fi
@@ -482,7 +482,7 @@ then
 		then
 			echo "Successfully created the whitelist config file \"${shamikoWhitelistConfigFilePath}\". "
 		else
-			exitCode=$(expr $exitCode \| 8)
+			exitCode=$(expr ${exitCode} \| 8)
 			echo "Failed to create the whitelist config file \"${shamikoWhitelistConfigFilePath}\". "
 		fi
 	else
@@ -502,7 +502,7 @@ readonly actionUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/sr
 readonly actionDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/${targetAction}.sha512"
 
 shellDigest="$(curl -s "${actionDigestUrl}")"
-if [[ ${EXIT_SUCCESS} == $? && ! -z "${shellDigest}" ]];
+if [[ ${EXIT_SUCCESS} == $? && -n "${shellDigest}" ]];
 then
 	echo "Successfully fetched the SHA-512 value file of the latest \`\`${targetAction}\`\` from GitHub. "
 	if [[ "$(cat "${targetAction}" | sha512sum | cut -d " " -f1)" == "${shellDigest}" ]];
@@ -511,7 +511,7 @@ then
 	else
 		echo "The target action \`\`${targetAction}\`\` is out-of-date and need to be updated. "
 		shellContent="$(curl -s "${actionUrl}")"
-		if [[ ${EXIT_SUCCESS} == $? && ! -z "${shellContent}" ]];
+		if [[ ${EXIT_SUCCESS} == $? && -n "${shellContent}" ]];
 		then
 			echo "Successfully fetched the latest \`\`${targetAction}\`\` from GitHub. "
 			if [[ "$(echo "${shellContent}" | sha512sum | cut -d " " -f1)" == "${shellDigest}" ]];
@@ -522,29 +522,30 @@ then
 				if [[ ${EXIT_SUCCESS} == $? && -f "${targetAction}" ]];
 				then
 					echo "Successfully updated \`\`${targetAction}\`\`. "
-					rm -f "${actionPropPath}") && (echo -n "${targetAB}" > "${actionPropPath}")
+					rm -f "${actionPropPath}"
+					echo -n "${targetAB}" > "${actionPropPath}"
 					if [[ ${EXIT_SUCCESS} == $? && -f "${actionPropPath}" ]];
 					then
 						echo "Successfully switched to \`\`${targetAction}\`\` in \"${actionPropPath}\". "
 					else
-						exitCode=$(expr $exitCode \| 16)
+						exitCode=$(expr ${exitCode} \| 16)
 						echo "Failed to switch to \`\`${targetAction}\`\` in \"${actionPropPath}\". "
 					fi
 				else
-					exitCode=$(expr $exitCode \| 16)
+					exitCode=$(expr ${exitCode} \| 16)
 					echo "Failed to update \`\`${targetAction}\`\`. "
 				fi
 			else
-				exitCode=$(expr $exitCode \| 16)
+				exitCode=$(expr ${exitCode} \| 16)
 				echo "Failed to verify the latest \`\`${targetAction}\`\`. "
 			fi
 		else
-			exitCode=$(expr $exitCode \| 16)
+			exitCode=$(expr ${exitCode} \| 16)
 			echo "Failed to fetch the latest \`\`${targetAction}\`\` from GitHub. "
 		fi
 	fi
 else
-	exitCode=$(expr $exitCode \| 16)
+	exitCode=$(expr ${exitCode} \| 16)
 	echo "Failed to fetch the SHA-512 value file of the latest \`\`${targetAction}\`\` from GitHub. "
 fi
 echo ""
@@ -577,7 +578,7 @@ if [[ $? == ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully set permissions. "
 else
-	exitCode=$(expr $exitCode \| 32)
+	exitCode=$(expr ${exitCode} \| 32)
 	echo "Failed to set permissions. "
 fi
 echo ""
