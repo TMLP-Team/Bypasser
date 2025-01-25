@@ -518,7 +518,7 @@ then
 			then
 				echo "Successfully verified the latest \`\`${targetAction}\`\`. "
 				rm -f "${targetAction}"
-				echo -n "${shellContent}" > "${targetAction}"
+				echo "${shellContent}" > "${targetAction}"
 				if [[ $? -eq ${EXIT_SUCCESS} && -f "${targetAction}" ]];
 				then
 					echo "Successfully updated \`\`${targetAction}\`\`. "
