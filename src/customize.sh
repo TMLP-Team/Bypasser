@@ -12,14 +12,14 @@ readonly outerSymbolCount=200
 readonly innerSymbolCount=100
 readonly startTime=$(date +%s%N)
 
-function cleanCache()
+function cleanCache
 {
 	sync
 	echo 3 > /proc/sys/vm/drop_caches
 	return 0
 }
 
-function getKeyPress()
+function getKeyPress
 {
 	timeout=5
 	read -r -t ${timeout} pressString < <(getevent -ql)
@@ -140,7 +140,7 @@ else
 fi
 
 # Permission #
-function setPermissions()
+function setPermissions
 {
 	returnCode=${EXIT_SUCCESS}
 	find . -type d -exec chmod 755 {} \;

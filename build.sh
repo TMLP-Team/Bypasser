@@ -8,7 +8,7 @@ readonly moduleId="bypasser"
 readonly moduleVersion="$(date +%Y%m%d%H)"
 readonly moduleFolderPath="$(dirname "$0")"
 
-function setPermissions()
+function setPermissions
 {
 	returnCode=${EXIT_SUCCESS}
 	find . -type d -exec chmod 755 {} \;

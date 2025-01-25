@@ -12,14 +12,14 @@ readonly moduleId="bypasser"
 readonly startTime=$(date +%s%N)
 exitCode=0
 
-function cleanCache()
+function cleanCache
 {
 	sync
 	echo 3 > /proc/sys/vm/drop_caches
 	return 0
 }
 
-function getKeyPress()
+function getKeyPress
 {
 	timeout=5
 	read -r -t ${timeout} pressString < <(getevent -ql)
@@ -75,7 +75,7 @@ readonly blacklistConfigFilePath="${configFolderPath}/${blacklistConfigFileName}
 readonly whitelistConfigFileName=".HMAL_Whitelist_Config.json"
 readonly whitelistConfigFilePath="${configFolderPath}/${whitelistConfigFileName}"
 
-function getClassification()
+function getClassification
 {
 	if [[ $# == 1 ]];
 	then
@@ -111,7 +111,7 @@ function getClassification()
 	fi
 }
 
-function getArray()
+function getArray
 {
 	if [[ $# == 1 ]];
 	then
@@ -136,7 +136,7 @@ function getArray()
 	fi
 }	
 
-function getBlacklistScopeStringC()
+function getBlacklistScopeStringC
 {
 	if [[ $# == 1 ]];
 	then
@@ -166,7 +166,7 @@ function getBlacklistScopeStringC()
 	fi
 }
 
-function getBlacklistScopeStringD()
+function getBlacklistScopeStringD
 {
 	if [[ $# == 2 ]];
 	then
@@ -191,7 +191,7 @@ function getBlacklistScopeStringD()
 	fi
 }
 
-function getWhitelistScopeString()
+function getWhitelistScopeString
 {
 	if [[ $# == 2 ]];
 	then
@@ -494,6 +494,7 @@ then
 	echo "Successfully fetched the latest \`\`${targetAction}\`\` from GitHub. "
 	shellDigest="$(curl -s "${actionDigestUrl}")"
 	if [[ ${EXIT_SUCCESS} == $? && ! -z "${shellDigest}" ]];
+	then
 		echo "Successfully fetched the SHA-512 value file of the latest \`\`${targetAction}\`\` from GitHub. "
 		if [[ "$(echo "${shellContent}" | sha512sum | cut -d " " -f1)" == "${shellDigest}" ]];
 		then
@@ -535,7 +536,7 @@ echo ""
 
 # Permission (0bX00000) #
 echo "# Permission (0bX00000) #"
-function setPermissions()
+function setPermissions
 {
 	returnCode=${EXIT_SUCCESS}
 	find . -type d -exec chmod 755 {} \;

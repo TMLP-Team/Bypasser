@@ -8,7 +8,7 @@ readonly actionAPath="actionA.sh"
 readonly actionBPath="actionB.sh"
 readonly actionFolderPath="$(dirname "$0")"
 
-function setPermissions()
+function setPermissions
 {
 	returnCode=${EXIT_SUCCESS}
 	find . -type d -exec chmod 755 {} \;
