@@ -9,6 +9,7 @@ readonly VK_UP=38
 readonly VK_DOWN=40
 readonly moduleName="Bypasser"
 readonly moduleId="bypasser"
+readonly defaultTimeout=5
 readonly startTime=$(date +%s%N)
 exitCode=0
 
@@ -17,39 +18,6 @@ function cleanCache
 	sync
 	echo 3 > /proc/sys/vm/drop_caches
 	return 0
-}
-
-function getKeyPress
-{
-	timeout=5
-	read -r -t ${timeout} pressString < <(getevent -ql)
-	pressCode=$?
-	if [[ ${EXIT_SUCCESS} == ${pressCode} ]];
-	then
-		if echo "${pressString}" | grep -q "KEY_VOLUMEUP";
-		then
-			echo "The [+] was pressed. "
-			return ${VK_UP}
-		elif echo "${pressString}" | grep -q "KEY_VOLUMEDOWN";
-		then
-			echo "The [-] was pressed. "
-			return ${VK_DOWN}
-		elif echo "${pressString}" | grep -q "KEY_POWER";
-		then
-			echo "The power key was pressed. "
-			return ${VK_POWER}
-		elif echo "${pressString}" | grep -q "ABS_MT_TRACKING_ID";
-		then
-			echo "The screen was pressed. "
-			return ${VK_SCREEN}
-		else
-			echo "The following unknown event occurred. "
-			echo "${pressString}"
-			return ${EXIT_FAILURE}
-		fi
-	else
-		return ${EOF}
-	fi
 }
 
 echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
@@ -106,6 +74,44 @@ function getClassification
 			fi
 		else
 			return ${EOF}
+		fi
+	else
+		return ${EOF}
+	fi
+}
+
+function getTheKeyPressed
+{
+	if echo "$1" | grep -qE '^[1-9][0-9]*$';
+	then
+		timeout=$1
+	else
+		timeout=${defaultTimeout}
+	fi
+	read -r -t ${timeout} pressString < <(getevent -ql)
+	pressCode=$?
+	if [[ ${EXIT_SUCCESS} == ${pressCode} ]];
+	then
+		if echo "${pressString}" | grep -q "KEY_VOLUMEUP";
+		then
+			echo "The [+] was pressed. "
+			return ${VK_UP}
+		elif echo "${pressString}" | grep -q "KEY_VOLUMEDOWN";
+		then
+			echo "The [-] was pressed. "
+			return ${VK_DOWN}
+		elif echo "${pressString}" | grep -q "KEY_POWER";
+		then
+			echo "The power key was pressed. "
+			return ${VK_POWER}
+		elif echo "${pressString}" | grep -q "ABS_MT_TRACKING_ID";
+		then
+			echo "The screen was pressed. "
+			return ${VK_SCREEN}
+		else
+			echo "The following unknown event occurred. "
+			echo "${pressString}"
+			return ${EXIT_FAILURE}
 		fi
 	else
 		return ${EOF}
@@ -233,77 +239,82 @@ lengthD=$(echo "$classificationD" | wc -l)
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub. "
-	localCount=0
-	folderCount=0
-	fileCount=0
-	for item in "${dataAppFolder}/"*
-	do
-		if [[ -d "${item}" ]];
-		then
-			folderCount=$(expr ${folderCount} + 1)
-			subItems="$(ls -1 "${item}")"
-			if [[ $(echo "${subItems}" | wc -l) == 1 ]];
-			then
-				firstItem="$(echo "${subItems}" | awk "NR==1")"
-				printableStrings="$(cat "${item}/${firstItem}/base.apk" | strings)"
-				packageName="$(basename "${firstItem}" | cut -d "-" -f 1)"
-				if echo -n "${packageName}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
-				then
-					if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
-					then
-						localCount=$(expr ${localCount} + 1)
-						echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
-						if [[ "${classificationB}" =~ "${packageName}" ]];
-						then
-							echo "which was already in Classification \$B\$. "
-						else
-							echo "which was not in and has been added to Classification \$B\$. "
-							classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
-						fi
-					fi
-				else
-					echo "Failed to resolve the folder \"${item}\". "
-				fi
-			else
-				echo "There is at least 1 additional item in \"${item}\", which should not exist. "
-			fi
-		elif [ -f "${item}" ];
-		then
-			if [[ "${item}" == *.apk ]];
-			then
-				fileCount=$(expr ${fileCount} + 1)
-				printableStrings="$(cat "${item}" | strings)"
-				packageName="$(basename "${item}")"
-				packageName="${packageName%.apk}"
-				if echo -n "${packageName}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
-				then
-					if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
-					then
-						localCount=$(expr ${localCount} + 1)
-						echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
-						if [[ "${classificationB}" =~ "${packageName}" ]];
-						then
-							echo "which was already in Classification \$B\$. "
-						else
-							echo "which was not in and has been added to Classification \$B\$. "
-							classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
-						fi
-					fi
-				else
-					echo "Failed to resolve the APK file \"${item}\". "
-				fi
-			else
-				echo "A file that should not exist was found at \"${item}\". "
-			fi
-		fi
-	done
-	if [[ ${folderCount} -gt 0 ]] && [[ ${fileCount} -gt 0 ]];
+	echo "Please press the [+] key in ${defaultTimeout} seconds if you want to scan the local applications. "
+	getTheKeyPressed
+	if [[ ${VK_UP} == $? ]];
 	then
-		echo "A mixture of folders and files was detected in the \"${dataAppFolder}\" folder. "
+		localCount=0
+		folderCount=0
+		fileCount=0
+		for item in "${dataAppFolder}/"*
+		do
+			if [[ -d "${item}" ]];
+			then
+				folderCount=$(expr ${folderCount} + 1)
+				subItems="$(ls -1 "${item}")"
+				if [[ $(echo "${subItems}" | wc -l) == 1 ]];
+				then
+					firstItem="$(echo "${subItems}" | awk "NR==1")"
+					printableStrings="$(cat "${item}/${firstItem}/base.apk" | strings)"
+					packageName="$(basename "${firstItem}" | cut -d "-" -f 1)"
+					if echo -n "${packageName}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
+					then
+						if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
+						then
+							localCount=$(expr ${localCount} + 1)
+							echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
+							if [[ "${classificationB}" =~ "${packageName}" ]];
+							then
+								echo "which was already in Classification \$B\$. "
+							else
+								echo "which was not in and has been added to Classification \$B\$. "
+								classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
+							fi
+						fi
+					else
+						echo "Failed to resolve the folder \"${item}\". "
+					fi
+				else
+					echo "There is at least 1 additional item in \"${item}\", which should not exist. "
+				fi
+			elif [ -f "${item}" ];
+			then
+				if [[ "${item}" == *.apk ]];
+				then
+					fileCount=$(expr ${fileCount} + 1)
+					printableStrings="$(cat "${item}" | strings)"
+					packageName="$(basename "${item}")"
+					packageName="${packageName%.apk}"
+					if echo -n "${packageName}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
+					then
+						if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
+						then
+							localCount=$(expr ${localCount} + 1)
+							echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
+							if [[ "${classificationB}" =~ "${packageName}" ]];
+							then
+								echo "which was already in Classification \$B\$. "
+							else
+								echo "which was not in and has been added to Classification \$B\$. "
+								classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
+							fi
+						fi
+					else
+						echo "Failed to resolve the APK file \"${item}\". "
+					fi
+				else
+					echo "A file that should not exist was found at \"${item}\". "
+				fi
+			fi
+		done
+		if [[ ${folderCount} -gt 0 ]] && [[ ${fileCount} -gt 0 ]];
+		then
+			echo "A mixture of folders and files was detected in the \"${dataAppFolder}\" folder. "
+		fi
+		classificationB=$(echo -n "${classificationB}" | sort | uniq)
+		lengthB=$(echo "$classificationB" | wc -l)
+		echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub and the local machine. "
 	fi
-	classificationB=$(echo -n "${classificationB}" | sort | uniq)
-	lengthB=$(echo "$classificationB" | wc -l)
-	echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub and the local machine. "
 else
 	classificationB=""
 	lengthB=0
@@ -566,12 +577,12 @@ else
 	exitCode=$(expr $exitCode \| 32)
 	echo "Failed to set permissions. "
 fi
+echo ""
 
 # Exit #
 readonly endTime=$(date +%s%N)
 readonly timeDelta=$(expr ${endTime} - ${startTime})
 
-getKeyPress
 cleanCache
 echo "Finished executing the \`\`action.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s) (${exitCode}). "
 exit ${exitCode}

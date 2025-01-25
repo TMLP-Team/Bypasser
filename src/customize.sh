@@ -9,6 +9,7 @@ readonly VK_UP=38
 readonly VK_DOWN=40
 readonly moduleName="Bypasser"
 readonly moduleId="bypasser"
+readonly defaultTimeout=5
 readonly outerSymbolCount=200
 readonly innerSymbolCount=100
 readonly startTime=$(date +%s%N)
@@ -20,9 +21,14 @@ function cleanCache
 	return 0
 }
 
-function getKeyPress
+function getTheKeyPressed
 {
-	timeout=5
+	if echo "$1" | grep -qE '^[1-9][0-9]*$';
+	then
+		timeout=$1
+	else
+		timeout=${defaultTimeout}
+	fi
 	read -r -t ${timeout} pressString < <(getevent -ql)
 	pressCode=$?
 	if [[ ${EXIT_SUCCESS} == ${pressCode} ]];
@@ -197,7 +203,7 @@ fi
 readonly endTime=$(date +%s%N)
 readonly timeDelta=$(expr ${endTime} - ${startTime})
 
-getKeyPress
+getTheKeyPressed
 cleanCache
 ui_print "Finished executing the \`\`customize.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s). "
 ui_print $(yes "#" | head -n ${outerSymbolCount} | tr -d '\n')

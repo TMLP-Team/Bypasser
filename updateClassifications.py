@@ -165,7 +165,17 @@ def updateSHA512(srcFp:str, encoding:str = "utf-8") -> bool:
 def gitPush() -> bool:
 	commitMessage = "Regular Update ({0})".format(datetime.now().strftime("%Y%m%d%H%M%S"))
 	print("The commit message is \"{0}\". ".format(commitMessage))
-	commandlines = ["git add .", "git commit -m \"{0}\"".format(commitMessage), "git push"]
+	if __import__("platform").system().upper() == "WINDOWS":
+		commandlines = []
+	else:
+		commandlines = [																			\
+			"find . -type d -exec chmod 755 {} \\;", 														\
+			"find . ! -name \"LICENSE\" ! -name \"build.sh\" ! -name \"*.sha512\" -type f -exec chmod 644 {} \\;", 	\
+			"find . -name \"*.sha512\" -type f -exec chmod 444 {} \\;", 										\
+			"chmod 444 \"LICENSE\"", 																\
+			"chmod 744 \"build.sh\""																	\
+		]
+	commandlines.extend(["git add .", "git commit -m \"{0}\"".format(commitMessage), "git push"])
 	for commandline in commandlines:
 		if os.system(commandline) != 0:
 			return False
