@@ -151,6 +151,9 @@ else
 fi
 
 # Action #
+readonly actionFilePath="action.sh"
+gapTime=0
+
 function getTheKeyPressed
 {
 	if echo "$1" | grep -qE '^[1-9][0-9]*$';
@@ -190,39 +193,42 @@ function getTheKeyPressed
 	fi
 }
 
-if [[ -f ./action.sh ]];
+if [[ -f "${actionFilePath}" ]];
 then
-	if [[ -x ./action.sh ]];
+	if [[ -x "${actionFilePath}" ]];
 	then
-		if ! sh -n "action.sh";
+		if ! sh -n "${actionFilePath}";
 		then
-			abort "The \`\`action.sh\`\` contained syntax errors. "
+			abort "The \`\`"${actionFilePath}"\`\` contained syntax errors. "
 		fi
 	else
-		abort "The \`\`action.sh\`\` was not executable. "
+		abort "The \`\`"${actionFilePath}"\`\` was not executable. "
 	fi
 else
-	abort "The \`\`action.sh\`\` was missing. "
+	abort "The \`\`"${actionFilePath}"\`\` was missing. "
 fi
 ui_print "Please press the [+] key in ${defaultTimeout} seconds if you want to scan the local applications. "
+startGapTime=$(date +%s%N)
 keyMessage="$(getTheKeyPressed)"
 keyCode=$?
+endGapTime=$(date +%s%N)
+gapTime=$(expr ${endGapTime} - ${startGapTime})
 ui_print "${keyMessage}"
 ui_print $(yes "=" | head -n ${innerSymbolCount} | tr -d '\n')
-actionStrings="$(sh ./action.sh ${keyCode})"
+actionStrings="$(sh "${actionFilePath}" ${keyCode})"
 exitCode=$?
 ui_print "${actionStrings}"
 ui_print $(yes "=" | head -n ${innerSymbolCount} | tr -d '\n')
 if [[ ${EXIT_SUCCESS} == ${exitCode} ]];
 then
-	ui_print "Successfully executed the \`\`action.sh\`\` (${exitCode}). "
+	ui_print "Successfully executed the \`\`"${actionFilePath}"\`\` (${exitCode}). "
 else
-	ui_print "Warning: The execution of \`\`action.sh\`\` returned a non-zero exit code (${exitCode}). "
+	ui_print "Warning: The execution of \`\`"${actionFilePath}"\`\` returned a non-zero exit code (${exitCode}). "
 fi
 
 # Finish #
 readonly endTime=$(date +%s%N)
-readonly timeDelta=$(expr ${endTime} - ${startTime})
+readonly timeDelta=$(expr ${endTime} - ${startTime} - ${gapTime})
 
 cleanCache
 ui_print "Finished executing the \`\`customize.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s). "

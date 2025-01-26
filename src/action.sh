@@ -54,22 +54,22 @@ then
 				else
 					echo "Failed to execute \`\`action.sh\`\` since the necessary script \`\`${actionPath}\`\` was not executable. "
 					echo "Please try to flash the latest version of the ${moduleName} Magisk Module. "
-					exit 2
+					exit ${EXIT_FAILURE}
 				fi
 			else
 				echo "Failed to execute \`\`action.sh\`\` since the necessary script \`\`${actionPath}\`\` was missing. "
 				echo "Please try to flash the latest version of the ${moduleName} Magisk Module. "
-				exit 3
+				exit ${EXIT_FAILURE}
 			fi
 		else
 			echo "Failed to execute \`\`action.sh\`\` since improper configurations were detected. "
 			echo "Please try to flash the latest version of the ${moduleName} Magisk Module. "
-			exit 4
+			exit ${EXIT_FAILURE}
 		fi
 	else
 		echo "Failed to execute \`\`action.sh\`\` since configurations are missing. "
 		echo "Please try to flash the latest version of the ${moduleName} Magisk Module. "
-		exit 5
+		exit ${EXIT_FAILURE}
 	fi
 else
 	echo "Failed to execute \`\`action.sh\`\` since the working directory \"$(pwd)\" is unexpected. "

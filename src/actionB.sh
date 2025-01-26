@@ -44,6 +44,7 @@ readonly blacklistConfigFileName=".HMAL_Blacklist_Config.json"
 readonly blacklistConfigFilePath="${configFolderPath}/${blacklistConfigFileName}"
 readonly whitelistConfigFileName=".HMAL_Whitelist_Config.json"
 readonly whitelistConfigFilePath="${configFolderPath}/${whitelistConfigFileName}"
+gapTime=0
 
 function getClassification
 {
@@ -246,8 +247,11 @@ then
 		keyCode="$1"
 	else
 		echo "Please press the [+] key in ${defaultTimeout} seconds if you want to scan the local applications. "
+		startGapTime=$(date +%s%N)
 		getTheKeyPressed
 		keyCode=$?
+		endGapTime=$(date +%s%N)
+		gapTime=$(expr ${endGapTime} - ${startGapTime})
 	fi
 	if [[ "${keyCode}" -eq ${VK_UP} ]];
 	then
@@ -599,7 +603,7 @@ echo ""
 
 # Exit #
 readonly endTime=$(date +%s%N)
-readonly timeDelta=$(expr ${endTime} - ${startTime})
+readonly timeDelta=$(expr ${endTime} - ${startTime} - ${gapTime})
 
 cleanCache
 echo "Finished executing the \`\`action.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s) (${exitCode}). "
