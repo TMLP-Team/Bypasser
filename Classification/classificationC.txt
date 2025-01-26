@@ -3,6 +3,7 @@ com.byxiaorun.detector
 com.henrikherzig.playintegritychecker
 com.reveny.nativecheck
 com.sefu.vmessfree
+com.thend.integritychecker
 com.tsng.applistdetector
 com.zhenxi.hunter
 gr.nikolasspyr.integritycheck

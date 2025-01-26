@@ -232,13 +232,29 @@ function getWhitelistScopeString
 
 classificationB="$(getClassification "B")"
 returnCodeB=$?
-lengthB=$(echo "$classificationB" | wc -l)
+if [[ -n "${classificationB}" ]];
+then
+	lengthB=$(echo "${classificationB}" | wc -l)
+else
+	lengthB=0
+fi
 classificationC="$(getClassification "C")"
 returnCodeC=$?
-lengthC=$(echo "$classificationC" | wc -l)
+if [[ -n "${classificationC}" ]];
+then
+	lengthC=$(echo "${classificationC}" | wc -l)
+else
+	lengthC=0
+fi
 classificationD="$(getClassification "D")"
 returnCodeD=$?
-lengthD=$(echo "$classificationD" | wc -l)
+if [[ -n "${classificationD}" ]];
+then
+	lengthD=$(echo "${classificationD}" | wc -l)
+else
+	lengthD=0
+fi
+classificationL=""
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub. "
@@ -271,6 +287,15 @@ then
 					packageName="$(basename "${firstItem}" | cut -d "-" -f 1)"
 					if echo -n "${packageName}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
 					then
+						if [[ "${packageName}" != "com.google.android.gms" && ! "$(echo -e -n "${classificationB}\n${classificationC}\n${classificationD}")" =~ "${packageName}" ]];
+						then
+							if [[ -z "${classificationL}" ]];
+							then
+								classificationL="${packageName}"
+							else
+								classificationL="$(echo -e -n "${classificationL}\n${packageName}")"
+							fi
+						fi
 						if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
 						then
 							localCount=$(expr ${localCount} + 1)
@@ -299,6 +324,15 @@ then
 					packageName="${packageName%.apk}"
 					if echo -n "${packageName}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
 					then
+						if [[ "${packageName}" != "com.google.android.gms" && ! "$(echo -e -n "${classificationB}\n${classificationC}\n${classificationD}")" =~ "${packageName}" ]];
+						then
+							if [[ -z "${classificationL}" ]];
+							then
+								classificationL="${packageName}"
+							else
+								classificationL="$(echo -e -n "${classificationL}\n${packageName}")"
+							fi
+						fi
 						if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
 						then
 							localCount=$(expr ${localCount} + 1)
@@ -331,6 +365,12 @@ else
 	classificationB=""
 	lengthB=0
 	echo "Failed to fetch package names of Classification \$B\$ from GitHub. "
+fi
+if [[ -n "${classificationL}" ]];
+then
+	lengthL=$(echo "${classificationL}" | wc -l)
+else
+	lengthL=0
 fi
 if [[ ${returnCodeC} == ${EXIT_SUCCESS} ]];
 then
@@ -451,19 +491,23 @@ then
 		then
 			lines="$(echo -e -n "${lines}\n$(echo -n "${classificationD}")")"
 		fi
+		if [[ -n "${classificationL}" ]];
+		then
+			lines="$(echo -e -n "${lines}\n$(echo -n "${classificationL}")")"
+		fi
 		lines=$(echo -n "${lines}" | sort | uniq)
 		echo "${lines}" > "${trickyStoreTargetFilePath}"
 		if [[ $? -eq ${EXIT_SUCCESS} && -f "${trickyStoreTargetFilePath}" ]];
 		then
 			cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
 			echo "Successfully wrote ${cnt} target(s) to \"${trickyStoreTargetFilePath}\". "
-			expectedCount=$(expr 1 + ${lengthB} + ${lengthC} + ${lengthD})
+			expectedCount=$(expr 1 + ${lengthB} + ${lengthC} + ${lengthD} + ${lengthL})
 			if [[ ${cnt} == ${expectedCount} ]];
 			then
-				echo "Successfully verified \"${trickyStoreTargetFilePath}\" (${cnt} = ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD}). "
+				echo "Successfully verified \"${trickyStoreTargetFilePath}\" (${cnt} = ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD} + ${lengthL}). "
 			else
 				exitCode=$(expr ${exitCode} \| 4)
-				echo "Failed to verify \"${trickyStoreTargetFilePath}\" (${cnt} != ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD}). "
+				echo "Failed to verify \"${trickyStoreTargetFilePath}\" (${cnt} != ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD} + ${lengthL}). "
 			fi
 		else
 			exitCode=$(expr ${exitCode} \| 4)
