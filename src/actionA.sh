@@ -371,7 +371,7 @@ then
 		then
 			lengthL=$(echo "${classificationL}" | wc -l)
 			echo "Successfully fetched ${lengthL} additional package name(s) from the local machine. "
-			echo "Kindly report the package name(s) with corresponding classification(s) to \"${reportLink}\" if you wish to. "
+			echo "Kindly report the package name(s) with the corresponding classification(s) to \"${reportLink}\" if you wish to. "
 		else
 			echo "No additional package names were fetched from the local machine. "
 		fi
