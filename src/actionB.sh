@@ -44,6 +44,7 @@ readonly blacklistConfigFileName=".HMAL_Blacklist_Config.json"
 readonly blacklistConfigFilePath="${configFolderPath}/${blacklistConfigFileName}"
 readonly whitelistConfigFileName=".HMAL_Whitelist_Config.json"
 readonly whitelistConfigFilePath="${configFolderPath}/${whitelistConfigFileName}"
+readonly reportLink="https://github.com/TMLP-Team/Bypasser"
 gapTime=0
 
 function getClassification
@@ -255,6 +256,7 @@ else
 	lengthD=0
 fi
 classificationL=""
+lengthL=0
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub. "
@@ -358,19 +360,26 @@ then
 			echo "A mixture of folders and files was detected in the \"${dataAppFolder}\" folder. "
 		fi
 		classificationB=$(echo -n "${classificationB}" | sort | uniq)
-		lengthB=$(echo "$classificationB" | wc -l)
+		if [[ -n "${classificationB}" ]];
+		then
+			lengthB=$(echo "${classificationB}" | wc -l)
+		else
+			lengthB=0
+		fi
 		echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub and the local machine. "
+		if [[ -n "${classificationL}" ]];
+		then
+			lengthL=$(echo "${classificationL}" | wc -l)
+			echo "Successfully fetched ${lengthL} additional package name(s) from the local machine. "
+			echo "Kindly report the package name(s) with corresponding classification(s) to \"${reportLink}\" if you wish to. "
+		else
+			echo "No additional package names were fetched from the local machine. "
+		fi
 	fi
 else
 	classificationB=""
 	lengthB=0
 	echo "Failed to fetch package names of Classification \$B\$ from GitHub. "
-fi
-if [[ -n "${classificationL}" ]];
-then
-	lengthL=$(echo "${classificationL}" | wc -l)
-else
-	lengthL=0
 fi
 if [[ ${returnCodeC} == ${EXIT_SUCCESS} ]];
 then
