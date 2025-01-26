@@ -115,6 +115,7 @@ function getTheKeyPressed
 			return ${EXIT_FAILURE}
 		fi
 	else
+		echo "Users did not respond within ${timeout} second(s). "
 		return ${EOF}
 	fi
 }
@@ -240,9 +241,15 @@ lengthD=$(echo "$classificationD" | wc -l)
 if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub. "
-	echo "Please press the [+] key in ${defaultTimeout} seconds if you want to scan the local applications. "
-	getTheKeyPressed
-	if [[ $? -eq ${VK_UP} ]];
+	if [[ $# -ge 1 ]];
+	then
+		keyCode="$1"
+	else
+		echo "Please press the [+] key in ${defaultTimeout} seconds if you want to scan the local applications. "
+		getTheKeyPressed
+		keyCode=$?
+	fi
+	if [[ "${keyCode}" -eq ${VK_UP} ]];
 	then
 		localCount=0
 		folderCount=0
@@ -519,7 +526,7 @@ then
 				echo "Successfully verified the latest \`\`${targetAction}\`\`. "
 				if echo "${shellContent}" | sh -n;
 				then
-					echo "The latest \`\`${targetAction}\`\` successfully passed the local shell syntax check. "
+					echo "The latest \`\`${targetAction}\`\` successfully passed the local shell syntax check (sh). "
 					rm -f "${targetAction}"
 					echo "${shellContent}" > "${targetAction}"
 					if [[ $? -eq ${EXIT_SUCCESS} && -f "${targetAction}" ]];
@@ -540,7 +547,7 @@ then
 					fi
 				else
 					exitCode=$(expr ${exitCode} \| 16)
-					echo "The latest \`\`${targetAction}\`\` failed to pass the local shell syntax check. "
+					echo "The latest \`\`${targetAction}\`\` failed to pass the local shell syntax check (sh). "
 				fi
 			else
 				exitCode=$(expr ${exitCode} \| 16)

@@ -21,44 +21,6 @@ function cleanCache
 	return 0
 }
 
-function getTheKeyPressed
-{
-	if echo "$1" | grep -qE '^[1-9][0-9]*$';
-	then
-		timeout=$1
-	else
-		timeout=${defaultTimeout}
-	fi
-	read -r -t ${timeout} pressString < <(getevent -ql)
-	pressCode=$?
-	if [[ ${EXIT_SUCCESS} == ${pressCode} ]];
-	then
-		if echo "${pressString}" | grep -q "KEY_VOLUMEUP";
-		then
-			echo "The [+] was pressed. "
-			return ${VK_UP}
-		elif echo "${pressString}" | grep -q "KEY_VOLUMEDOWN";
-		then
-			echo "The [-] was pressed. "
-			return ${VK_DOWN}
-		elif echo "${pressString}" | grep -q "KEY_POWER";
-		then
-			echo "The power key was pressed. "
-			return ${VK_POWER}
-		elif echo "${pressString}" | grep -q "ABS_MT_TRACKING_ID";
-		then
-			echo "The screen was pressed. "
-			return ${VK_SCREEN}
-		else
-			echo "The following unknown event occurred. "
-			echo "${pressString}"
-			return ${EXIT_FAILURE}
-		fi
-	else
-		return ${EOF}
-	fi
-}
-
 ui_print ""
 ui_print $(yes "#" | head -n ${outerSymbolCount} | tr -d '\n')
 ui_print "Welcome to the installer of the ${moduleName} Magisk Module! "
@@ -124,8 +86,19 @@ do
 		sha512Expected="$(cat "${sha512FilePath}")"
 		if [[ "${sha512Computed}" == "${sha512Expected}" ]];
 		then
-			((++successCount))
-			echo "Successfully verified \"${file}\". "
+			if [[ "${file}" == *.sh ]];
+			then
+				if sh -n "${file}";
+				then
+					((++successCount))
+					echo "Successfully verified \"${file}\" and it successfully passed the local shell syntax check (sh). "
+				else
+					echo "Successfully verified \"${file}\" but it failed to pass the local shell syntax check (sh). "
+				fi
+			else
+				((++successCount))
+				echo "Successfully verified \"${file}\". "
+			fi
 		else
 			echo "Failed to verify \"${file}\". "
 		fi
@@ -135,7 +108,7 @@ do
 done
 if [[ ${totalCount} == ${successCount} ]];
 then
-	echo "Successfully verified all the files. "
+	echo "Successfully verified all the files and they all passed the local shell syntax check (sh). "
 	find . -type f -name "*.sha512" -delete
 	if [[ $? -eq ${EXIT_SUCCESS} ]];
 	then
@@ -144,7 +117,7 @@ then
 		echo "Failed to remove all the SHA-512 value files. "
 	fi
 else
-	abort "Failed to verify all the files. "
+	abort "Failed to verify all the files or some of the scripts failed to pass the local shell syntax check (sh). "
 fi
 
 # Permission #
@@ -178,18 +151,65 @@ else
 fi
 
 # Action #
+function getTheKeyPressed
+{
+	if echo "$1" | grep -qE '^[1-9][0-9]*$';
+	then
+		timeout=$1
+	else
+		timeout=${defaultTimeout}
+	fi
+	read -r -t ${timeout} pressString < <(getevent -ql)
+	pressCode=$?
+	if [[ ${EXIT_SUCCESS} == ${pressCode} ]];
+	then
+		if echo "${pressString}" | grep -q "KEY_VOLUMEUP";
+		then
+			echo "The [+] was pressed. "
+			return ${VK_UP}
+		elif echo "${pressString}" | grep -q "KEY_VOLUMEDOWN";
+		then
+			echo "The [-] was pressed. "
+			return ${VK_DOWN}
+		elif echo "${pressString}" | grep -q "KEY_POWER";
+		then
+			echo "The power key was pressed. "
+			return ${VK_POWER}
+		elif echo "${pressString}" | grep -q "ABS_MT_TRACKING_ID";
+		then
+			echo "The screen was pressed. "
+			return ${VK_SCREEN}
+		else
+			echo "The following unknown event occurred. "
+			echo "${pressString}"
+			return ${EXIT_FAILURE}
+		fi
+	else
+		echo "Users did not respond within ${timeout} second(s). "
+		return ${EOF}
+	fi
+}
+
 if [[ -f ./action.sh ]];
 then
-	if [[ ! -x ./action.sh ]];
+	if [[ -x ./action.sh ]];
 	then
-		abort "The \`\`action.sh\`\` is not executable. "
+		if ! sh -n "action.sh";
+		then
+			abort "The \`\`action.sh\`\` contained syntax errors. "
+		fi
+	else
+		abort "The \`\`action.sh\`\` was not executable. "
 	fi
 else
-	abort "The \`\`action.sh\`\` is missing. "
+	abort "The \`\`action.sh\`\` was missing. "
 fi
-ui_print "Please press the [+] key in the ${defaultTimeout}-th second after you see this message if you want to scan the local applications. "
+ui_print "Please press the [+] key in ${defaultTimeout} seconds if you want to scan the local applications. "
+keyMessage="$(getTheKeyPressed)"
+keyCode=$?
+ui_print "${keyMessage}"
 ui_print $(yes "=" | head -n ${innerSymbolCount} | tr -d '\n')
-actionStrings="$(sh ./action.sh)"
+actionStrings="$(sh ./action.sh ${keyCode})"
 exitCode=$?
 ui_print "${actionStrings}"
 ui_print $(yes "=" | head -n ${innerSymbolCount} | tr -d '\n')
@@ -204,7 +224,6 @@ fi
 readonly endTime=$(date +%s%N)
 readonly timeDelta=$(expr ${endTime} - ${startTime})
 
-getTheKeyPressed
 cleanCache
 ui_print "Finished executing the \`\`customize.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s). "
 ui_print $(yes "#" | head -n ${outerSymbolCount} | tr -d '\n')

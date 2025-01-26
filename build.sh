@@ -46,7 +46,7 @@ if [[ $? == ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleName}" ]]; the
 	echo "The current working directory is \"$(pwd)\". "
 else
 	echo "The working directory \"$(pwd)\" is unexpected. "
-	exit 1
+	exit ${EOF}
 fi
 setPermissions
 if [[ $? == ${EXIT_SUCCESS} ]];
@@ -56,20 +56,31 @@ else
 	echo "Failed to set permissions. "
 fi
 
+# Check #
+readonly srcFolderPath="src"
+
+find . -name "*.sh" -exec bash -n {} \;
+if [[ $? == ${EXIT_SUCCESS} ]];
+then
+	echo "All the scripts successfully passed the local shell syntax check (bash). "
+else
+	echo "Some of the scripts failed to pass the local shell syntax check (bash). "
+	exit ${EXIT_FAILURE}
+fi
+
 # Pack #
-srcFolderPath="src"
-propFileName="module.prop"
-propFilePath="${srcFolderPath}/${propFileName}"
-propContent="id=${moduleId}\n\
+readonly propFileName="module.prop"
+readonly propFilePath="${srcFolderPath}/${propFileName}"
+readonly propContent="id=${moduleId}\n\
 name=${moduleName}\n\
 version=v${moduleVersion}\n\
 versionCode=${moduleVersion}\n\
 author=TMLP Team\n\
 description=This is a developing Magisk module for bypassing Android environment detection related to TMLP. The abbreviation \"TMLP\" stands for anything related to TWRP, Magisk, LSPosed, and Plugins. \n\
 updateJson=https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Update.json"
-zipFolderPath="Release"
-zipFileName="${moduleName}_v${moduleVersion}.zip"
-zipFilePath="${zipFolderPath}/${zipFileName}"
+readonly zipFolderPath="Release"
+readonly zipFileName="${moduleName}_v${moduleVersion}.zip"
+readonly zipFilePath="${zipFolderPath}/${zipFileName}"
 
 if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolderPath}/system" ]]; then
 	echo "Sources were found to be packed. "
@@ -119,9 +130,9 @@ else
 fi
 
 # Log #
-changelogFolderPath="Changelog"
-changelogFileName="${moduleName}_v${moduleVersion}.md"
-changelogFilePath="${changelogFolderPath}/${changelogFileName}"
+readonly changelogFolderPath="Changelog"
+readonly changelogFileName="${moduleName}_v${moduleVersion}.md"
+readonly changelogFilePath="${changelogFolderPath}/${changelogFileName}"
 
 if [[ ! -d "${changelogFolderPath}" ]]; then
 	mkdir -p "${changelogFolderPath}"
@@ -157,15 +168,16 @@ else
 fi
 
 # Update #
-updateFolderPath="."
-updateFileName="Update.json"
-updateFilePath="${updateFolderPath}/${updateFileName}"
-updateContent="{\n\
+readonly updateFolderPath="."
+readonly updateFileName="Update.json"
+readonly updateFilePath="${updateFolderPath}/${updateFileName}"
+readonly updateContent="{\n\
 	\"version\":\"v${moduleVersion}\", \n\
 	\"versionCode\":${moduleVersion}, \n\
 	\"zipUrl\":\"https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/${zipFilePath}\", \n\
 	\"changelog\":\"https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/${changelogFilePath}\"\n\
 }"
+
 if [[ ! -d "${updateFolderPath}" ]]; then
 	mkdir -p "${updateFolderPath}"
 fi

@@ -173,7 +173,8 @@ def gitPush() -> bool:
 			"find . ! -name \"LICENSE\" ! -name \"build.sh\" ! -name \"*.sha512\" -type f -exec chmod 644 {} \\;", 	\
 			"find . -name \"*.sha512\" -type f -exec chmod 444 {} \\;", 										\
 			"chmod 444 \"LICENSE\"", 																\
-			"chmod 744 \"build.sh\""																	\
+			"chmod 744 \"build.sh\"", 																\
+			"find . -name \"*.sh\" -exec bash -n {} \\;"													\
 		]
 	commandlines.extend(["git add .", "git commit -m \"{0}\"".format(commitMessage), "git push"])
 	for commandline in commandlines:

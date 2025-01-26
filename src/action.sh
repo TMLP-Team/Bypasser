@@ -6,8 +6,6 @@ readonly moduleName="Bypasser"
 readonly moduleId="bypasser"
 readonly actionFolderPath="$(dirname "$0")"
 readonly actionPropPath="action.prop"
-readonly actionAPath="actionA.sh"
-readonly actionBPath="actionB.sh"
 
 function setPermissions
 {
@@ -37,29 +35,41 @@ then
 	if [[ -f "${actionPropPath}" ]];
 	then
 		target="$(cat "${actionPropPath}")";
-		if [[ "A" == "${target}" ]];
+		if [[ "A" == "${target}" || "B" == "${target}" ]];
 		then
-			if [[ -f "${actionAPath}" ]];
+			actionPath="action${target}.sh"
+			if [[ -f "${actionPath}" ]];
 			then
-				sh "${actionAPath}"
-				exit ${EXIT_SUCCESS}
-			fi
-		elif [[ "B" == "${target}" ]];
-		then
-			if [[ -f "${actionBPath}" ]];
-			then
-				sh "${actionBPath}"
-				exit ${EXIT_SUCCESS}
+				if [[ -x "${actionPath}" ]];
+				then
+					if sh -n "${actionPath}";
+					then
+						sh "${actionPath}" "$@"
+						exit ${EXIT_SUCCESS}
+					else
+						echo "Failed to execute \`\`action.sh\`\` since the necessary script \`\`${actionPath}\`\` failed to pass the local shell syntax check (sh). "
+						echo "Please try to flash the latest version of the ${moduleName} Magisk Module. "
+						exit ${EXIT_FAILURE}
+					fi
+				else
+					echo "Failed to execute \`\`action.sh\`\` since the necessary script \`\`${actionPath}\`\` was not executable. "
+					echo "Please try to flash the latest version of the ${moduleName} Magisk Module. "
+					exit 2
+				fi
+			else
+				echo "Failed to execute \`\`action.sh\`\` since the necessary script \`\`${actionPath}\`\` was missing. "
+				echo "Please try to flash the latest version of the ${moduleName} Magisk Module. "
+				exit 3
 			fi
 		else
-			echo "Failed to execute \`\`action.sh\`\` since improper configurations are detected. "
+			echo "Failed to execute \`\`action.sh\`\` since improper configurations were detected. "
 			echo "Please try to flash the latest version of the ${moduleName} Magisk Module. "
-			exit ${EXIT_FAILURE}
+			exit 4
 		fi
 	else
 		echo "Failed to execute \`\`action.sh\`\` since configurations are missing. "
 		echo "Please try to flash the latest version of the ${moduleName} Magisk Module. "
-		exit ${EXIT_FAILURE}
+		exit 5
 	fi
 else
 	echo "Failed to execute \`\`action.sh\`\` since the working directory \"$(pwd)\" is unexpected. "
