@@ -517,23 +517,30 @@ then
 			if [[ "$(echo "${shellContent}" | sha512sum | cut -d " " -f1)" == "${shellDigest}" ]];
 			then
 				echo "Successfully verified the latest \`\`${targetAction}\`\`. "
-				rm -f "${targetAction}"
-				echo "${shellContent}" > "${targetAction}"
-				if [[ $? -eq ${EXIT_SUCCESS} && -f "${targetAction}" ]];
+				if echo "${shellContent}" | sh -n;
 				then
-					echo "Successfully updated \`\`${targetAction}\`\`. "
-					rm -f "${actionPropPath}"
-					echo -n "${targetAB}" > "${actionPropPath}"
-					if [[ $? -eq ${EXIT_SUCCESS} && -f "${actionPropPath}" ]];
+					echo "The latest \`\`${targetAction}\`\` successfully passed the local shell syntax check. "
+					rm -f "${targetAction}"
+					echo "${shellContent}" > "${targetAction}"
+					if [[ $? -eq ${EXIT_SUCCESS} && -f "${targetAction}" ]];
 					then
-						echo "Successfully switched to \`\`${targetAction}\`\` in \"${actionPropPath}\". "
+						echo "Successfully updated \`\`${targetAction}\`\`. "
+						rm -f "${actionPropPath}"
+						echo -n "${targetAB}" > "${actionPropPath}"
+						if [[ $? -eq ${EXIT_SUCCESS} && -f "${actionPropPath}" ]];
+						then
+							echo "Successfully switched to \`\`${targetAction}\`\` in \"${actionPropPath}\". "
+						else
+							exitCode=$(expr ${exitCode} \| 16)
+							echo "Failed to switch to \`\`${targetAction}\`\` in \"${actionPropPath}\". "
+						fi
 					else
 						exitCode=$(expr ${exitCode} \| 16)
-						echo "Failed to switch to \`\`${targetAction}\`\` in \"${actionPropPath}\". "
+						echo "Failed to update \`\`${targetAction}\`\`. "
 					fi
 				else
 					exitCode=$(expr ${exitCode} \| 16)
-					echo "Failed to update \`\`${targetAction}\`\`. "
+					echo "The latest \`\`${targetAction}\`\` failed to pass the local shell syntax check. "
 				fi
 			else
 				exitCode=$(expr ${exitCode} \| 16)

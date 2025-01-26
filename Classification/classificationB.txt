@@ -53,6 +53,7 @@ cn.wwl.xposed.hook
 cn.xihan.qdds
 cn.yhfcn.mipushfaker
 cn.yhfcn.samsung_clockfix
+coloros.pagelimits.mod
 com.agoines.relaxhelp
 com.ailr.SeemNetOfTranslate
 com.akari.ppx
