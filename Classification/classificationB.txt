@@ -3,6 +3,7 @@ Cleaner.Royall
 Fuck.RollingSky.Pay
 Hook.JiuWu.Xp
 It.dhd.oxygencustomizer
+Telegram.Speed.Hook
 akhil.alltrans
 android.xiaolan.ppxshare.tools
 androidx.top.hyperos.dynamic.notify
@@ -267,6 +268,7 @@ com.souleven.photosfix
 com.strawing.alwaysthemedicon
 com.strawing.fuckdevicepolicy
 com.suisho.pixelposed
+com.suqi8.oshin
 com.surcumference.fingerprintpay
 com.tcgg.imjhook
 com.termux
@@ -354,6 +356,7 @@ foss.coolest.fucker
 fr.netstat.locationindicatorwhitelist
 fuck.location
 fucking.internet.tile
+fuckinginput.coloros.baidu
 github.zerorooot.copyfenbi
 github.zerorooot.fuckbilibilivote
 github.zerorooot.hidemiuiclipboarddialog
@@ -384,7 +387,9 @@ io.github.duzhaokun123.fuckcainiao
 io.github.duzhaokun123.tasklabelastasktitle
 io.github.duzhaokun123.yamf
 io.github.enhancege
+io.github.howard20181.notificationiconfix
 io.github.huskydg.magisk
+io.github.icepony.alwayscreateuser
 io.github.jeffshee.nekumorimod
 io.github.lamprose.mi_ultra
 io.github.liusj5257
