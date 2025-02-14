@@ -46,8 +46,10 @@ com.flipkart.android
 com.google.android.apps.maps
 com.google.android.apps.messaging
 com.google.android.apps.youtube.music
+com.google.android.contactkeys
 com.google.android.gm
 com.google.android.googlequicksearchbox
+com.google.android.safetycore
 com.google.android.youtube
 com.hdfcbank.payzapp
 com.heytap.browser
