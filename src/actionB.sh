@@ -465,11 +465,22 @@ echo ""
 echo "# Tricky Store (0b000X00) #"
 readonly trickyStoreFolderPath="../../tricky_store"
 readonly trickyStoreTargetFileName="target.txt"
+readonly trickyStoreSecurityPatchFileName="security_patch.txt"
 readonly trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
+readonly trickyStoreSecurityPatchFilePath="${trickyStoreFolderPath}/${trickyStoreSecurityPatchFileName}"
+readonly patchContent="$(date +%Y%m%d)"
 
 if [[ -d "${trickyStoreFolderPath}" ]];
 then
 	echo "The tricky store folder was found at \"${trickyStoreFolderPath}\". "
+	echo "${patchContent}" > "${trickyStoreSecurityPatchFilePath}"
+	if [[ $? -eq ${EXIT_SUCCESS} && -f "${trickyStoreSecurityPatchFilePath}" ]];
+	then
+		echo "Successfully wrote \"${patchContent}\" to \"${trickyStoreSecurityPatchFilePath}\". "
+	else
+		exitCode=$(expr ${exitCode} \| 4)
+		echo "Failed to write \"${patchContent}\" to \"${trickyStoreSecurityPatchFilePath}\". "
+	fi
 	abortFlag=${EXIT_SUCCESS}
 	if [[ -f "${trickyStoreTargetFilePath}" ]];
 	then
