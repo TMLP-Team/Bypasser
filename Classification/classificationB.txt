@@ -168,6 +168,7 @@ com.hchen.autoseffswitch
 com.hchen.clipboardlist
 com.hchen.foregroundpin
 com.hchen.pinningapp
+com.hchen.switchfreeform
 com.hd.hdtool
 com.hello.world
 com.hentai.q
@@ -267,6 +268,7 @@ com.somebody.vipFucker
 com.souleven.photosfix
 com.strawing.alwaysthemedicon
 com.strawing.fuckdevicepolicy
+com.suisho.disablescreenshotsound
 com.suisho.pixelposed
 com.suqi8.oshin
 com.surcumference.fingerprintpay
@@ -395,6 +397,7 @@ io.github.lamprose.mi_ultra
 io.github.liusj5257
 io.github.lsposed.disableflagsecure
 io.github.lzghzr.biliveinvisible
+io.github.lzghzr.xperiaservicemenu
 io.github.lzghzr.xperiaupdatecenter
 io.github.nitsuya.aa.display
 io.github.nitsuya.donottryaccessibility
