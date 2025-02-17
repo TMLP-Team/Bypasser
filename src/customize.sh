@@ -35,19 +35,19 @@ fi
 cleanCache
 
 # Manager #
-readonly MIN_MAGISK_VER_CODE=28000
-readonly MIN_KSU_VER_CODE=11981
 readonly MIN_APATCH_VER_CODE=10927
+readonly MIN_KSU_VER_CODE=11981
+readonly MIN_MAGISK_VER_CODE=28000
 
 if $BOOTMODE;
 then
-	if [[ -n "${MAGISK_VER_CODE}" ]];
+	if [[ "${APATCH}" == "true" ]];
 	then
-		if [[ ${MAGISK_VER_CODE} -ge ${MIN_MAGISK_VER_CODE} ]];
+		if [[ ${APATCH_VER_CODE} -ge ${MIN_APATCH_VER_CODE} ]];
 		then
-			ui_print "The action button is supported (Magisk ${MAGISK_VER_CODE}). "
+			ui_print "The action button is supported (Apatch ${APATCH_VER_CODE}). "
 		else
-			ui_print "Warning: The action button is not supported (Magisk ${MAGISK_VER_CODE}). You can update dynamic configurations only by flashing this module. Please try to use the latest Magisk manager (>= ${MIN_MAGISK_VER_CODE}). "
+			ui_print "Warning: The action button is not supported (Apatch ${APATCH_VER_CODE}). You can update dynamic configurations only by flashing this module. Please try to use the latest Apatch manager (>= ${MIN_APATCH_VER_CODE}). "
 		fi
 	elif [[ "${KSU}" == "true" ]];
 	then
@@ -57,13 +57,13 @@ then
 		else
 			ui_print "Warning: The action button is not supported (KSU ${KSU_VER_CODE}). You can update dynamic configurations only by flashing this module. Please try to use the latest KSU manager (>= ${MIN_KSU_VER_CODE}). "
 		fi
-	elif [[ "${APATCH}" == "true" ]];
+	elif [[ -n "${MAGISK_VER_CODE}" ]];
 	then
-		if [[ ${APATCH_VER_CODE} -ge ${MIN_APATCH_VER_CODE} ]];
+		if [[ ${MAGISK_VER_CODE} -ge ${MIN_MAGISK_VER_CODE} ]];
 		then
-			ui_print "The action button is supported (Apatch ${APATCH_VER_CODE}). "
+			ui_print "The action button is supported (Magisk ${MAGISK_VER_CODE}). "
 		else
-			ui_print "Warning: The action button is not supported (Apatch ${APATCH_VER_CODE}). You can update dynamic configurations only by flashing this module. Please try to use the latest Apatch manager (>= ${MIN_APATCH_VER_CODE}). "
+			ui_print "Warning: The action button is not supported (Magisk ${MAGISK_VER_CODE}). You can update dynamic configurations only by flashing this module. Please try to use the latest Magisk manager (>= ${MIN_MAGISK_VER_CODE}). "
 		fi
 	else
 		ui_print "Warning: Cannot guarantee whether the action button is supported. You may need to update dynamic configurations by flashing this module. "
@@ -78,7 +78,7 @@ totalCount=0
 
 find . -type f ! -name "*.sha512" | while read file;
 do
-	((++totalCount))
+	totalCount=$(expr ${totalCount} + 1)
 	sha512Computed=$(sha512sum "$file" | cut -d " " -f1)
 	sha512FilePath="${file}.sha512"
 	if [[ -f "${sha512FilePath}" ]];
@@ -90,13 +90,13 @@ do
 			then
 				if sh -n "${file}";
 				then
-					((++successCount))
+					successCount=$(expr ${successCount} + 1)
 					echo "Successfully verified \"${file}\" and it successfully passed the local shell syntax check (sh). "
 				else
 					echo "Successfully verified \"${file}\" but it failed to pass the local shell syntax check (sh). "
 				fi
 			else
-				((++successCount))
+				successCount=$(expr ${successCount} + 1)
 				echo "Successfully verified \"${file}\". "
 			fi
 		else

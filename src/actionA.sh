@@ -40,10 +40,10 @@ readonly dataAppFolder="/data/app"
 readonly blacklistName="Blacklist"
 readonly whitelistName="Whitelist"
 readonly configFolderPath="/sdcard/Download"
-readonly blacklistConfigFileName=".HMAL_Blacklist_Config.json"
-readonly blacklistConfigFilePath="${configFolderPath}/${blacklistConfigFileName}"
-readonly whitelistConfigFileName=".HMAL_Whitelist_Config.json"
-readonly whitelistConfigFilePath="${configFolderPath}/${whitelistConfigFileName}"
+readonly blacklistConfigurationFileName=".HMAL_Blacklist_Config.json"
+readonly blacklistConfigurationFilePath="${configFolderPath}/${blacklistConfigurationFileName}"
+readonly whitelistConfigurationFileName=".HMAL_Whitelist_Config.json"
+readonly whitelistConfigurationFilePath="${configFolderPath}/${whitelistConfigurationFileName}"
 readonly reportLink="https://github.com/TMLP-Team/Bypasser"
 gapTime=0
 
@@ -435,21 +435,21 @@ fi
 if [[ -d "${configFolderPath}" ]];
 then
 	echo "Successfully created the folder \"${configFolderPath}\". "
-	echo -n "${blacklistConfigContent}" > "${blacklistConfigFilePath}"
-	if [[ $? -eq ${EXIT_SUCCESS} && -f "${blacklistConfigFilePath}" ]];
+	echo -n "${blacklistConfigContent}" > "${blacklistConfigurationFilePath}"
+	if [[ $? -eq ${EXIT_SUCCESS} && -f "${blacklistConfigurationFilePath}" ]];
 	then
-		echo "Successfully generated the config file \"${blacklistConfigFilePath}\". "
+		echo "Successfully generated the config file \"${blacklistConfigurationFilePath}\". "
 	else
 		exitCode=$(expr ${exitCode} \| 2)
-		echo "Failed to generate the config file \"${blacklistConfigFilePath}\". "
+		echo "Failed to generate the config file \"${blacklistConfigurationFilePath}\". "
 	fi
-	echo -n "${whitelistConfigContent}" > "${whitelistConfigFilePath}"
-	if [[ $? -eq ${EXIT_SUCCESS} && -f "${whitelistConfigFilePath}" ]];
+	echo -n "${whitelistConfigContent}" > "${whitelistConfigurationFilePath}"
+	if [[ $? -eq ${EXIT_SUCCESS} && -f "${whitelistConfigurationFilePath}" ]];
 	then
-		echo "Successfully generated the config file \"${whitelistConfigFilePath}\". "
+		echo "Successfully generated the config file \"${whitelistConfigurationFilePath}\". "
 	else
 		exitCode=$(expr ${exitCode} \| 2)
-		echo "Failed to generate the config file \"${whitelistConfigFilePath}\". "
+		echo "Failed to generate the config file \"${whitelistConfigurationFilePath}\". "
 	fi
 else
 	exitCode=$(expr ${exitCode} \| 2)
@@ -539,32 +539,49 @@ else
 fi
 echo ""
 
-# Shamiko (0b00X000) #
+# Shamiko and Zygisk Next (0b00X000) #
 echo "# Shamiko (0b00X000) #"
 readonly shamikoInstallationFolderPath="../../modules/zygisk_shamiko"
-readonly shamikoConfigFolderPath="../../shamiko"
-readonly shamikoWhitelistConfigFileName="whitelist"
-readonly shamikoWhitelistConfigFilePath="${shamikoConfigFolderPath}/${shamikoWhitelistConfigFileName}"
+readonly shamikoConfigurationFolderPath="../../shamiko"
+readonly shamikoWhitelistConfigurationFileName="whitelist"
+readonly shamikoWhitelistConfigurationFilePath="${shamikoConfigurationFolderPath}/${shamikoWhitelistConfigurationFileName}"
+readonly zygiskNextConfigurationFolderPath="../../zygisksu"
+readonly zygiskNextDenylistConfigurationFileName="denylist_enforce"
+readonly zygiskNextDenylistConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistConfigurationFileName}"
 
-if [[ -d "${shamikoInstallationFolderPath}" ]];
+if [[ -d "${shamikoInstallationFolderPath}" && -n "$(ls -1A "${shamikoInstallationFolderPath}")" ]];
 then
 	echo "The shamiko installation folder was found at \"${shamikoInstallationFolderPath}\". "
-	if [[ ! -d "${shamikoConfigFolderPath}" || -z "$(ls -1A "${shamikoConfigFolderPath}")" ]];
+	if [[ ! -d "${shamikoConfigurationFolderPath}" || -z "$(ls -1A "${shamikoConfigurationFolderPath}")" ]];
 	then
-		echo "The shamiko configuration folder at \"${shamikoConfigFolderPath}\" did not exist or was detected to be empty. "
-		touch "${shamikoWhitelistConfigFilePath}"
-		if [[ $? -eq ${EXIT_SUCCESS} && -f "${shamikoWhitelistConfigFilePath}" ]];
+		echo "The shamiko configuration folder at \"${shamikoConfigurationFolderPath}\" did not exist or was detected to be empty. "
+		touch "${shamikoWhitelistConfigurationFilePath}"
+		if [[ $? -eq ${EXIT_SUCCESS} && -f "${shamikoWhitelistConfigurationFilePath}" ]];
 		then
-			echo "Successfully created the whitelist config file \"${shamikoWhitelistConfigFilePath}\". "
+			echo "Successfully created the whitelist config file \"${shamikoWhitelistConfigurationFilePath}\". "
 		else
 			exitCode=$(expr ${exitCode} \| 8)
-			echo "Failed to create the whitelist config file \"${shamikoWhitelistConfigFilePath}\". "
+			echo "Failed to create the whitelist config file \"${shamikoWhitelistConfigurationFilePath}\". "
 		fi
 	else
-		echo "The shamiko configuration folder at \"${shamikoConfigFolderPath}\" was detected not to be empty. "
+		echo "The shamiko configuration folder at \"${shamikoConfigurationFolderPath}\" was detected not to be empty. "
 	fi
 else
 	echo "No shamiko installation folders were found. "
+fi
+if [[ -d "${zygiskNextConfigurationFolderPath}" && -n "$(ls -1A "${zygiskNextConfigurationFolderPath}")" ]];
+then
+	echo "The Zygisk Next configuration folder was found at \"${zygiskNextConfigurationFolderPath}\". "
+	echo -n 1 > "${zygiskNextDenylistConfigurationFilePath}"
+	if [[ $? -eq ${EXIX_SUCCESS} && -f "${zygiskNextDenylistConfigurationFilePath}" ]];
+	then
+		echo "Successfully wrote to the Zygisk Next configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+	else
+		exitCode=$(expr ${exitCode} \| 8)
+		echo "Failed to write to the Zygisk Next configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+	fi
+else
+	echo "No Zygisk Next configuration folders were found. "
 fi
 echo ""
 
