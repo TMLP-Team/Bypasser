@@ -549,36 +549,48 @@ readonly zygiskNextConfigurationFolderPath="../../zygisksu"
 readonly zygiskNextDenylistConfigurationFileName="denylist_enforce"
 readonly zygiskNextDenylistConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistConfigurationFileName}"
 
-if [ -d "${shamikoInstallationFolderPath}" ] && [ -n "$(ls -1A ${shamikoInstallationFolderPath})" ];
+if [[ -d "${shamikoInstallationFolderPath}" ]];
 then
 	echo "The shamiko installation folder was found at \"${shamikoInstallationFolderPath}\". "
-	if [[ ! -d "${shamikoConfigurationFolderPath}" || -z "$(ls -1A "${shamikoConfigurationFolderPath}")" ]];
+	if [[ -n "$(ls -1A ${shamikoInstallationFolderPath})" ]];
 	then
-		echo "The shamiko configuration folder at \"${shamikoConfigurationFolderPath}\" did not exist or was detected to be empty. "
-		touch "${shamikoWhitelistConfigurationFilePath}"
-		if [[ $? -eq ${EXIT_SUCCESS} && -f "${shamikoWhitelistConfigurationFilePath}" ]];
+		echo "The shamiko installation folder \"${shamikoInstallationFolderPath}\" seemed normal. "
+		if [[ ! -d "${shamikoConfigurationFolderPath}" || -z "$(ls -1A "${shamikoConfigurationFolderPath}")" ]];
 		then
-			echo "Successfully created the whitelist config file \"${shamikoWhitelistConfigurationFilePath}\". "
+			echo "The shamiko configuration folder at \"${shamikoConfigurationFolderPath}\" did not exist or was detected to be empty. "
+			touch "${shamikoWhitelistConfigurationFilePath}"
+			if [[ $? -eq ${EXIT_SUCCESS} && -f "${shamikoWhitelistConfigurationFilePath}" ]];
+			then
+				echo "Successfully created the whitelist config file \"${shamikoWhitelistConfigurationFilePath}\". "
+			else
+				exitCode=$(expr ${exitCode} \| 8)
+				echo "Failed to create the whitelist config file \"${shamikoWhitelistConfigurationFilePath}\". "
+			fi
 		else
-			exitCode=$(expr ${exitCode} \| 8)
-			echo "Failed to create the whitelist config file \"${shamikoWhitelistConfigurationFilePath}\". "
+			echo "The shamiko configuration folder at \"${shamikoConfigurationFolderPath}\" was detected not to be empty. "
 		fi
 	else
-		echo "The shamiko configuration folder at \"${shamikoConfigurationFolderPath}\" was detected not to be empty. "
+		echo "The shamiko installation folder \"${shamikoInstallationFolderPath}\" was empty. "
 	fi
 else
 	echo "No shamiko installation folders were found. "
 fi
-if [ -d "${zygiskNextConfigurationFolderPath}" ] && [ -n "$(ls -1A ${zygiskNextConfigurationFolderPath})" ];
+if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
 then
 	echo "The Zygisk Next configuration folder was found at \"${zygiskNextConfigurationFolderPath}\". "
-	echo -n 1 > "${zygiskNextDenylistConfigurationFilePath}"
-	if [[ $? -eq ${EXIX_SUCCESS} && -f "${zygiskNextDenylistConfigurationFilePath}" ]];
+	if [[ -n "$(ls -1A ${zygiskNextConfigurationFolderPath})" ]];
 	then
-		echo "Successfully wrote to the Zygisk Next configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+		echo "The Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\" seemed normal. "
+		echo -n 1 > "${zygiskNextDenylistConfigurationFilePath}"
+		if [[ $? -eq ${EXIX_SUCCESS} && -f "${zygiskNextDenylistConfigurationFilePath}" ]];
+		then
+			echo "Successfully wrote to the Zygisk Next configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+		else
+			exitCode=$(expr ${exitCode} \| 8)
+			echo "Failed to write to the Zygisk Next configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+		fi
 	else
-		exitCode=$(expr ${exitCode} \| 8)
-		echo "Failed to write to the Zygisk Next configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+		echo "The Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\" was empty. "
 	fi
 else
 	echo "No Zygisk Next configuration folders were found. "
