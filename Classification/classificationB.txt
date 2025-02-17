@@ -436,6 +436,7 @@ me.documenthook
 me.garfieldhan.apatch.next
 me.hd.hookgg
 me.hd.hookwzry
+me.hd.wauxv
 me.hoshino.novpndetect
 me.iacn.biliroaming
 me.jsonet.jshook
