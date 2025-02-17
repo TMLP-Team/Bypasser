@@ -702,6 +702,15 @@ cleanCache
 echo "Finished executing the \`\`action.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s) (${exitCode}). "
 if [[ "${APATCH}" == "true" || "${KSU}" == "true" ]];
 then
-	getTheKeyPressed > /dev/null
+	if [[ $# -lt 1 ]];
+	then
+		echo "Please press the [+] key to exit. "
+		vk=$(expr ${VK_UP} - 1)
+		while [[ $vk -ne ${VK_UP} ]]
+		do
+			content="$(getTheKeyPressed)"
+			vk=$?
+		done
+	fi
 fi
 exit ${exitCode}
