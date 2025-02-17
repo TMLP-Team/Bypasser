@@ -700,4 +700,8 @@ readonly timeDelta=$(expr ${endTime} - ${startTime} - ${gapTime})
 
 cleanCache
 echo "Finished executing the \`\`action.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s) (${exitCode}). "
+if [[ "${APATCH}" == "true" || "${KSU}" == "true" ]];
+then
+	getTheKeyPressed > /dev/null
+fi
 exit ${exitCode}
