@@ -704,9 +704,9 @@ if [[ "${APATCH}" == "true" || "${KSU}" == "true" ]];
 then
 	if [[ $# -lt 1 ]];
 	then
-		echo "Please press the [+] key to exit. "
-		vk=$(expr ${VK_UP} - 1)
-		while [[ $vk -ne ${VK_UP} ]]
+		echo "Please press the [+] or [-] key to exit. "
+		vk=0
+		while [[ ${vk} -ne ${VK_UP} && ${vk} -ne ${VK_DOWN} ]]
 		do
 			content="$(getTheKeyPressed)"
 			vk=$?
