@@ -45,7 +45,7 @@ then
 	then
 		if [[ ${APATCH_VER_CODE} -ge ${MIN_APATCH_VER_CODE} ]];
 		then
-			ui_print "The action button is supported (Apatch ${APATCH_VER_CODE}). "
+			ui_print "The action button is supported (Apatch ${APATCH_VER_CODE} >= ${MIN_APATCH_VER_CODE}). "
 		else
 			ui_print "Warning: The action button is not supported (Apatch ${APATCH_VER_CODE}). You can update dynamic configurations only by flashing this module. Please try to use the latest Apatch manager (>= ${MIN_APATCH_VER_CODE}). "
 		fi
@@ -53,7 +53,7 @@ then
 	then
 		if [[ ${KSU_VER_CODE} -ge ${MIN_KSU_VER_CODE} ]];
 		then
-			ui_print "The action button is supported (KSU ${KSU_VER_CODE}). "
+			ui_print "The action button is supported (KSU ${KSU_VER_CODE} >= ${MIN_KSU_VER_CODE}). "
 		else
 			ui_print "Warning: The action button is not supported (KSU ${KSU_VER_CODE}). You can update dynamic configurations only by flashing this module. Please try to use the latest KSU manager (>= ${MIN_KSU_VER_CODE}). "
 		fi
@@ -61,7 +61,7 @@ then
 	then
 		if [[ ${MAGISK_VER_CODE} -ge ${MIN_MAGISK_VER_CODE} ]];
 		then
-			ui_print "The action button is supported (Magisk ${MAGISK_VER_CODE}). "
+			ui_print "The action button is supported (Magisk ${MAGISK_VER_CODE} >= ${MIN_MAGISK_VER_CODE}). "
 		else
 			ui_print "Warning: The action button is not supported (Magisk ${MAGISK_VER_CODE}). You can update dynamic configurations only by flashing this module. Please try to use the latest Magisk manager (>= ${MIN_MAGISK_VER_CODE}). "
 		fi
