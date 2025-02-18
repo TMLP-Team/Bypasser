@@ -112,7 +112,7 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 		fi
 		sha512SuccessCount=0
 		sha512TotalCount=0
-		find "${srcFolderPath}" -type f | while read file;
+		for file in $(find "${srcFolderPath}" -type f);
 		do
 			sha512TotalCount=$(expr ${sha512TotalCount} + 1)
 			if [[ "${webrootFilePath}" == "${file}" ]];
