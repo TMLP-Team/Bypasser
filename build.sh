@@ -109,8 +109,11 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 		else
 			echo "Failed to remove all the previous SHA-512 value files. "
 		fi
+		sha512SuccessCount=0
+		sha512TotalCount=0
 		find "${srcFolderPath}" -type f | while read file;
 		do
+			sha512TotalCount=$(expr ${sha512TotalCount} + 1)
 			if [[ "${webrootFilePath}" == "${file}" ]];
 			then
 				find "${webrootFolderPath}" -type f ! -name "*.sha512" -exec sha512sum {} \; | sort > "${webrootFolderPath}.sha512"
@@ -121,13 +124,17 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 			fi
 			if [[ ${EXIT_SUCCESS} -eq ${sha512ExitCode} && -f "${file}.sha512" ]];
 			then
+				sha512SuccessCount=$(expr ${sha512SuccessCount} + 1)
 				echo "Successfully generated the SHA-512 value file of \"${file}\". "
 			else
 				echo "Failed to generate the SHA-512 value file of \"${file}\". "
-				exit 3
 			fi
 		done
-		
+		echo "Successfully generated ${sha512SuccessCount} / ${sha512TotalCount} sha512 file(s). "
+		if [[ sha512SuccessCount -ne sha512TotalCount ]];
+		then
+			exit 3
+		fi
 		if [[ ! -d "${zipFolderPath}" ]]; then
 			mkdir -p "${zipFolderPath}"
 		fi
