@@ -540,7 +540,7 @@ fi
 echo ""
 
 # Shamiko and Zygisk Next (0b00X000) #
-echo "# Shamiko (0b00X000) #"
+echo "# Shamiko and Zygisk Next (0b00X000) #"
 readonly shamikoInstallationFolderPath="../../modules/zygisk_shamiko"
 readonly shamikoConfigurationFolderPath="../../shamiko"
 readonly shamikoWhitelistConfigurationFileName="whitelist"
