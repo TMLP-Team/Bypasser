@@ -635,8 +635,8 @@ echo "# Update (0b0X0000) #"
 readonly webrootName="webroot"
 readonly webrootFolderPath="${webrootName}"
 readonly webrootFilePath="${webrootName}.zip"
-readonly webrootUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot/webroot.zip"
-readonly webrootDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot/webroot.zip.sha512"
+readonly webrootUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot.zip"
+readonly webrootDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot.zip.sha512"
 readonly actionPropPath="action.prop"
 readonly targetAB="B"
 readonly targetAction="action${targetAB}.sh"
@@ -655,7 +655,7 @@ then
 		mv "${webrootFolderPath}" "${webrootFolderPath}.bak"
 		if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}.bak" ]];
 		then
-			echo "Successfully copied \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
+			echo "Successfully moved \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
 			curl -s "${webrootUrl}" | unzip -d "${webrootFolderPath}"
 			if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}" && "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
 			then
