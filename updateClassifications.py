@@ -164,7 +164,7 @@ def updateSHA512(srcFp:str, encoding:str = "utf-8") -> bool:
 				with open(filePath + ".sha512", "w", encoding = encoding) as f:
 					f.write(digest)
 				successCnt += 1
-				print("[{{0:0>{0}}}] \"{{1}}\" -> {{2}}".format(length).format(i + 1, filePath, digest if isalnum(digest) else digest.split("\n")))
+				print("[{{0:0>{0}}}] \"{{1}}\" -> {{2}}".format(length).format(i + 1, filePath, digest if digest.isalnum() else digest.split("\n")))
 			except BaseException as e:
 				print("[{{0:0>{0}}}] \"{{1}}\" -> {{2}}".format(length).format(i + 1, filePath, e))
 		print("Successfully generated {0} / {1} SHA-512 value file(s) at the success rate of {2:.2f}%. ".format(successCnt, totalCnt, successCnt * 100 / totalCnt) if totalCnt else "No SHA-512 value files were generated. ")
