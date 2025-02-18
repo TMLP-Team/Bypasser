@@ -117,7 +117,7 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 			sha512TotalCount=$(expr ${sha512TotalCount} + 1)
 			if [[ "${webrootFilePath}" == "${file}" ]];
 			then
-				(cd ${srcFolderPath} && find "${webrootFolderPath}" -type f ! -name "*.sha512" -exec sha512sum {} \; | sort) > "${webrootFilePath}.sha512"
+				(cd ${srcFolderPath} && find "${webrootName}" -type f ! -name "*.sha512" -exec sha512sum {} \; | sort) > "${webrootFilePath}.sha512"
 				sha512ExitCode=$?
 				echo -n "* "
 			else
