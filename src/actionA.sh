@@ -545,59 +545,86 @@ readonly shamikoInstallationFolderPath="../../modules/zygisk_shamiko"
 readonly shamikoConfigurationFolderPath="../../shamiko"
 readonly shamikoWhitelistConfigurationFileName="whitelist"
 readonly shamikoWhitelistConfigurationFilePath="${shamikoConfigurationFolderPath}/${shamikoWhitelistConfigurationFileName}"
+readonly zygiskNextInstallationFolderPath="../../modules/zygisksu"
 readonly zygiskNextConfigurationFolderPath="../../zygisksu"
 readonly zygiskNextDenylistConfigurationFileName="denylist_enforce"
 readonly zygiskNextDenylistConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistConfigurationFileName}"
 
-if [[ -d "${shamikoInstallationFolderPath}" ]];
+if [[ -d "${shamikoInstallationFolderPath}" && -n "$(ls -1A ${shamikoInstallationFolderPath})" ]];
 then
 	echo "The shamiko installation folder was found at \"${shamikoInstallationFolderPath}\". "
-	if [[ -n "$(ls -1A ${shamikoInstallationFolderPath})" ]];
+	abortFlag=${EXIT_SUCCESS}
+	if [[ -d "${shamikoConfigurationFolderPath}" ]];
 	then
-		echo "The shamiko installation folder \"${shamikoInstallationFolderPath}\" seemed normal. "
-		if [[ ! -d "${shamikoConfigurationFolderPath}" || -z "$(ls -1A "${shamikoConfigurationFolderPath}")" ]];
+		echo "The shamiko configuration folder was found at \"${shamikoConfigurationFolderPath}\". "
+	else
+		echo "The shamiko configuration folder \"${shamikoConfigurationFolderPath}\" did not exist. "
+		mkdir -p "${shamikoConfigurationFolderPath}"
+		if [[ $? -eq ${EXIT_SUCCESS} && -d "${shamikoConfigurationFolderPath}" ]];
 		then
-			echo "The shamiko configuration folder at \"${shamikoConfigurationFolderPath}\" did not exist or was detected to be empty. "
+			echo "Successfully created the shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
+		else
+			exitCode=$(expr ${exitCode} \| 8)
+			abortFlag=${EXIT_FAILURE}
+			echo "Failed to create the shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
+		fi
+	fi
+	if [[ ${EXIT_SUCCESS} == ${abortFlag} ]];
+	then
+		if [[ -f "${shamikoWhitelistConfigurationFilePath}" ]];
+		then
+			echo "The shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" already existed. "
+		else
 			touch "${shamikoWhitelistConfigurationFilePath}"
 			if [[ $? -eq ${EXIT_SUCCESS} && -f "${shamikoWhitelistConfigurationFilePath}" ]];
 			then
-				echo "Successfully created the whitelist config file \"${shamikoWhitelistConfigurationFilePath}\". "
+				echo "Successfully created the shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\". "
 			else
 				exitCode=$(expr ${exitCode} \| 8)
-				echo "Failed to create the whitelist config file \"${shamikoWhitelistConfigurationFilePath}\". "
+				echo "Failed to create the shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\". "
 			fi
-		else
-			echo "The shamiko configuration folder at \"${shamikoConfigurationFolderPath}\" was detected not to be empty. "
 		fi
-	else
-		echo "The shamiko installation folder \"${shamikoInstallationFolderPath}\" was empty. "
 	fi
 else
-	echo "No shamiko installation folders were found. "
+	echo "The shamiko installation folder \"${shamikoInstallationFolderPath}\" did not exist. "
 fi
-if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
+if [[ -d "${zygiskNextInstallationFolderPath}" && -n "$(ls -1A ${zygiskNextInstallationFolderPath})" ]];
 then
-	echo "The Zygisk Next configuration folder was found at \"${zygiskNextConfigurationFolderPath}\". "
-	if [[ -n "$(ls -1A ${zygiskNextConfigurationFolderPath})" ]];
+	echo "The Zygisk Next installation folder was found at \"${zygiskNextInstallationFolderPath}\". "
+	abortFlag=${EXIT_SUCCESS}
+	if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
 	then
-		echo "The Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\" seemed normal. "
-		if [[ -f "${zygiskNextDenylistConfigurationFilePath}" ]];
+		echo "The Zygisk Next configuration folder was found at \"${zygiskNextConfigurationFolderPath}\". "
+	else
+		echo "The Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\" did not exist. "
+		mkdir -p "${zygiskNextConfigurationFolderPath}"
+		if [[ $? -eq ${EXIT_SUCCESS} && -d "${zygiskNextConfigurationFolderPath}" ]];
 		then
-			rm -f "${zygiskNextDenylistConfigurationFilePath}"
-		fi
-		echo -n 1 > "${zygiskNextDenylistConfigurationFilePath}" && chmod 666 "${zygiskNextDenylistConfigurationFilePath}"
-		if [[ $? -eq ${EXIX_SUCCESS} && -f "${zygiskNextDenylistConfigurationFilePath}" ]];
-		then
-			echo "Successfully wrote to the Zygisk Next configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+			echo "Successfully created the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
 		else
 			exitCode=$(expr ${exitCode} \| 8)
-			echo "Failed to write to the Zygisk Next configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+			abortFlag=${EXIT_FAILURE}
+			echo "Failed to create the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
 		fi
-	else
-		echo "The Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\" was empty. "
+	fi
+	if [[ ${EXIT_SUCCESS} == ${abortFlag} ]];
+	then
+		if [[ -f "${zygiskNextDenylistConfigurationFilePath}" ]];
+		then
+			echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" already existed. "
+		else
+			touch "${zygiskNextDenylistConfigurationFilePath}"
+			if [[ $? -eq ${EXIT_SUCCESS} && -f "${zygiskNextDenylistConfigurationFilePath}" ]];
+			then
+				echo "Successfully created the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+			else
+				exitCode=$(expr ${exitCode} \| 8)
+				echo "Failed to create the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+			fi
+		fi
 	fi
 else
-	echo "No Zygisk Next configuration folders were found. "
+	echo "The Zygisk Next installation folder \"${zygiskNextInstallationFolderPath}\" did not exist. "
 fi
 echo ""
 
