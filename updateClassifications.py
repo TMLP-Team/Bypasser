@@ -151,7 +151,7 @@ def updateSHA512(srcFp:str, encoding:str = "utf-8") -> bool:
 						for fileName in files:
 							fileP = os.path.join(root, fileName)
 							with open(fileP, "rb") as f:
-								digests.append(sha512(f.read()).hexdigest() + "  " + fileP)
+								digests.append(sha512(f.read()).hexdigest() + "  " + os.path.relpath(fileP, srcFp))
 					digests.sort()
 					digest = "\n".join(digests)
 				else:
