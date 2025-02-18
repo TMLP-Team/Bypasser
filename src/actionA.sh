@@ -632,8 +632,9 @@ echo ""
 
 # Update (0b0X0000) #
 echo "# Update (0b0X0000) #"
-readonly webrootFolderPath="src/webroot"
-readonly webrootFilePath="src/webroot.zip"
+readonly webrootName="webroot"
+readonly webrootFolderPath="${webrootName}"
+readonly webrootFilePath="${webrootName}.zip"
 readonly webrootUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot/webroot.zip"
 readonly webrootDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot/webroot.zip.sha512"
 readonly actionPropPath="action.prop"
