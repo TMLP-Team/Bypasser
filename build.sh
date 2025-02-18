@@ -69,6 +69,9 @@ else
 fi
 
 # Pack #
+readonly webrootName="webroot"
+readonly webrootFolderPath="${srcFolderPath}/${webrootName}"
+readonly webrootFilePath="${srcFolderPath}/${webrootName}.zip"
 readonly propFileName="module.prop"
 readonly propFilePath="${srcFolderPath}/${propFileName}"
 readonly propContent="id=${moduleId}\n\
@@ -84,8 +87,20 @@ readonly zipFilePath="${zipFolderPath}/${zipFileName}"
 
 if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolderPath}/system" ]]; then
 	echo "Sources were found to be packed. "
+	if [[ -d "${webrootFolderPath}" ]];
+	then
+		echo "The web UI folder was found to be packed. "
+		(cd "${webrootFolderPath}" && find . -type f ! -name "*.sha512" | zip -J -ll -r -v -@ -) > "${webrootFilePath}"
+		if [[ $? -eq ${EXIT_SUCCESS} && -f "${webrootFilePath}" ]];
+		then
+			echo "Successfully packed the web UI folder. "
+		else
+			echo "Failed to pack the web UI folder. "
+			exit 2
+		fi
+	fi
 	echo -e "${propContent}" > "${propFilePath}"
-	if [[ $? -eq ${EXIT_SUCCESS} && -e "${propFilePath}" ]]; then
+	if [[ $? -eq ${EXIT_SUCCESS} && -f "${propFilePath}" ]]; then
 		echo "Successfully generated the property file \"${propFilePath}\". "
 		find "${srcFolderPath}" -type f -name "*.sha512" -delete
 		if [[ $? -eq ${EXIT_SUCCESS} ]];
@@ -96,37 +111,46 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 		fi
 		find "${srcFolderPath}" -type f | while read file;
 		do
-			echo -n "$(sha512sum "${file}" | cut -d " " -f1)" > "${file}.sha512"
-			if [[ $? -eq ${EXIT_SUCCESS} && -e "${file}.sha512" ]];
+			if [[ "${webrootFilePath}" == "${file}" ]];
+			then
+				find "${webrootFolderPath}" -type f ! -name "*.sha512" -exec sha512sum {} \; | sort > "${webrootFolderPath}.sha512"
+				sha512ExitCode=$?
+			else
+				echo -n "$(sha512sum "${file}" | cut -d " " -f1)" > "${file}.sha512"
+				sha512ExitCode=$?
+			fi
+			if [[ ${EXIT_SUCCESS} -eq ${sha512ExitCode} && -f "${file}.sha512" ]];
 			then
 				echo "Successfully generated the SHA-512 value file of \"${file}\". "
 			else
 				echo "Failed to generate the SHA-512 value file of \"${file}\". "
+				exit 3
 			fi
 		done
+		
 		if [[ ! -d "${zipFolderPath}" ]]; then
 			mkdir -p "${zipFolderPath}"
 		fi
 		if [[ -d "${zipFolderPath}" ]]; then
 			echo "Successfully created the ZIP folder path \"${zipFolderPath}\". "
-			(cd "${srcFolderPath}" && zip -J -ll -r -v - *) > "${zipFilePath}"
+			(cd "${srcFolderPath}" && zip -J -ll -r -v - * -x "${webrootFilePath}" -x "${webrootFilePath}.sha512") > "${zipFilePath}"
 			if [[ $? -eq ${EXIT_SUCCESS} && -f "${zipFilePath}" ]]; then
 				echo "Successfully packed the ${moduleName} Magisk module to \"${zipFilePath}\" via the ``zip`` command! "
 			else
 				echo "Failed to pack the ${moduleName} Magisk module to \"${zipFilePath}\" via the ``zip`` command. "
-				exit 2
+				exit 4
 			fi
 		else
 			echo "Failed to create the ZIP folder path \"${zipFolderPath}\". "
-			exit 3
+			exit 5
 		fi
 	else
 		echo "Failed to generate the property file \"${propFilePath}\". "
-		exit 4
+		exit 6
 	fi
 else
 	echo "No sources were found to be packed. "
-	exit 5
+	exit 7
 fi
 
 # Log #
@@ -156,15 +180,15 @@ if [[ -d "${changelogFolderPath}" ]]; then
 			echo "Successfully wrote the change log to \"${changelogFilePath}\". "
 		else
 			echo "Failed to write the change log to \"${changelogFilePath}\". "
-			exit 6
+			exit 8
 		fi
 	else
 		echo "Failed to create the log \"${changelogFilePath}\". "
-		exit 7
+		exit 9
 	fi
 else
 	echo "Failed to create the log folder path \"${changelogFolderPath}\". "
-	exit 8
+	exit 10
 fi
 
 # Update #
@@ -188,11 +212,11 @@ if [[ -d "${updateFolderPath}" ]]; then
 		echo "Successfully created the update JSON file \"${updateFilePath}\". "
 	else
 		echo "Failed to create the update JSON file \"${updateFilePath}\". "
-		exit 9
+		exit 11
 	fi
 else
 	echo "Failed to create the update folder path \"${updateFolderPath}\". "
-	exit 10
+	exit 12
 fi
 setPermissions
 if [[ $? == ${EXIT_SUCCESS} ]];
@@ -208,8 +232,8 @@ if [[ $? -eq ${EXIT_SUCCESS} ]]; then
 	echo "Successfully pushed to GitHub. "
 else
 	echo "Failed to push to GitHub. "
-	exit 11
+	exit 13
 fi
 
 # Exit #
-exit 0
+exit ${EXIT_SUCCESS}

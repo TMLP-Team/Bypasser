@@ -630,12 +630,60 @@ echo ""
 
 # Update (0b0X0000) #
 echo "# Update (0b0X0000) #"
+readonly webrootFolderPath="src/webroot"
+readonly webrootFilePath="src/webroot.zip"
+readonly webrootUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot/webroot.zip"
+readonly webrootDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot/webroot.zip.sha512"
 readonly actionPropPath="action.prop"
 readonly targetAB="A"
 readonly targetAction="action${targetAB}.sh"
 readonly actionUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/${targetAction}"
 readonly actionDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/${targetAction}.sha512"
 
+webrootDigest="$(curl -s "${webrootDigestUrl}")"
+if [[ $? -eq ${EXIT_SUCCESS} && -n "${webrootDigest}" ]];
+then
+	echo "Successfully fetched the SHA-512 value of the latest ZIP file of the web UI. "
+	if [[ "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
+	then
+		echo "The current web UI is already up-to-date. "
+	else
+		echo "The current web UI is out-of-date and needs to be updated. "
+		mv "${webrootFolderPath}" "${webrootFolderPath}.bak"
+		if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}.bak" ]];
+		then
+			echo "Successfully copied \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
+			curl -s "${webrootUrl}" | unzip -d "${webrootFolderPath}"
+			if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}" && "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
+			then
+				echo "Successfully updated and verified the web UI. "
+				rm -rf "${webrootFolderPath}.bak"
+				if [[ $? -eq ${EXIT_SUCCESS} && ! -d "${webrootFolderPath}.bak" ]];
+				then
+					echo "Successfully removed \"${webrootFolderPath}.bak\". "
+				else
+					echo "Failed to remove \"${webrootFolderPath}.bak\". "
+				fi
+			else
+				exitCode=$(expr ${exitCode} \| 16)
+				echo "Failed to update or verify the web UI. "
+				mv "${webrootFolderPath}.bak" "${webrootFolderPath}"
+				if [[ $? -eq ${EXIT_SUCCESS} && ! -d "${webrootFolderPath}" ]];
+				then
+					echo "Successfully restored \"${webrootFolderPath}.bak\" to \"${webrootFolderPath}\". "
+				else
+					echo "Failed to restore \"${webrootFolderPath}.bak\" to \"${webrootFolderPath}\". "
+				fi
+			fi
+		else
+			exitCode=$(expr ${exitCode} \| 16)
+			echo "Failed to copy \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
+		fi
+	fi
+else
+	exitCode=$(expr ${exitCode} \| 16)
+	echo "Failed to fetch the SHA-512 value of the latest ZIP file of the web UI. "
+fi
 shellDigest="$(curl -s "${actionDigestUrl}")"
 if [[ $? -eq ${EXIT_SUCCESS} && -n "${shellDigest}" ]];
 then
