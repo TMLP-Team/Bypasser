@@ -145,8 +145,18 @@ def updateSHA512(srcFp:str, encoding:str = "utf-8") -> bool:
 		length = len(str(totalCnt))
 		for i, filePath in enumerate(filePaths):
 			try:
-				with open(filePath, "rb") as f:
-					digest = sha512(f.read()).hexdigest()
+				if filePath == os.path.join(srcFp, "webroot.zip"):
+					digests = []
+					for root, dirs, files in os.walk(os.path.join(srcFp, "webroot")):
+						for fileName in files:
+							fileP = os.path.join(root, fileName)
+							with open(fileP, "rb") as f:
+								digests.append(sha512(f.read()).hexdigest() + "  " + fileP)
+					digests.sort()
+					digest = "\n".join(digests)
+				else:
+					with open(filePath, "rb") as f:
+						digest = sha512(f.read()).hexdigest()
 			except BaseException as e:
 				print("[{{0:0>{0}}}] \"{{1}}\" -> {{2}}".format(length).format(i + 1, filePath, e))
 				continue
