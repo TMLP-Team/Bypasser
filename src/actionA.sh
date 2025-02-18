@@ -581,7 +581,11 @@ then
 	if [[ -n "$(ls -1A ${zygiskNextConfigurationFolderPath})" ]];
 	then
 		echo "The Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\" seemed normal. "
-		echo -n 1 > "${zygiskNextDenylistConfigurationFilePath}"
+		if [[ -f "${zygiskNextDenylistConfigurationFilePath}" ]];
+		then
+			rm -f "${zygiskNextDenylistConfigurationFilePath}"
+		fi
+		echo -n 1 > "${zygiskNextDenylistConfigurationFilePath}" && chmod 666 "${zygiskNextDenylistConfigurationFilePath}"
 		if [[ $? -eq ${EXIX_SUCCESS} && -f "${zygiskNextDenylistConfigurationFilePath}" ]];
 		then
 			echo "Successfully wrote to the Zygisk Next configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
