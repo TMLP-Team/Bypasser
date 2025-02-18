@@ -142,7 +142,7 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 		fi
 		if [[ -d "${zipFolderPath}" ]]; then
 			echo "Successfully created the ZIP folder path \"${zipFolderPath}\". "
-			(cd "${srcFolderPath}" && zip -J -ll -r -v - * -x "${webrootFilePath}" -x "${webrootFilePath}.sha512") > "${zipFilePath}"
+			(cd "${srcFolderPath}" && zip -J -ll -r -v - * -x "${webrootFileName}.zip" -x "${webrootFileName}.zip.sha512") > "${zipFilePath}"
 			if [[ $? -eq ${EXIT_SUCCESS} && -f "${zipFilePath}" ]]; then
 				echo "Successfully packed the ${moduleName} Magisk module to \"${zipFilePath}\" via the ``zip`` command! "
 			else
