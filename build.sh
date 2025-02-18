@@ -108,6 +108,7 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 			echo "Successfully removed all the previous SHA-512 value files. "
 		else
 			echo "Failed to remove all the previous SHA-512 value files. "
+			exit 3
 		fi
 		sha512SuccessCount=0
 		sha512TotalCount=0
@@ -133,7 +134,7 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 		echo "Successfully generated ${sha512SuccessCount} / ${sha512TotalCount} sha512 file(s). "
 		if [[ sha512SuccessCount -ne sha512TotalCount ]];
 		then
-			exit 3
+			exit 4
 		fi
 		if [[ ! -d "${zipFolderPath}" ]]; then
 			mkdir -p "${zipFolderPath}"
@@ -145,19 +146,19 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 				echo "Successfully packed the ${moduleName} Magisk module to \"${zipFilePath}\" via the ``zip`` command! "
 			else
 				echo "Failed to pack the ${moduleName} Magisk module to \"${zipFilePath}\" via the ``zip`` command. "
-				exit 4
+				exit 5
 			fi
 		else
 			echo "Failed to create the ZIP folder path \"${zipFolderPath}\". "
-			exit 5
+			exit 6
 		fi
 	else
 		echo "Failed to generate the property file \"${propFilePath}\". "
-		exit 6
+		exit 7
 	fi
 else
 	echo "No sources were found to be packed. "
-	exit 7
+	exit 8
 fi
 
 # Log #
@@ -187,15 +188,15 @@ if [[ -d "${changelogFolderPath}" ]]; then
 			echo "Successfully wrote the change log to \"${changelogFilePath}\". "
 		else
 			echo "Failed to write the change log to \"${changelogFilePath}\". "
-			exit 8
+			exit 9
 		fi
 	else
 		echo "Failed to create the log \"${changelogFilePath}\". "
-		exit 9
+		exit 10
 	fi
 else
 	echo "Failed to create the log folder path \"${changelogFolderPath}\". "
-	exit 10
+	exit 11
 fi
 
 # Update #
@@ -219,11 +220,11 @@ if [[ -d "${updateFolderPath}" ]]; then
 		echo "Successfully created the update JSON file \"${updateFilePath}\". "
 	else
 		echo "Failed to create the update JSON file \"${updateFilePath}\". "
-		exit 11
+		exit 12
 	fi
 else
 	echo "Failed to create the update folder path \"${updateFolderPath}\". "
-	exit 12
+	exit 13
 fi
 setPermissions
 if [[ $? == ${EXIT_SUCCESS} ]];
@@ -239,7 +240,7 @@ if [[ $? -eq ${EXIT_SUCCESS} ]]; then
 	echo "Successfully pushed to GitHub. "
 else
 	echo "Failed to push to GitHub. "
-	exit 13
+	exit 14
 fi
 
 # Exit #
