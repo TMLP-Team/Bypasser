@@ -575,6 +575,7 @@ then
 		then
 			echo "The shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" already existed. "
 		else
+			echo "The shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" did not exist. "
 			touch "${shamikoWhitelistConfigurationFilePath}"
 			if [[ $? -eq ${EXIT_SUCCESS} && -f "${shamikoWhitelistConfigurationFilePath}" ]];
 			then
@@ -609,11 +610,12 @@ then
 	fi
 	if [[ ${EXIT_SUCCESS} == ${abortFlag} ]];
 	then
-		if [[ -f "${zygiskNextDenylistConfigurationFilePath}" ]];
+		if [[ -f "${zygiskNextDenylistConfigurationFilePath}" && "1" == "$(cat "${zygiskNextDenylistConfigurationFilePath}")" ]];
 		then
-			echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" already existed. "
+			echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" was already configured. "
 		else
-			touch "${zygiskNextDenylistConfigurationFilePath}"
+			echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" was not configured. "
+			echo -n "1" > "${zygiskNextDenylistConfigurationFilePath}"
 			if [[ $? -eq ${EXIT_SUCCESS} && -f "${zygiskNextDenylistConfigurationFilePath}" ]];
 			then
 				echo "Successfully created the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
