@@ -76,7 +76,7 @@ fi
 successCount=0
 totalCount=0
 
-find . -type f ! -name "*.sha512" | while read file;
+for file in $(find . -type f ! -name "*.sha512");
 do
 	totalCount=$(expr ${totalCount} + 1)
 	sha512Computed=$(sha512sum "$file" | cut -d " " -f1)
