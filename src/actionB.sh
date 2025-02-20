@@ -656,7 +656,7 @@ then
 		if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}.bak" ]];
 		then
 			echo "Successfully moved \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
-			curl -s "${webrootUrl}" | unzip -d "${webrootFolderPath}"
+			curl -s "${webrootUrl}" -o "${webrootFilePath}" && unzip "${webrootFilePath}" -d "${webrootFolderPath}" && rm -f "${webrootFilePath}"
 			if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}" && "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
 			then
 				echo "Successfully updated and verified the web UI. "
