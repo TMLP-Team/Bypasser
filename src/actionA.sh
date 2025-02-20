@@ -304,7 +304,7 @@ then
 							echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
 							if [[ "${classificationB}" =~ "${packageName}" ]];
 							then
-								echo "which was already in Classification \$B\$. "
+								echo "which is already in Classification \$B\$. "
 							else
 								echo "which was not in and has been added to Classification \$B\$. "
 								classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
@@ -341,7 +341,7 @@ then
 							echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
 							if [[ "${classificationB}" =~ "${packageName}" ]];
 							then
-								echo "which was already in Classification \$B\$. "
+								echo "which is already in Classification \$B\$. "
 							else
 								echo "which was not in and has been added to Classification \$B\$. "
 								classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
@@ -612,7 +612,7 @@ then
 	then
 		if [[ -f "${zygiskNextDenylistConfigurationFilePath}" && "1" == "$(cat "${zygiskNextDenylistConfigurationFilePath}")" ]];
 		then
-			echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" was already configured. "
+			echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" is already configured. "
 		else
 			echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" was not configured. "
 			echo -n "1" > "${zygiskNextDenylistConfigurationFilePath}"

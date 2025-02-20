@@ -73,40 +73,47 @@ else
 fi
 
 # Hash #
-successCount=0
-totalCount=0
+sha512SuccessCount=0
+sha512TotalCount=0
 
-for file in $(find . -type f ! -name "*.sha512");
+for filePath in $(find . -type f ! -name "*.sha512");
 do
-	totalCount=$(expr ${totalCount} + 1)
-	sha512Computed=$(sha512sum "$file" | cut -d " " -f1)
-	sha512FilePath="${file}.sha512"
+	sha512TotalCount=$(expr ${sha512TotalCount} + 1)
+	if [[ ${sha512TotalCount} -ge 1 && ${sha512TotalCount} -le 9 ]];
+	then
+		sha512TotalCountString="0${sha512TotalCount}"
+	else
+		sha512TotalCountString="${sha512TotalCount}"
+	fi
+	sha512Computed=$(sha512sum "${filePath}" | cut -d " " -f1)
+	sha512FilePath="${filePath}.sha512"
 	if [[ -f "${sha512FilePath}" ]];
 	then
 		sha512Expected="$(cat "${sha512FilePath}")"
 		if [[ "${sha512Computed}" == "${sha512Expected}" ]];
 		then
-			if [[ "${file}" == *.sh ]];
+			if [[ "${filePath}" =~ \.sh$ ]];
 			then
-				if sh -n "${file}";
+				if sh -n "${filePath}";
 				then
-					successCount=$(expr ${successCount} + 1)
-					echo "Successfully verified \"${file}\" and it successfully passed the local shell syntax check (sh). "
+					sha512SuccessCount=$(expr ${sha512SuccessCount} + 1)
+					echo "[${sha512TotalCountString}] Successfully verified \"${filePath}\" and it successfully passed the local shell syntax check (sh). "
 				else
-					echo "Successfully verified \"${file}\" but it failed to pass the local shell syntax check (sh). "
+					echo "[${sha512TotalCountString}] Successfully verified \"${filePath}\" but it failed to pass the local shell syntax check (sh). "
 				fi
 			else
-				successCount=$(expr ${successCount} + 1)
-				echo "Successfully verified \"${file}\". "
+				sha512SuccessCount=$(expr ${sha512SuccessCount} + 1)
+				echo "[${sha512TotalCountString}] Successfully verified \"${filePath}\". "
 			fi
 		else
-			echo "Failed to verify \"${file}\". "
+			echo "[${sha512TotalCountString}] Failed to verify \"${filePath}\". "
 		fi
 	else
-		echo "No SHA-512 value files were found to verify \"${file}\". "
+		echo "[${sha512TotalCountString}] Failed to find the corresponding SHA-512 value file to verify \"${filePath}\". "
 	fi
 done
-if [[ ${totalCount} == ${successCount} ]];
+echo "Finished checking ${sha512SuccessCount} / ${sha512TotalCount} file(s). "
+if [[ ${sha512TotalCount} == ${sha512SuccessCount} ]];
 then
 	echo "Successfully verified all the files and they all passed the local shell syntax check (sh). "
 	find . -type f -name "*.sha512" -delete
