@@ -90,7 +90,7 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 	if [[ -d "${webrootFolderPath}" ]];
 	then
 		echo "The web UI folder was found to be packed. "
-		(cd "${webrootFolderPath}" && find . -type f ! -name "*.sha512" | zip -J -ll -r -v -@ -) > "${webrootFilePath}"
+		(cd "${webrootFolderPath}" && find . -type f ! -name "*.sha512" ! -name "*.prop" | zip -J -ll -r -v -@ -) > "${webrootFilePath}"
 		if [[ $? -eq ${EXIT_SUCCESS} && -f "${webrootFilePath}" ]];
 		then
 			echo "Successfully packed the web UI folder. "
@@ -117,7 +117,7 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 			sha512TotalCount=$(expr ${sha512TotalCount} + 1)
 			if [[ "${webrootFilePath}" == "${file}" ]];
 			then
-				(cd ${srcFolderPath} && find "${webrootName}" -type f ! -name "*.sha512" -exec sha512sum {} \; | sort) > "${webrootFilePath}.sha512"
+				(cd ${srcFolderPath} && find "${webrootName}" -type f ! -name "*.sha512" ! -name "*.prop" -exec sha512sum {} \; | sort) > "${webrootFilePath}.sha512"
 				sha512ExitCode=$?
 				echo -n "* "
 			else

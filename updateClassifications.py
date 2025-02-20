@@ -149,9 +149,10 @@ def updateSHA512(srcFp:str, encoding:str = "utf-8") -> bool:
 					digests = []
 					for root, dirs, files in os.walk(os.path.join(srcFp, "webroot")):
 						for fileName in files:
-							fileP = os.path.join(root, fileName)
-							with open(fileP, "rb") as f:
-								digests.append(sha512(f.read()).hexdigest() + "  " + os.path.relpath(fileP, srcFp))
+							if os.path.splitext(fileName)[1].lower() not in (".prop", ".sha512"):
+								fileP = os.path.join(root, fileName)
+								with open(fileP, "rb") as f:
+									digests.append(sha512(f.read()).hexdigest() + "  " + os.path.relpath(fileP, srcFp))
 					digests.sort()
 					digest = "\n".join(digests)
 				else:

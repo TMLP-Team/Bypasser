@@ -637,7 +637,9 @@ readonly webrootFolderPath="${webrootName}"
 readonly webrootFilePath="${webrootName}.zip"
 readonly webrootUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot.zip"
 readonly webrootDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot.zip.sha512"
-readonly actionPropPath="action.prop"
+readonly actionPropFileName="action.prop"
+readonly actionPropFilePath="${actionPropFileName}"
+readonly webrootActionPropFilePath="${webrootFolderPath}/${actionPropFileName}"
 readonly targetAB="A"
 readonly targetAction="action${targetAB}.sh"
 readonly actionUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/${targetAction}"
@@ -647,7 +649,7 @@ webrootDigest="$(curl -s "${webrootDigestUrl}")"
 if [[ $? -eq ${EXIT_SUCCESS} && -n "${webrootDigest}" ]];
 then
 	echo "Successfully fetched the SHA-512 value of the latest ZIP file of the web UI. "
-	if [[ -d "${webrootFolderPath}" && "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
+	if [[ -d "${webrootFolderPath}" && "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" ! -name "*.prop" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
 	then
 		echo "The current web UI is already up-to-date. "
 	else
@@ -670,7 +672,7 @@ then
 		if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
 		then
 			curl -s "${webrootUrl}" -o "${webrootFilePath}" && unzip "${webrootFilePath}" -d "${webrootFolderPath}" && rm -f "${webrootFilePath}"
-			if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}" && "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
+			if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}" && "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" ! -name "*.prop" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
 			then
 				echo "Successfully updated and verified the web UI. "
 				if [[ -d "${webrootFolderPath}.bak" ]];
@@ -731,14 +733,14 @@ then
 					if [[ $? -eq ${EXIT_SUCCESS} && -f "${targetAction}" ]];
 					then
 						echo "Successfully updated \`\`${targetAction}\`\`. "
-						rm -f "${actionPropPath}"
-						echo -n "${targetAB}" > "${actionPropPath}"
-						if [[ $? -eq ${EXIT_SUCCESS} && -f "${actionPropPath}" ]];
+						rm -f "${actionPropFilePath}" "${webrootActionPropFilePath}"
+						echo -n "${targetAB}" > "${actionPropPath}" && echo -n "${targetAB}" > "${webrootActionPropPath}"
+						if [[ $? -eq ${EXIT_SUCCESS} && -f "${actionPropPath}" && -f "${webrootActionPropPath}" ]];
 						then
-							echo "Successfully switched to \`\`${targetAction}\`\` in \"${actionPropPath}\". "
+							echo "Successfully switched to \`\`${targetAction}\`\` in \"${actionPropPath}\" and \"${webrootActionPropPath}\". "
 						else
 							exitCode=$(expr ${exitCode} \| 16)
-							echo "Failed to switch to \`\`${targetAction}\`\` in \"${actionPropPath}\". "
+							echo "Failed to switch to \`\`${targetAction}\`\` in \"${actionPropPath}\" or \"${webrootActionPropPath}\". "
 						fi
 					else
 						exitCode=$(expr ${exitCode} \| 16)
