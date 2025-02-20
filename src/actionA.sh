@@ -647,15 +647,26 @@ webrootDigest="$(curl -s "${webrootDigestUrl}")"
 if [[ $? -eq ${EXIT_SUCCESS} && -n "${webrootDigest}" ]];
 then
 	echo "Successfully fetched the SHA-512 value of the latest ZIP file of the web UI. "
-	if [[ "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
+	if [[ -d "${webrootFolderPath}" && "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
 	then
 		echo "The current web UI is already up-to-date. "
 	else
 		echo "The current web UI is out-of-date and needs to be updated. "
-		mv "${webrootFolderPath}" "${webrootFolderPath}.bak"
-		if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}.bak" ]];
+		abortFlag=${EXIT_SUCCESS}
+		if [[ -d "${webrootFolderPath}" ]];
 		then
-			echo "Successfully moved \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
+			mv -fT "${webrootFolderPath}" "${webrootFolderPath}.bak"
+			if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}.bak" ]];
+			then
+				echo "Successfully moved \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
+			else
+				abortFlag=${EXIT_FAILURE}
+				exitCode=$(expr ${exitCode} \| 16)
+				echo "Failed to move \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
+			fi
+		fi
+		if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
+		then
 			curl -s "${webrootUrl}" -o "${webrootFilePath}" && unzip "${webrootFilePath}" -d "${webrootFolderPath}" && rm -f "${webrootFilePath}"
 			if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}" && "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
 			then
@@ -670,17 +681,17 @@ then
 			else
 				exitCode=$(expr ${exitCode} \| 16)
 				echo "Failed to update or verify the web UI. "
-				mv "${webrootFolderPath}.bak" "${webrootFolderPath}"
-				if [[ $? -eq ${EXIT_SUCCESS} && ! -d "${webrootFolderPath}" ]];
+				if [[ -d "${webrootFolderPath}.bak" ]];
 				then
-					echo "Successfully restored \"${webrootFolderPath}.bak\" to \"${webrootFolderPath}\". "
-				else
-					echo "Failed to restore \"${webrootFolderPath}.bak\" to \"${webrootFolderPath}\". "
+					mv -fT "${webrootFolderPath}.bak" "${webrootFolderPath}"
+					if [[ $? -eq ${EXIT_SUCCESS} && ! -d "${webrootFolderPath}" ]];
+					then
+						echo "Successfully restored \"${webrootFolderPath}.bak\" to \"${webrootFolderPath}\". "
+					else
+						echo "Failed to restore \"${webrootFolderPath}.bak\" to \"${webrootFolderPath}\". "
+					fi
 				fi
 			fi
-		else
-			exitCode=$(expr ${exitCode} \| 16)
-			echo "Failed to copy \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
 		fi
 	fi
 else
@@ -691,7 +702,7 @@ shellDigest="$(curl -s "${actionDigestUrl}")"
 if [[ $? -eq ${EXIT_SUCCESS} && -n "${shellDigest}" ]];
 then
 	echo "Successfully fetched the SHA-512 value of the latest \`\`${targetAction}\`\` from GitHub. "
-	if [[ "$(sha512sum "${targetAction}" | cut -d " " -f1)" == "${shellDigest}" ]];
+	if [[ -f "${targetAction}" && "$(sha512sum "${targetAction}" | cut -d " " -f1)" == "${shellDigest}" ]];
 	then
 		echo "The target action \`\`${targetAction}\`\` is already up-to-date. "
 	else
