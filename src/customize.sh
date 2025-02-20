@@ -214,7 +214,7 @@ then
 else
 	abort "The \`\`"${actionFilePath}"\`\` was missing. "
 fi
-ui_print "Please press the [+] key in ${defaultTimeout} seconds if you want to scan the local applications. "
+ui_print "Please press the [+] or [-] key in ${defaultTimeout} seconds if you want to scan the local applications. Otherwise, you may touch the screen to skip the timing. "
 startGapTime=$(date +%s%N)
 keyMessage="$(getTheKeyPressed)"
 keyCode=$?

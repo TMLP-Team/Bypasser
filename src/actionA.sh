@@ -264,14 +264,14 @@ then
 	then
 		keyCode="$1"
 	else
-		echo "Please press the [+] key in ${defaultTimeout} seconds if you want to scan the local applications. "
+		echo "Please press the [+] or [-] key in ${defaultTimeout} seconds if you want to scan the local applications. Otherwise, you may touch the screen to skip the timing. "
 		startGapTime=$(date +%s%N)
 		getTheKeyPressed
 		keyCode=$?
 		endGapTime=$(date +%s%N)
 		gapTime=$(expr ${endGapTime} - ${startGapTime})
 	fi
-	if [[ "${keyCode}" -eq ${VK_UP} ]];
+	if [[ ${VK_UP} -eq ${keyCode} || ${VK_DOWN} -eq ${keyCode} ]];
 	then
 		localCount=0
 		folderCount=0
@@ -788,7 +788,7 @@ then
 	then
 		echo "Please press the [+] or [-] key to exit. "
 		vk=0
-		while [[ ${vk} -ne ${VK_UP} && ${vk} -ne ${VK_DOWN} ]]
+		while [[ ${VK_UP} -ne ${vk} && ${VK_DOWN} -ne ${vk} ]]
 		do
 			content="$(getTheKeyPressed)"
 			vk=$?
