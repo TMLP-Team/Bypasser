@@ -550,7 +550,7 @@ readonly zygiskNextConfigurationFolderPath="../../zygisksu"
 readonly zygiskNextDenylistConfigurationFileName="denylist_enforce"
 readonly zygiskNextDenylistConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistConfigurationFileName}"
 
-if [[ -d "${shamikoInstallationFolderPath}" && -n "$(ls -1A ${shamikoInstallationFolderPath})" ]];
+if ls -1A "${shamikoInstallationFolderPath}/*" &> /dev/null;
 then
 	echo "The shamiko installation folder was found at \"${shamikoInstallationFolderPath}\". "
 	abortFlag=${EXIT_SUCCESS}
@@ -589,7 +589,7 @@ then
 else
 	echo "The shamiko installation folder \"${shamikoInstallationFolderPath}\" did not exist. "
 fi
-if [[ -d "${zygiskNextInstallationFolderPath}" && -n "$(ls -1A ${zygiskNextInstallationFolderPath})" ]];
+if ls -1A "${zygiskNextInstallationFolderPath}/*" &> /dev/null;
 then
 	echo "The Zygisk Next installation folder was found at \"${zygiskNextInstallationFolderPath}\". "
 	abortFlag=${EXIT_SUCCESS}
