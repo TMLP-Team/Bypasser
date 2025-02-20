@@ -17,12 +17,20 @@
 	</head>
 	<body>
 		<script type="text/javascript" src="main.js" color="255,255,255" opacity=0.6></script>
+		Welcome to the web UI of the Bypasser Magisk Module! 
 		<script>
+			var actionSlot = "Unknown";
 			if (window.apatch !== undefined && window.apatch.ksu === undefined)
 			{
 				window.ksu = window.apatch
 			}
+			fetch("../action.prop")
+				.then(response => response.text())
+				.then(data => {
+					var actionSlot = data;
+					document.body.innerHTML += "The current action slot is " + actionSlot + ". ";
+				})
+				.catch(error => console.error("Error: ", error));
 		</script>
-		Welcome to the web UI of the Bypasser Magisk Module! 
 	</body>
 </html>
