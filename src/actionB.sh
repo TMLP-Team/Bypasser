@@ -496,7 +496,7 @@ then
 	else
 		echo "The copying has been skipped since no tricky store target files were detected. "
 	fi
-	if [[ ${EXIT_SUCCESS} == ${abortFlag} ]];
+	if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
 	then
 		lines="$(echo -n "com.google.android.gms")"
 		if [[ -n "${classificationB}" ]];
@@ -569,7 +569,7 @@ then
 			echo "Failed to create the shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
 		fi
 	fi
-	if [[ ${EXIT_SUCCESS} == ${abortFlag} ]];
+	if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
 	then
 		if [[ -f "${shamikoWhitelistConfigurationFilePath}" ]];
 		then
@@ -608,7 +608,7 @@ then
 			echo "Failed to create the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
 		fi
 	fi
-	if [[ ${EXIT_SUCCESS} == ${abortFlag} ]];
+	if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
 	then
 		if [[ -f "${zygiskNextDenylistConfigurationFilePath}" && "1" == "$(cat "${zygiskNextDenylistConfigurationFilePath}")" ]];
 		then
@@ -664,6 +664,8 @@ then
 				exitCode=$(expr ${exitCode} \| 16)
 				echo "Failed to move \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
 			fi
+		else
+			echo "No original web UI folders to be renamed. "
 		fi
 		if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
 		then
@@ -671,12 +673,17 @@ then
 			if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}" && "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
 			then
 				echo "Successfully updated and verified the web UI. "
-				rm -rf "${webrootFolderPath}.bak"
-				if [[ $? -eq ${EXIT_SUCCESS} && ! -d "${webrootFolderPath}.bak" ]];
+				if [[ -d "${webrootFolderPath}.bak" ]];
 				then
-					echo "Successfully removed \"${webrootFolderPath}.bak\". "
+					rm -rf "${webrootFolderPath}.bak"
+					if [[ $? -eq ${EXIT_SUCCESS} && ! -d "${webrootFolderPath}.bak" ]];
+					then
+						echo "Successfully removed \"${webrootFolderPath}.bak\". "
+					else
+						echo "Failed to remove \"${webrootFolderPath}.bak\". "
+					fi
 				else
-					echo "Failed to remove \"${webrootFolderPath}.bak\". "
+					echo "No old web UI folders that should be removed were found. "
 				fi
 			else
 				exitCode=$(expr ${exitCode} \| 16)
@@ -690,6 +697,8 @@ then
 					else
 						echo "Failed to restore \"${webrootFolderPath}.bak\" to \"${webrootFolderPath}\". "
 					fi
+				else
+					echo "No old web UI folders were found for restoring. "
 				fi
 			fi
 		fi
