@@ -16,9 +16,8 @@ readonly startTime=$(date +%s%N)
 
 function cleanCache
 {
-	sync
-	echo 3 > /proc/sys/vm/drop_caches
-	return 0
+	sync && echo 3 > /proc/sys/vm/drop_caches
+	return $?
 }
 
 ui_print ""

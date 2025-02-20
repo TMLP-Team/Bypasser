@@ -12,13 +12,12 @@ readonly moduleId="bypasser"
 readonly defaultTimeout=5
 readonly actionFolderPath="$(dirname "$0")"
 readonly startTime=$(date +%s%N)
-exitCode=0
+exitCode=${EXIT_SUCCESS}
 
 function cleanCache
 {
-	sync
-	echo 3 > /proc/sys/vm/drop_caches
-	return 0
+	sync && echo 3 > /proc/sys/vm/drop_caches
+	return $?
 }
 
 echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
@@ -804,17 +803,4 @@ readonly timeDelta=$(expr ${endTime} - ${startTime} - ${gapTime})
 
 cleanCache
 echo "Finished executing the \`\`action.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s) (${exitCode}). "
-if [[ "${APATCH}" == "true" || "${KSU}" == "true" ]];
-then
-	if [[ $# -lt 1 ]];
-	then
-		echo "Please press the [+] or [-] key to exit. "
-		vk=0
-		while [[ ${VK_UP} -ne ${vk} && ${VK_DOWN} -ne ${vk} ]]
-		do
-			content="$(getTheKeyPressed)"
-			vk=$?
-		done
-	fi
-fi
 exit ${exitCode}
