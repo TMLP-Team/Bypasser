@@ -665,7 +665,7 @@ then
 				echo "Failed to move \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
 			fi
 		else
-			echo "No original web UI folders to be renamed. "
+			echo "No old web UI folders were found to be backed up. "
 		fi
 		if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
 		then
