@@ -734,13 +734,13 @@ then
 					then
 						echo "Successfully updated \`\`${targetAction}\`\`. "
 						rm -f "${actionPropFilePath}" "${webrootActionPropFilePath}"
-						echo -n "${targetAB}" > "${actionPropPath}" && echo -n "${targetAB}" > "${webrootActionPropPath}"
-						if [[ $? -eq ${EXIT_SUCCESS} && -f "${actionPropPath}" && -f "${webrootActionPropPath}" ]];
+						echo -n "${targetAB}" > "${actionPropFilePath}" && echo -n "${targetAB}" > "${webrootActionPropFilePath}"
+						if [[ $? -eq ${EXIT_SUCCESS} && -f "${actionPropFilePath}" && -f "${webrootActionPropFilePath}" ]];
 						then
-							echo "Successfully switched to \`\`${targetAction}\`\` in \"${actionPropPath}\" and \"${webrootActionPropPath}\". "
+							echo "Successfully switched to \`\`${targetAction}\`\` in \"${actionPropFilePath}\" and \"${webrootActionPropFilePath}\". "
 						else
 							exitCode=$(expr ${exitCode} \| 16)
-							echo "Failed to switch to \`\`${targetAction}\`\` in \"${actionPropPath}\" or \"${webrootActionPropPath}\". "
+							echo "Failed to switch to \`\`${targetAction}\`\` in \"${actionPropFilePath}\" or \"${webrootActionPropFilePath}\". "
 						fi
 					else
 						exitCode=$(expr ${exitCode} \| 16)
