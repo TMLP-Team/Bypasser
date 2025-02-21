@@ -732,7 +732,7 @@ then
 				if [[ -d "${webrootFolderPath}.bak" ]];
 				then
 					rm -rf "${webrootFolderPath}" && mv -fT "${webrootFolderPath}.bak" "${webrootFolderPath}"
-					if [[ $? -eq ${EXIT_SUCCESS} && ! -d "${webrootFolderPath}" ]];
+					if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}" ]];
 					then
 						echo "Successfully restored \"${webrootFolderPath}.bak\" to \"${webrootFolderPath}\". "
 					else
