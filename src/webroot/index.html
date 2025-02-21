@@ -25,8 +25,7 @@
 			fetch("action.prop")
 				.then(response => response.text())
 				.then(data => {
-					var actionSlot = data;
-					document.getElementById("actionSlot").innerHTML = "The current action slot is " + actionSlot + ". ";
+					document.getElementById("actionSlot").innerHTML = "The current action slot is " + data + ". ";
 				})
 				.catch(error => console.error("Error: ", error));
 		</script>
