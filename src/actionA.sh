@@ -656,7 +656,7 @@ then
 		abortFlag=${EXIT_SUCCESS}
 		if [[ -d "${webrootFolderPath}" ]];
 		then
-			mv -fT "${webrootFolderPath}" "${webrootFolderPath}.bak"
+			rm -rf "${webrootFolderPath}.bak" && mv -fT "${webrootFolderPath}" "${webrootFolderPath}.bak"
 			if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}.bak" ]];
 			then
 				echo "Successfully moved \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
@@ -691,7 +691,7 @@ then
 				echo "Failed to update or verify the web UI. "
 				if [[ -d "${webrootFolderPath}.bak" ]];
 				then
-					mv -fT "${webrootFolderPath}.bak" "${webrootFolderPath}"
+					rm -rf "${webrootFolderPath}" && mv -fT "${webrootFolderPath}.bak" "${webrootFolderPath}"
 					if [[ $? -eq ${EXIT_SUCCESS} && ! -d "${webrootFolderPath}" ]];
 					then
 						echo "Successfully restored \"${webrootFolderPath}.bak\" to \"${webrootFolderPath}\". "
@@ -715,6 +715,20 @@ then
 	if [[ -f "${targetAction}" && "$(sha512sum "${targetAction}" | cut -d " " -f1)" == "${shellDigest}" ]];
 	then
 		echo "The target action \`\`${targetAction}\`\` is already up-to-date. "
+		if [[ -f "${actionPropFilePath}" && -f "${webrootActionPropFilePath}" && "$(cat "${actionPropFilePath}")" == "$(cat "${webrootActionPropFilePath}")" ]];
+		then
+			echo "The action slot of the web UI seemed correct. "
+		else
+			echo "The action slot of the web UI was inconsistent with the actual one. "
+			rm -f "${webrootActionPropFilePath}" && echo -n "$(cat "${actionPropFilePath}")" > "${webrootActionPropFilePath}"
+			if [[ $? -eq ${EXIT_SUCCESS} && -f "${actionPropFilePath}" && -f "${webrootActionPropFilePath}" ]];
+			then
+				echo "Successfully synchronized \"${webrootActionPropFilePath}\" from \"${actionPropFilePath}\". "
+			else
+				exitCode=$(expr ${exitCode} \| 16)
+				echo "Failed to synchronize \"${webrootActionPropFilePath}\" from \"${actionPropFilePath}\". "
+			fi
+		fi
 	else
 		echo "The target action \`\`${targetAction}\`\` is out-of-date and needs to be updated. "
 		shellContent="$(curl -s "${actionUrl}")"
