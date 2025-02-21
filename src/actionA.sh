@@ -14,23 +14,59 @@ readonly actionFolderPath="$(dirname "$0")"
 readonly startTime=$(date +%s%N)
 exitCode=${EXIT_SUCCESS}
 
-function cleanCache
+function clearCaches
 {
 	sync && echo 3 > /proc/sys/vm/drop_caches
 	return $?
 }
 
+function setPermissions
+{
+	returnCode=${EXIT_SUCCESS}
+	find . -type d -exec chmod 755 {} \;
+	if [[ $? != ${EXIT_SUCCESS} ]];
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
+	find . ! -name "*.sh" -type f -exec chmod 444 {} \;
+	if [[ $? != ${EXIT_SUCCESS} ]];
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
+	find . -name "*.sh" -type f -exec chmod 544 {} \;
+	if [[ $? != ${EXIT_SUCCESS} ]];
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
+	return ${returnCode}
+}
+
 echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
 echo "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
+clearCaches
+if [[ $? -eq ${EXIT_SUCCESS} ]];
+then
+	echo "Successfully cleared caches. "
+else
+	exitCode=$(expr ${exitCode} \| ${EXIT_FAILURE})
+	echo "Failed to clear caches. "
+fi
 chmod 755 "${actionFolderPath}" && cd "${actionFolderPath}"
 if [[ $? -eq ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleId}" ]];
 then
 	echo "The current working directory is \"$(pwd)\". "
 else
 	echo "The working directory \"$(pwd)\" is unexpected. "
-	exitCode=$(expr ${exitCode} \| 1)
+	exitCode=$(expr ${exitCode} \| ${EXIT_FAILURE})
 fi
-cleanCache
+setPermissions
+if [[ $? -eq ${EXIT_SUCCESS} ]];
+then
+	echo "Successfully set permissions. "
+else
+	exitCode=$(expr ${exitCode} \| ${EXIT_FAILURE})
+	echo "Failed to set permissions. "
+fi
 echo ""
 
 # HMA/HMAL (0b0000X0) #
@@ -538,16 +574,12 @@ else
 fi
 echo ""
 
-# Shamiko and Zygisk Next (0b00X000) #
-echo "# Shamiko and Zygisk Next (0b00X000) #"
+# Shamiko (0b00X000) #
+echo "# Shamiko (0b00X000) #"
 readonly shamikoInstallationFolderPath="../../modules/zygisk_shamiko"
 readonly shamikoConfigurationFolderPath="../../shamiko"
 readonly shamikoWhitelistConfigurationFileName="whitelist"
 readonly shamikoWhitelistConfigurationFilePath="${shamikoConfigurationFolderPath}/${shamikoWhitelistConfigurationFileName}"
-readonly zygiskNextInstallationFolderPath="../../modules/zygisksu"
-readonly zygiskNextConfigurationFolderPath="../../zygisksu"
-readonly zygiskNextDenylistConfigurationFileName="denylist_enforce"
-readonly zygiskNextDenylistConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistConfigurationFileName}"
 
 if ls -1A "${shamikoInstallationFolderPath}/*" &> /dev/null;
 then
@@ -588,6 +620,14 @@ then
 else
 	echo "The shamiko installation folder \"${shamikoInstallationFolderPath}\" did not exist. "
 fi
+
+# Zygisk Next (0b0X0000) #
+echo "# Zygisk Next (0b0X0000) #"
+readonly zygiskNextInstallationFolderPath="../../modules/zygisksu"
+readonly zygiskNextConfigurationFolderPath="../../zygisksu"
+readonly zygiskNextDenylistConfigurationFileName="denylist_enforce"
+readonly zygiskNextDenylistConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistConfigurationFileName}"
+
 if ls -1A "${zygiskNextInstallationFolderPath}/*" &> /dev/null;
 then
 	echo "The Zygisk Next installation folder was found at \"${zygiskNextInstallationFolderPath}\". "
@@ -602,7 +642,7 @@ then
 		then
 			echo "Successfully created the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
 		else
-			exitCode=$(expr ${exitCode} \| 8)
+			exitCode=$(expr ${exitCode} \| 16)
 			abortFlag=${EXIT_FAILURE}
 			echo "Failed to create the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
 		fi
@@ -619,7 +659,7 @@ then
 			then
 				echo "Successfully created the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
 			else
-				exitCode=$(expr ${exitCode} \| 8)
+				exitCode=$(expr ${exitCode} \| 16)
 				echo "Failed to create the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
 			fi
 		fi
@@ -629,8 +669,8 @@ else
 fi
 echo ""
 
-# Update (0b0X0000) #
-echo "# Update (0b0X0000) #"
+# Update (0bX00000) #
+echo "# Update (0bX00000) #"
 readonly webrootName="webroot"
 readonly webrootFolderPath="${webrootName}"
 readonly webrootFilePath="${webrootName}.zip"
@@ -662,7 +702,7 @@ then
 				echo "Successfully moved \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
 			else
 				abortFlag=${EXIT_FAILURE}
-				exitCode=$(expr ${exitCode} \| 16)
+				exitCode=$(expr ${exitCode} \| 32)
 				echo "Failed to move \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
 			fi
 		else
@@ -687,7 +727,7 @@ then
 					echo "No old web UI folders that should be removed were found. "
 				fi
 			else
-				exitCode=$(expr ${exitCode} \| 16)
+				exitCode=$(expr ${exitCode} \| 32)
 				echo "Failed to update or verify the web UI. "
 				if [[ -d "${webrootFolderPath}.bak" ]];
 				then
@@ -705,7 +745,7 @@ then
 		fi
 	fi
 else
-	exitCode=$(expr ${exitCode} \| 16)
+	exitCode=$(expr ${exitCode} \| 32)
 	echo "Failed to fetch the SHA-512 value of the latest ZIP file of the web UI. "
 fi
 shellDigest="$(curl -s "${actionDigestUrl}")"
@@ -725,7 +765,7 @@ then
 			then
 				echo "Successfully synchronized \"${webrootActionPropFilePath}\" from \"${actionPropFilePath}\". "
 			else
-				exitCode=$(expr ${exitCode} \| 16)
+				exitCode=$(expr ${exitCode} \| 32)
 				echo "Failed to synchronize \"${webrootActionPropFilePath}\" from \"${actionPropFilePath}\". "
 			fi
 		fi
@@ -752,62 +792,29 @@ then
 						then
 							echo "Successfully switched to \`\`${targetAction}\`\` in \"${actionPropFilePath}\" and \"${webrootActionPropFilePath}\". "
 						else
-							exitCode=$(expr ${exitCode} \| 16)
+							exitCode=$(expr ${exitCode} \| 32)
 							echo "Failed to switch to \`\`${targetAction}\`\` in \"${actionPropFilePath}\" or \"${webrootActionPropFilePath}\". "
 						fi
 					else
-						exitCode=$(expr ${exitCode} \| 16)
+						exitCode=$(expr ${exitCode} \| 32)
 						echo "Failed to update \`\`${targetAction}\`\`. "
 					fi
 				else
-					exitCode=$(expr ${exitCode} \| 16)
+					exitCode=$(expr ${exitCode} \| 32)
 					echo "The latest \`\`${targetAction}\`\` failed to pass the local shell syntax check (sh). "
 				fi
 			else
-				exitCode=$(expr ${exitCode} \| 16)
+				exitCode=$(expr ${exitCode} \| 32)
 				echo "Failed to verify the latest \`\`${targetAction}\`\`. "
 			fi
 		else
-			exitCode=$(expr ${exitCode} \| 16)
+			exitCode=$(expr ${exitCode} \| 32)
 			echo "Failed to fetch the latest \`\`${targetAction}\`\` from GitHub. "
 		fi
 	fi
 else
-	exitCode=$(expr ${exitCode} \| 16)
-	echo "Failed to fetch the SHA-512 value of the latest \`\`${targetAction}\`\` from GitHub. "
-fi
-echo ""
-
-# Permission (0bX00000) #
-echo "# Permission (0bX00000) #"
-function setPermissions
-{
-	returnCode=${EXIT_SUCCESS}
-	find . -type d -exec chmod 755 {} \;
-	if [[ $? != ${EXIT_SUCCESS} ]];
-	then
-		returnCode=${EXIT_FAILURE}
-	fi
-	find . ! -name "*.sh" -type f -exec chmod 444 {} \;
-	if [[ $? != ${EXIT_SUCCESS} ]];
-	then
-		returnCode=${EXIT_FAILURE}
-	fi
-	find . -name "*.sh" -type f -exec chmod 544 {} \;
-	if [[ $? != ${EXIT_SUCCESS} ]];
-	then
-		returnCode=${EXIT_FAILURE}
-	fi
-	return ${returnCode}
-}
-
-setPermissions
-if [[ $? -eq ${EXIT_SUCCESS} ]];
-then
-	echo "Successfully set permissions. "
-else
 	exitCode=$(expr ${exitCode} \| 32)
-	echo "Failed to set permissions. "
+	echo "Failed to fetch the SHA-512 value of the latest \`\`${targetAction}\`\` from GitHub. "
 fi
 echo ""
 
@@ -815,6 +822,21 @@ echo ""
 readonly endTime=$(date +%s%N)
 readonly timeDelta=$(expr ${endTime} - ${startTime} - ${gapTime})
 
-cleanCache
+setPermissions && chmod 755 "${actionFolderPath}"
+if [[ $? -eq ${EXIT_SUCCESS} ]];
+then
+	echo "Successfully set permissions. "
+else
+	exitCode=$(expr ${exitCode} \| ${EXIT_FAILURE})
+	echo "Failed to set permissions. "
+fi
+clearCaches
+if [[ $? -eq ${EXIT_SUCCESS} ]];
+then
+	echo "Successfully cleared caches. "
+else
+	exitCode=$(expr ${exitCode} \| ${EXIT_FAILURE})
+	echo "Failed to clear caches. "
+fi
 echo "Finished executing the \`\`action.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s) (${exitCode}). "
 exit ${exitCode}

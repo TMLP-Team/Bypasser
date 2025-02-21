@@ -13,7 +13,7 @@ readonly actionFolderPath="$(dirname "$0")"
 readonly actionPropFilePath="action.prop"
 exitCode=${EXIT_SUCCESS}
 
-function cleanCache
+function clearCaches
 {
 	sync && echo 3 > /proc/sys/vm/drop_caches
 	return $?
@@ -79,11 +79,11 @@ function getTheKeyPressed
 	fi
 }
 
-cleanCache
-chmod 755 "${actionFolderPath}" && cd "${actionFolderPath}"
+clearCaches &> /dev/null
+chmod 755 "${actionFolderPath}" 2>/dev/null && cd "${actionFolderPath}" 2>/dev/null
 if [[ $? == ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleId}" ]];
 then
-	setPermissions
+	setPermissions &> /dev/null
 	if [[ -f "${actionPropFilePath}" ]];
 	then
 		target="$(cat "${actionPropFilePath}")";
@@ -128,6 +128,9 @@ else
 	echo "Please try to flash the latest version of the ${moduleName} Magisk Module. "
 	exitCode=${EOF}
 fi
+setPermissions &> /dev/null
+chmod 755 "${actionFolderPath}" &> /dev/null
+clearCaches &> /dev/null
 if [[ "${APATCH}" == "true" || "${KSU}" == "true" ]];
 then
 	if [[ $# -lt 1 ]];
@@ -141,5 +144,4 @@ then
 		done
 	fi
 fi
-cleanCache
 exit ${exitCode}

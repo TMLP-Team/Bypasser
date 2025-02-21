@@ -14,24 +14,58 @@ readonly outerSymbolCount=200
 readonly innerSymbolCount=100
 readonly startTime=$(date +%s%N)
 
-function cleanCache
+function clearCaches
 {
 	sync && echo 3 > /proc/sys/vm/drop_caches
 	return $?
+}
+
+function setPermissions
+{
+	returnCode=${EXIT_SUCCESS}
+	find . -type d -exec chmod 755 {} \;
+	if [[ $? != ${EXIT_SUCCESS} ]];
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
+	find . ! -name "*.sh" -type f -exec chmod 444 {} \;
+	if [[ $? != ${EXIT_SUCCESS} ]];
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
+	find . -name "*.sh" -type f -exec chmod 544 {} \;
+	if [[ $? != ${EXIT_SUCCESS} ]];
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
+	return ${returnCode}
 }
 
 ui_print ""
 ui_print $(yes "#" | head -n ${outerSymbolCount} | tr -d '\n')
 ui_print "Welcome to the installer of the ${moduleName} Magisk Module! "
 ui_print "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
+clearCaches
+if [[ $? -eq ${EXIT_SUCCESS} ]];
+then
+	ui_print "Successfully cleared caches. "
+else
+	ui_print "Warning: Failed to clear caches. "
+fi
 chmod 755 "${MODPATH}" && cd "${MODPATH}"
 if [[ $? -eq ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleId}" ]];
 then
 	ui_print "The current working directory is \"$(pwd)\". "
 else
-	abort "The working directory \"$(pwd)\" is unexpected. "
+	abort "Error: The working directory \"$(pwd)\" is unexpected. "
 fi
-cleanCache
+setPermissions
+if [[ $? -eq ${EXIT_SUCCESS} ]];
+then
+	ui_print "Successfully set permissions. "
+else
+	ui_print "Warning: Failed to set permissions. "
+fi
 
 # Manager #
 readonly MIN_APATCH_VER_CODE=10927
@@ -96,64 +130,34 @@ do
 				if sh -n "${filePath}";
 				then
 					sha512SuccessCount=$(expr ${sha512SuccessCount} + 1)
-					echo "[${sha512TotalCountString}] Successfully verified \"${filePath}\" and it successfully passed the local shell syntax check (sh). "
+					ui_print "[${sha512TotalCountString}] Successfully verified \"${filePath}\" and it successfully passed the local shell syntax check (sh). "
 				else
-					echo "[${sha512TotalCountString}] Successfully verified \"${filePath}\" but it failed to pass the local shell syntax check (sh). "
+					ui_print "[${sha512TotalCountString}] Successfully verified \"${filePath}\" but it failed to pass the local shell syntax check (sh). "
 				fi
 			else
 				sha512SuccessCount=$(expr ${sha512SuccessCount} + 1)
-				echo "[${sha512TotalCountString}] Successfully verified \"${filePath}\". "
+				ui_print "[${sha512TotalCountString}] Successfully verified \"${filePath}\". "
 			fi
 		else
-			echo "[${sha512TotalCountString}] Failed to verify \"${filePath}\". "
+			ui_print "[${sha512TotalCountString}] Failed to verify \"${filePath}\". "
 		fi
 	else
-		echo "[${sha512TotalCountString}] Failed to find the corresponding SHA-512 value file to verify \"${filePath}\". "
+		ui_print "[${sha512TotalCountString}] Failed to find the corresponding SHA-512 value file to verify \"${filePath}\". "
 	fi
 done
-echo "Finished checking ${sha512SuccessCount} / ${sha512TotalCount} file(s). "
+ui_print "Finished checking ${sha512SuccessCount} / ${sha512TotalCount} file(s). "
 if [[ ${sha512TotalCount} == ${sha512SuccessCount} ]];
 then
-	echo "Successfully verified all the files and they all passed the local shell syntax check (sh). "
+	ui_print "Successfully verified all the files and they all passed the local shell syntax check (sh). "
 	find . -type f -name "*.sha512" -delete
 	if [[ $? -eq ${EXIT_SUCCESS} ]];
 	then
-		echo "Successfully removed all the SHA-512 value files. "
+		ui_print "Successfully removed all the SHA-512 value files. "
 	else
-		echo "Failed to remove all the SHA-512 value files. "
+		ui_print "Warning: Failed to remove all the SHA-512 value files. "
 	fi
 else
-	abort "Failed to verify all the files or some of the scripts failed to pass the local shell syntax check (sh). "
-fi
-
-# Permission #
-function setPermissions
-{
-	returnCode=${EXIT_SUCCESS}
-	find . -type d -exec chmod 755 {} \;
-	if [[ $? != ${EXIT_SUCCESS} ]];
-	then
-		returnCode=${EXIT_FAILURE}
-	fi
-	find . ! -name "*.sh" -type f -exec chmod 444 {} \;
-	if [[ $? != ${EXIT_SUCCESS} ]];
-	then
-		returnCode=${EXIT_FAILURE}
-	fi
-	find . -name "*.sh" -type f -exec chmod 544 {} \;
-	if [[ $? != ${EXIT_SUCCESS} ]];
-	then
-		returnCode=${EXIT_FAILURE}
-	fi
-	return ${returnCode}
-}
-
-setPermissions
-if [[ $? -eq ${EXIT_SUCCESS} ]];
-then
-	ui_print "Successfully set permissions. "
-else
-	ui_print "Warning: Failed to set permissions. "
+	abort "Error: Failed to verify all the files or some of the scripts failed to pass the local shell syntax check (sh). "
 fi
 
 # Action #
@@ -205,13 +209,13 @@ then
 	then
 		if ! sh -n "${actionFilePath}";
 		then
-			abort "The \`\`"${actionFilePath}"\`\` contained syntax errors. "
+			abort "Error: The \`\`"${actionFilePath}"\`\` failed to pass the local shell syntax check (sh). "
 		fi
 	else
-		abort "The \`\`"${actionFilePath}"\`\` was not executable. "
+		abort "Error: The \`\`"${actionFilePath}"\`\` was not executable. "
 	fi
 else
-	abort "The \`\`"${actionFilePath}"\`\` was missing. "
+	abort "Error: The \`\`"${actionFilePath}"\`\` was missing. "
 fi
 ui_print "Please press the [+] or [-] key in ${defaultTimeout} seconds if you want to scan the local applications. Otherwise, you may touch the screen to skip the timing. "
 startGapTime=$(date +%s%N)
@@ -236,7 +240,20 @@ fi
 readonly endTime=$(date +%s%N)
 readonly timeDelta=$(expr ${endTime} - ${startTime} - ${gapTime})
 
-cleanCache
+setPermissions && chmod 755 "${actionFolderPath}"
+if [[ $? -eq ${EXIT_SUCCESS} ]];
+then
+	ui_print "Successfully set permissions. "
+else
+	ui_print "Warning: Failed to set permissions. "
+fi
+clearCaches
+if [[ $? -eq ${EXIT_SUCCESS} ]];
+then
+	ui_print "Successfully cleared caches. "
+else
+	ui_print "Warning: Failed to clear caches. "
+fi
 ui_print "Finished executing the \`\`customize.sh\`\` in $(expr ${timeDelta} / 1000000000).$(expr ${timeDelta} % 1000000000) second(s). "
 ui_print $(yes "#" | head -n ${outerSymbolCount} | tr -d '\n')
 ui_print ""
