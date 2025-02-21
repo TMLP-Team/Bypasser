@@ -17,9 +17,7 @@
 	</head>
 	<body>
 		<script type="text/javascript" src="main.js" color="255,255,255" opacity=0.6></script>
-		Welcome to the web UI of the Bypasser Magisk Module! <br />
 		<script>
-			var actionSlot = "Unknown";
 			if (window.apatch !== undefined && window.apatch.ksu === undefined)
 			{
 				window.ksu = window.apatch
@@ -28,9 +26,11 @@
 				.then(response => response.text())
 				.then(data => {
 					var actionSlot = data;
-					document.body.innerHTML += "The current action slot is " + actionSlot + ". ";
+					document.getElementById("actionSlot").innerHTML = "The current action slot is " + actionSlot + ". ";
 				})
 				.catch(error => console.error("Error: ", error));
 		</script>
+		<div id="welcome">Welcome to the web UI of the Bypasser Magisk Module! </div><br />
+		<div id="actionSlot">Cannot fetch the current action slot. </div><br />
 	</body>
 </html>
