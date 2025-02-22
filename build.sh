@@ -227,7 +227,7 @@ else
 	echo "Failed to create the update folder path \"${updateFolderPath}\". "
 	exit 13
 fi
-setPermissions
+setPermissions && chmod 755 "${moduleFolderPath}"
 if [[ $? == ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully set permissions. "
