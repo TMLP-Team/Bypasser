@@ -240,7 +240,7 @@ fi
 readonly endTime=$(date +%s%N)
 readonly timeDelta=$(expr ${endTime} - ${startTime} - ${gapTime})
 
-setPermissions && chmod 755 "${actionFolderPath}"
+setPermissions && chmod 755 "${MODPATH}"
 if [[ $? -eq ${EXIT_SUCCESS} ]];
 then
 	ui_print "Successfully set permissions. "
