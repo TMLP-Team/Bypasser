@@ -4,6 +4,7 @@ from datetime import datetime
 from hashlib import sha512
 from json import loads
 from re import findall
+from zipfile import ZipFile
 try:
 	from requests import get
 except:
@@ -173,6 +174,22 @@ def updateSHA512(srcFp:str, encoding:str = "utf-8") -> bool:
 	else:
 		return False
 
+def compress(zipFolderPath:str, zipFilePath:str, extensionsExcluded:tuple|list|set) -> bool:
+	if isinstance(zipFolderPath, str) and os.path.isdir(zipFolderPath) and isinstance(zipFilePath, str) and isinstance(extensionsExcluded, (tuple, list, set)):
+		try:
+			with ZipFile(zipFilePath, "w") as zipf:
+				for root, _, files in os.walk(zipFolderPath):
+					for fileName in files:
+						if os.path.splitext(fileName)[1] not in extensionsExcluded:
+							filePath = os.path.join(root, fileName)
+							zipf.write(filePath, os.path.relpath(filePath, zipFolderPath))
+			print("Successfully compressed the web UI folder \"{0}\" to \"{1}\". ".format(zipFolderPath, zipFilePath))
+			return True
+		except BaseException as e:
+			print("Failed to compress the web UI folder \"{0}\" to \"{1}\" due to \"{2}\". ".format(zipFolderPath, zipFilePath, e))
+	else:
+		return False
+
 def gitPush() -> bool:
 	commitMessage = "Regular Update ({0})".format(datetime.now().strftime("%Y%m%d%H%M%S"))
 	print("The commit message is \"{0}\". ".format(commitMessage))
@@ -200,6 +217,10 @@ def main() -> int:
 	filePathC = "Classification/classificationC.txt"
 	filePathD = "Classification/classificationD.txt"
 	srcFolderPath = "src"
+	webrootName = "webroot"
+	webrootFolderPath = os.path.join(srcFolderPath, webrootName)
+	webrootFilePath = os.path.join(srcFolderPath, webrootName + ".zip")
+	extensionsExcluded = [".prop", ".sha512"]
 	bRet = True
 	
 	# Update $B$ #
@@ -227,6 +248,9 @@ def main() -> int:
 		print(setCD)
 		bRet = False
 	
+	# Update the Web UI #
+	bRet = updateSHA512(srcFolderPath) and compress(webrootFolderPath, webrootFilePath, extensionsExcluded)
+	
 	# Git Push #
 	if bRet:
 		try:
@@ -234,7 +258,7 @@ def main() -> int:
 		except:
 			choice = True
 		if choice:
-			bRet = updateSHA512(srcFolderPath) and gitPush()
+			bRet = gitPush()
 	
 	# Exit #
 	iRet = EXIT_SUCCESS if bRet else EXIT_FAILURE
