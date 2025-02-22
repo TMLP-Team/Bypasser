@@ -123,13 +123,12 @@ then
 		echo "Please try to flash the latest version of the ${moduleName} Magisk Module. "
 		exitCode=${EXIT_FAILURE}
 	fi
+	setPermissions &> /dev/null 2>/dev/null && chmod 755 "${actionFolderPath}" 2>/dev/null
 else
 	echo "Failed to execute \`\`action.sh\`\` since the working directory \"$(pwd)\" is unexpected. "
 	echo "Please try to flash the latest version of the ${moduleName} Magisk Module. "
 	exitCode=${EOF}
 fi
-setPermissions &> /dev/null
-chmod 755 "${actionFolderPath}" &> /dev/null
 clearCaches &> /dev/null
 if [[ "${APATCH}" == "true" || "${KSU}" == "true" ]];
 then

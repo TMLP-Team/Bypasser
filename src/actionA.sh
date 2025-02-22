@@ -55,17 +55,17 @@ chmod 755 "${actionFolderPath}" && cd "${actionFolderPath}"
 if [[ $? -eq ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleId}" ]];
 then
 	echo "The current working directory is \"$(pwd)\". "
+	setPermissions
+	if [[ $? -eq ${EXIT_SUCCESS} ]];
+	then
+		echo "Successfully set permissions. "
+	else
+		exitCode=$(expr ${exitCode} \| ${EXIT_FAILURE})
+		echo "Failed to set permissions. "
+	fi
 else
 	echo "The working directory \"$(pwd)\" is unexpected. "
 	exitCode=$(expr ${exitCode} \| ${EXIT_FAILURE})
-fi
-setPermissions
-if [[ $? -eq ${EXIT_SUCCESS} ]];
-then
-	echo "Successfully set permissions. "
-else
-	exitCode=$(expr ${exitCode} \| ${EXIT_FAILURE})
-	echo "Failed to set permissions. "
 fi
 echo ""
 
@@ -822,13 +822,16 @@ echo ""
 readonly endTime=$(date +%s%N)
 readonly timeDelta=$(expr ${endTime} - ${startTime} - ${gapTime})
 
-setPermissions && chmod 755 "${actionFolderPath}"
-if [[ $? -eq ${EXIT_SUCCESS} ]];
+if [[ ${EXIT_SUCCESS} -eq $(expr ${exitCode} \& ${EXIT_FAILURE}) ]];
 then
-	echo "Successfully set permissions. "
-else
-	exitCode=$(expr ${exitCode} \| ${EXIT_FAILURE})
-	echo "Failed to set permissions. "
+	setPermissions && chmod 755 "${actionFolderPath}"
+	if [[ $? -eq ${EXIT_SUCCESS} ]];
+	then
+		echo "Successfully set permissions. "
+	else
+		exitCode=$(expr ${exitCode} \| ${EXIT_FAILURE})
+		echo "Failed to set permissions. "
+	fi
 fi
 clearCaches
 if [[ $? -eq ${EXIT_SUCCESS} ]];
