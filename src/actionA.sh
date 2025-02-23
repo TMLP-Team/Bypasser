@@ -80,6 +80,7 @@ readonly blacklistConfigurationFilePath="${configFolderPath}/${blacklistConfigur
 readonly whitelistConfigurationFileName=".HMAL_Whitelist_Config.json"
 readonly whitelistConfigurationFilePath="${configFolderPath}/${whitelistConfigurationFileName}"
 readonly reportLink="https://github.com/TMLP-Team/Bypasser"
+readonly sensitiveApplications="com.google.android.safetycore com.google.android.contactkeys"
 gapTime=0
 
 function getClassification
@@ -299,7 +300,7 @@ then
 	then
 		keyCode="$1"
 	else
-		echo "Please press the [+] or [-] key in ${defaultTimeout} seconds if you want to scan the local applications. Otherwise, you may touch the screen to skip the timing. "
+		echo "Please press the [+] or [-] key in ${defaultTimeout} seconds if you want to scan the local user application installation directory. Otherwise, you may touch the screen to skip the timing. "
 		startGapTime=$(date +%s%N)
 		getTheKeyPressed
 		keyCode=$?
@@ -494,6 +495,19 @@ if [[ -z "${blacklistAppList}" || -z "${blacklistScopeList}" || -z "${whitelistA
 then
 	echo "At least one list was empty. Please check the configurations generated before importing. "
 fi
+for sensitiveApplication in ${sensitiveApplications}
+do
+	if pm list packages | grep -q "{sensitiveApplication}";
+	then
+		if pm disable "{sensitiveApplication}";
+		then
+			echo "The sensitive application \"${sensitiveApplication}\" was detected, which has been disabled. "
+		else
+			exitCode=$(expr ${exitCode} \| 2)
+			echo "The sensitive application \"${sensitiveApplication}\" was detected, which failed to be disabled. "
+		fi
+	fi
+done
 echo ""
 
 # Tricky Store (0b000X00) #
