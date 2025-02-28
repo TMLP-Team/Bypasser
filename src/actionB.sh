@@ -595,7 +595,23 @@ readonly shamikoConfigurationFolderPath="../../shamiko"
 readonly shamikoWhitelistConfigurationFileName="whitelist"
 readonly shamikoWhitelistConfigurationFilePath="${shamikoConfigurationFolderPath}/${shamikoWhitelistConfigurationFileName}"
 
-if ls -1A "${shamikoInstallationFolderPath}/*" &> /dev/null;
+function doFoldersExistToBeNonEmpty
+{
+	for folder in "$@";
+	do
+		if [[ ! -d "${folder}" ]];
+		then
+			return ${EXIT_FAILURE}
+		fi
+		if [[ -z "$(find "${folder}" -maxdepth 1 -mindepth 1 -print -quit)" ]];
+		then
+			return ${EXIT_FAILURE}
+		fi
+	done
+	return ${EXIT_SUCCESS}
+}
+
+if doFoldersExistToBeNonEmpty "${shamikoInstallationFolderPath}";
 then
 	echo "The shamiko installation folder was found at \"${shamikoInstallationFolderPath}\". "
 	abortFlag=${EXIT_SUCCESS}
@@ -643,7 +659,7 @@ readonly zygiskNextConfigurationFolderPath="../../zygisksu"
 readonly zygiskNextDenylistConfigurationFileName="denylist_enforce"
 readonly zygiskNextDenylistConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistConfigurationFileName}"
 
-if ls -1A "${zygiskNextInstallationFolderPath}/*" &> /dev/null;
+if doFoldersExistToBeNonEmpty "${zygiskNextInstallationFolderPath}";
 then
 	echo "The Zygisk Next installation folder was found at \"${zygiskNextInstallationFolderPath}\". "
 	abortFlag=${EXIT_SUCCESS}
