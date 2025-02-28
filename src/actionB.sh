@@ -634,6 +634,7 @@ then
 else
 	echo "The shamiko installation folder \"${shamikoInstallationFolderPath}\" did not exist. "
 fi
+echo ""
 
 # Zygisk Next (0b0X0000) #
 echo "# Zygisk Next (0b0X0000) #"
