@@ -497,9 +497,9 @@ then
 fi
 for sensitiveApplication in ${sensitiveApplications}
 do
-	if pm list packages | grep -q "{sensitiveApplication}";
+	if pm list packages | grep -q "${sensitiveApplication}";
 	then
-		if pm disable "{sensitiveApplication}";
+		if pm disable "${sensitiveApplication}" &> /dev/null;
 		then
 			echo "The sensitive application \"${sensitiveApplication}\" was detected, which has been disabled. "
 		else

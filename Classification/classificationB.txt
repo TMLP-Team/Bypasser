@@ -81,6 +81,7 @@ com.android1500.androidfaker
 com.android1500.gpssetter
 com.app.catsmoker
 com.asameer.killappnow
+com.asdf51.friend
 com.asyjaiz.a12blur
 com.berdik.letmedowngrade
 com.berdik.macsposed
@@ -236,6 +237,7 @@ com.nnnen.plusne
 com.nxdxfg.GoldenVipHook
 com.oosl.colorostool
 com.overlook.android.fing
+com.owo233.fuckmarketads
 com.parallelc.micts
 com.pic.catcher
 com.plus.boy
