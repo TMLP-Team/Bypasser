@@ -76,7 +76,7 @@ then
 	elif [[ "${KSU}" == "true" ]];
 	then
 		echo "KSU (${KSU_VER_CODE}): Please sequentially deploy the KSU Manager with its super user tab configured correctly, the Zygisk Next module with denylist enforcement on, the shamiko module in the whitelist mode${commonStatements}"
-	elif [[ "${MAGISK}" == "true" ]];
+	elif [[ -n "${MAGISK_VER_CODE}" ]];
 	then
 		echo "Magisk (${MAGISK_VER_CODE}): Please sequentially deploy the Magisk Manager with Zygisk enabled, the shamiko module in the whitelist mode${commonStatements}"
 	else
