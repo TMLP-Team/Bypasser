@@ -71,13 +71,11 @@ fi
 readonly MIN_APATCH_VER_CODE=10927
 readonly MIN_KSU_VER_CODE=11981
 readonly MIN_MAGISK_VER_CODE=28000
-readonly commonStatements=", the PIF + TS + VBMetaFixer modules with correct TS configurations, the latest Jing Matrix version of the LSPosed module with the narrowest scope for each plugin, and the HMAL plugin activated with correct configurations. "
 
 if $BOOTMODE;
 then
 	if [[ "${APATCH}" == "true" ]];
 	then
-		ui_print "Apatch: Please sequentially deploy the Apatch Manager with its super user tab configured correctly, the Zygisk Next module with denylist enforcement on${commonStatements}"
 		if [[ ${APATCH_VER_CODE} -ge ${MIN_APATCH_VER_CODE} ]];
 		then
 			ui_print "The action button is supported (Apatch ${APATCH_VER_CODE} >= ${MIN_APATCH_VER_CODE}). "
@@ -86,7 +84,6 @@ then
 		fi
 	elif [[ "${KSU}" == "true" ]];
 	then
-		ui_print "KSU: Please sequentially deploy the KSU Manager with its super user tab configured correctly, the Zygisk Next module with denylist enforcement on, the shamiko module in the whitelist mode${commonStatements}"
 		if [[ ${KSU_VER_CODE} -ge ${MIN_KSU_VER_CODE} ]];
 		then
 			ui_print "The action button is supported (KSU ${KSU_VER_CODE} >= ${MIN_KSU_VER_CODE}). "
@@ -95,7 +92,6 @@ then
 		fi
 	elif [[ -n "${MAGISK_VER_CODE}" ]];
 	then
-		ui_print "Magisk: Please sequentially deploy the Magisk Manager with Zygisk enabled, the shamiko module in the whitelist mode${commonStatements}"
 		if [[ ${MAGISK_VER_CODE} -ge ${MIN_MAGISK_VER_CODE} ]];
 		then
 			ui_print "The action button is supported (Magisk ${MAGISK_VER_CODE} >= ${MIN_MAGISK_VER_CODE}). "

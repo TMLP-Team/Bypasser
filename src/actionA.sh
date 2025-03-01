@@ -72,13 +72,13 @@ if $BOOTMODE;
 then
 	if [[ "${APATCH}" == "true" ]];
 	then
-		echo "Apatch: Please sequentially deploy the Apatch Manager with its super user tab configured correctly, the Zygisk Next module with denylist enforcement on${commonStatements}"
+		echo "Apatch (${APATCH_VER_CODE}): Please sequentially deploy the Apatch Manager with its super user tab configured correctly, the Zygisk Next module with denylist enforcement on${commonStatements}"
 	elif [[ "${KSU}" == "true" ]];
 	then
-		echo "KSU: Please sequentially deploy the KSU Manager with its super user tab configured correctly, the Zygisk Next module with denylist enforcement on, the shamiko module in the whitelist mode${commonStatements}"
-	elif [[ -n "${MAGISK_VER_CODE}" ]];
+		echo "KSU (${KSU_VER_CODE}): Please sequentially deploy the KSU Manager with its super user tab configured correctly, the Zygisk Next module with denylist enforcement on, the shamiko module in the whitelist mode${commonStatements}"
+	elif [[ "${MAGISK}" == "true" ]];
 	then
-		echo "Magisk: Please sequentially deploy the Magisk Manager with Zygisk enabled, the shamiko module in the whitelist mode${commonStatements}"
+		echo "Magisk (${MAGISK_VER_CODE}): Please sequentially deploy the Magisk Manager with Zygisk enabled, the shamiko module in the whitelist mode${commonStatements}"
 	else
 		echo "Unknown: The manager used is unknown. "
 	fi	
