@@ -11,6 +11,7 @@ readonly moduleName="Bypasser"
 readonly moduleId="bypasser"
 readonly defaultTimeout=5
 readonly actionFolderPath="$(dirname "$0")"
+readonly commonStatements=", the PIF + TS + VBMetaFixer modules with correct TS configurations, the latest Jing Matrix version of the LSPosed module with the narrowest scope for each plugin, and the HMAL plugin activated with correct configurations. "
 readonly startTime=$(date +%s%N)
 exitCode=${EXIT_SUCCESS}
 
@@ -66,6 +67,23 @@ then
 else
 	echo "The working directory \"$(pwd)\" is unexpected. "
 	exitCode=$(expr ${exitCode} \| ${EXIT_FAILURE})
+fi
+if $BOOTMODE;
+then
+	if [[ "${APATCH}" == "true" ]];
+	then
+		echo "Apatch: Please sequentially deploy the Apatch Manager with its super user tab configured correctly, the Zygisk Next module with denylist enforcement on${commonStatements}"
+	elif [[ "${KSU}" == "true" ]];
+	then
+		echo "KSU: Please sequentially deploy the KSU Manager with its super user tab configured correctly, the Zygisk Next module with denylist enforcement on, the shamiko module in the whitelist mode${commonStatements}"
+	elif [[ -n "${MAGISK_VER_CODE}" ]];
+	then
+		echo "Magisk: Please sequentially deploy the Magisk Manager with Zygisk enabled, the shamiko module in the whitelist mode${commonStatements}"
+	else
+		echo "Unknown: The manager used is unknown. "
+	fi	
+else
+	echo "Unbooted: The device is not working in the boot mode. "
 fi
 echo ""
 
