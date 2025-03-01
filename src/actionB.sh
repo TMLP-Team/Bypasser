@@ -617,11 +617,7 @@ function doFoldersExistToBeNonEmpty
 {
 	for folder in "$@";
 	do
-		if [[ ! -d "${folder}" ]];
-		then
-			return ${EXIT_FAILURE}
-		fi
-		if [[ -z "$(find "${folder}" -maxdepth 1 -mindepth 1 -print -quit)" ]];
+		if [[ ! -d "${folder}" || -z "$(find "${folder}" -maxdepth 1 -mindepth 1 -print -quit)" ]];
 		then
 			return ${EXIT_FAILURE}
 		fi
