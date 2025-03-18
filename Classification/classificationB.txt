@@ -4,6 +4,7 @@ Fuck.RollingSky.Pay
 Hook.JiuWu.Xp
 It.dhd.oxygencustomizer
 Telegram.Speed.Hook
+ai.noads.ozon
 akhil.alltrans
 android.xiaolan.ppxshare.tools
 androidx.top.hyperos.dynamic.notify
@@ -47,6 +48,7 @@ cn.lovesykun.miui_force_fps
 cn.lyric.getter
 cn.myflv.noactive
 cn.tinyhai.ban_uninstall
+cn.unicorn369.HookEuicc
 cn.wankkoree.xp.portrait2landscape
 cn.wankkoree.xp.webviewpp
 cn.wankkoree.xposed.enablewebviewdebugging
@@ -232,12 +234,15 @@ com.mhook.dialog.beta
 com.mihuashi.paybyfinger
 com.miui.break.sim
 com.mln.momoxposed
+com.modisk.dawn
 com.my.televip
+com.neko.helsirootbypass
 com.nnnen.plusne
 com.nxdxfg.GoldenVipHook
 com.oosl.colorostool
 com.overlook.android.fing
 com.owo233.fuckmarketads
+com.padi.hook.hookqq
 com.parallelc.micts
 com.pic.catcher
 com.plus.boy
@@ -252,6 +257,7 @@ com.queallytech.disablelogrequest
 com.queallytech.omapi
 com.raincat.dolby_beta
 com.rdstory.miuiperfsaver
+com.rel.languager
 com.reveny.protecttai.bypass
 com.reveny.vbmetafix.service
 com.rifsxd.ksunext
@@ -274,6 +280,8 @@ com.strawing.alwaysthemedicon
 com.strawing.fuckdevicepolicy
 com.suisho.disablescreenshotsound
 com.suisho.pixelposed
+com.sumver.fixmiaod
+com.sumver.keepaod
 com.suqi8.oshin
 com.surcumference.fingerprintpay
 com.tcgg.imjhook
@@ -327,6 +335,7 @@ com.yotagit.xfucker
 com.yuanwofei.cardemulator.pro
 com.yubyf.quotelockx
 com.yunzia.hyperstar
+com.yuuki.betterbar
 com.yuuki.puresatusbar
 com.yxer.compo.module
 com.zdy.project.wechat_chatroom_helper
@@ -377,6 +386,7 @@ icu.nullptr.twifucker
 id.my.pjm.toys.nfcnci_patience
 im.hoho.alipayinstallb
 inc.whew.android.fakegapps
+io.github.Retmon403.oppotheme
 io.github.a13e300.ksuwebui
 io.github.a13e300.tools.stethox
 io.github.alexdonh.noaccessibilityservices
@@ -397,6 +407,8 @@ io.github.howard20181.notificationiconfix
 io.github.huskydg.magisk
 io.github.icepony.alwayscreateuser
 io.github.jeffshee.nekumorimod
+io.github.jqssun.gpssetter
+io.github.jqssun.seaccess
 io.github.lamprose.mi_ultra
 io.github.liusj5257
 io.github.lsposed.disableflagsecure
