@@ -40,6 +40,7 @@ com.cisco.anyconnect.vpn.android.avf
 com.csam.icici.bank.imobile
 com.digilocker.android
 com.digitalgd.dgyss
+com.edkey.quicktakes
 com.eg.android.AlipayGphone
 com.feiyu.carrot3.nearme.gamecenter
 com.finshell.wallet
