@@ -123,6 +123,7 @@ com.douban.fuckad
 com.dr8.xposed.saax
 com.droserasprout.healergram
 com.dualguard
+com.duolingo.kill
 com.emanuelef.remote_capture
 com.example.installhook
 com.example.ourom
@@ -360,6 +361,7 @@ de.buttercookie.rocketplayerdefuser
 dev.arktic.installerrestrictor
 dev.coderpwh.fuck_shake
 dev.lackluster.mihelper
+dev.rushii.xspoofsignatures
 dev.sora.extractor
 dialog.box
 es.chiteroman.bootloaderspoofer
