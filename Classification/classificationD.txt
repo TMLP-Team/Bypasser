@@ -94,6 +94,7 @@ com.oneplus.note
 com.oneplus.soundrecorder
 com.oneplus.twspods
 com.oppo.market
+com.oppo.store
 com.ovunque.parkwheels
 com.parknshop.parknshopapp
 com.phonepe.app
