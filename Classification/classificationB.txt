@@ -261,6 +261,7 @@ com.rdstory.miuiperfsaver
 com.rel.languager
 com.reveny.protecttai.bypass
 com.reveny.vbmetafix.service
+com.richardluo.globalIconPack
 com.rifsxd.ksunext
 com.rifsxd.processhook
 com.setoskins.hook
@@ -295,6 +296,7 @@ com.thinkdifferent.anywebview
 com.three.minit.batteryresources
 com.topjohnwu.magisk
 com.topmiaohan.superlist
+com.toxic.prime.ff
 com.tribalfs.gmh
 com.trump.myxposed
 com.tsng.fuckdmzj
@@ -350,6 +352,7 @@ com.zhufucdev.cp_plugin
 com.zhufucdev.motion_emulator
 com.zhufucdev.ws_plugin
 com.zidongdianji
+com.zitan.eternalseniahook
 com.ztc1997.fakedcbacklight
 com.ztc1997.mockbluetoothdevice
 com.zuiyou.adfree
@@ -467,8 +470,10 @@ me.rhunk.snapenhance
 me.simplehook
 me.sleep.vip
 me.teble.xposed.autodaily
+me.timschneeberger.onyxtweaks
 me.weishu.kernelsu
 me.zhenxin.thisreallylite
+miko.client
 ml.pyshivam.imeimasker
 mobi.acpm.inspeckage
 moe.chenxy.hyperpods
