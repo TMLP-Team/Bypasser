@@ -273,6 +273,7 @@ com.silverlabtm.app.deviceidchanger.free
 com.simo.ssl.killer
 com.simo.tgramhooks
 com.sky.xposed.rimet
+com.skyhand.ppxxphelper
 com.skyhand.redbookhelper
 com.skyhand.sinahelper
 com.softwarebakery.drivedroid
@@ -424,6 +425,7 @@ io.github.nitsuya.aa.display
 io.github.nitsuya.donottryaccessibility
 io.github.nvg064.xiaomicharginganimation
 io.github.qauxv
+io.github.rezade05.hidebusybox
 io.github.rushiranpise.gameunlocker
 io.github.tehcneko.applinkverify
 io.github.tehcneko.clipboardwhitelist
