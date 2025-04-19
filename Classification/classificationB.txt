@@ -119,6 +119,7 @@ com.demo.serendipity
 com.demo.tl_ing
 com.dingda.adfree
 com.dingtalk.recall
+com.dorian15.greendothide
 com.douban.fuckad
 com.dr8.xposed.saax
 com.droserasprout.healergram
@@ -371,6 +372,7 @@ dialog.box
 es.chiteroman.bootloaderspoofer
 es.rafagale.biometricbypass
 eu.faircode.xlua
+eu.rafareborn.biometricbypass
 fansirsqi.xposed.sesame
 fer.amiya.amiyahooks
 foss.coolest.fucker
@@ -411,6 +413,7 @@ io.github.duzhaokun123.yamf
 io.github.enhancege
 io.github.howard20181.notificationiconfix
 io.github.huskydg.magisk
+io.github.icepony.alwaysbatterysaver
 io.github.icepony.alwayscreateuser
 io.github.jeffshee.nekumorimod
 io.github.jqssun.gpssetter
