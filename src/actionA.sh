@@ -11,7 +11,6 @@ readonly moduleName="Bypasser"
 readonly moduleId="bypasser"
 readonly defaultTimeout=5
 readonly actionFolderPath="$(dirname "$0")"
-readonly commonStatements=", the PIF + TS + VBMetaFixer modules with correct TS configurations, the latest Jing Matrix version of the LSPosed module with the narrowest scope for each plugin, and the HMAL plugin activated with correct configurations. "
 readonly startTime=$(date +%s%N)
 exitCode=${EXIT_SUCCESS}
 
@@ -72,15 +71,24 @@ if $BOOTMODE;
 then
 	if [[ "${APATCH}" == "true" ]];
 	then
-		echo "Apatch (${APATCH_VER_CODE}): Please sequentially deploy the Apatch Manager with only applications requiring root privileges configured, the NeoZygisk module${commonStatements}"
+		echo "Apatch (${APATCH_VER_CODE}): Please deploy the latest \`\`action\`\` version of the Apatch with only applications requiring root privileges configured and granted in the Apatch Manager, \
+embed the Cherish Peekaboo as a kernel module, install the NeoZygisk module as a system module, install the Play Integrity Fix (PIF) module as a system module, install the Tricky Store (TS) module as a system module with the correct configurations, \
+install the latest Jing Matrix \`\`action\`\` version of the LSPosed module as a system module with the narrowest scope for each plugin, install the VBMetaFixer module as a system module if TEE is not broken, \
+and activate the HMAL plugin with the correct configurations. "
 	elif [[ "${KSU}" == "true" ]];
 	then
-		echo "KSU (${KSU_VER_CODE}): Please sequentially deploy the KSU Manager with only applications requiring root privileges configured, the NeoZygisk module, the shamiko module in the whitelist mode if you wish to${commonStatements}"
+		echo "KSU (${KSU_VER_CODE}): Please deploy the latest KSU or KSU Next with only applications requiring root privileges configured and granted in the manager, embed the SUSFS as a kernel module, \
+install the NeoZygisk module as a system module, install the Shamiko module as a system module with the whitelist mode enabled if you wish to, install the Play Integrity Fix (PIF) module as a system module, \
+install the Tricky Store (TS) module as a system module with the correct configurations, install the latest Jing Matrix \`\`action\`\` version of the LSPosed module as a system module with the narrowest scope for each plugin, \
+install the VBMetaFixer module as a system module if TEE is not broken, and activate the HMAL plugin with the correct configurations. "
 	elif [[ -n "${MAGISK_VER_CODE}" ]];
 	then
-		echo "Magisk (${MAGISK_VER_CODE}): Please sequentially deploy the Magisk Manager with the Zygisk enabled by built-in Zygisk or the NeoZygisk module, the shamiko module in the whitelist mode${commonStatements}"
+		echo "Magisk (${MAGISK_VER_CODE}): Please deploy the latest Magisk Manager with the Zygisk enabled by built-in Zygisk or the NeoZygisk module, execute applications requiring root privileges with root privileges granted, \
+install the Shamiko module with the whitelist mode enabled if not using Magisk Delta, install the Play Integrity Fix (PIF) module, install the Tricky Store (TS) module with the correct configurations, \
+install the latest Jing Matrix \`\`action\`\` version of the LSPosed module with the narrowest scope for each plugin, install the VBMetaFixer module if TEE is not broken, install the bindhosts or the built-in Systemless hosts module, \
+and activate the HMAL plugin with the correct configurations. "
 	else
-		echo "Unknown: The manager used is unknown. "
+		echo "Unknown: The rooting solution used is unknown. "
 	fi	
 else
 	echo "Unbooted: The device is not working in the boot mode. "
