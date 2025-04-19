@@ -679,16 +679,21 @@ echo ""
 
 # Zygisk Next (0b0X0000) #
 echo "# Zygisk Next (0b0X0000) #"
-readonly zygiskNextInstallationFolderPath="../../modules/zygisksu"
+readonly zygiskSolutionInstallationFolderPath="../../modules/zygisksu"
+readonly neozygiskConfigurationFolderPath="../../neozygisk"
 readonly zygiskNextConfigurationFolderPath="../../zygisksu"
 readonly zygiskNextDenylistConfigurationFileName="denylist_enforce"
 readonly zygiskNextDenylistConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistConfigurationFileName}"
 
-if doFoldersExistToBeNonEmpty "${zygiskNextInstallationFolderPath}";
+if doFoldersExistToBeNonEmpty "${zygiskSolutionInstallationFolderPath}";
 then
-	echo "The Zygisk Next installation folder was found at \"${zygiskNextInstallationFolderPath}\". "
+	echo "The installation folder of the Zygisk solution module was found at \"${zygiskSolutionInstallationFolderPath}\". "
 	abortFlag=${EXIT_SUCCESS}
-	if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
+	if [[ -d "${neozygiskConfigurationFolderPath}" ]];
+	then
+		echo "As Neozygisk is the Zygisk solution module, nothing is required to be handled. "
+		abortFlag=${EXIT_FAILURE}
+	elif [[ -d "${zygiskNextConfigurationFolderPath}" ]];
 	then
 		echo "The Zygisk Next configuration folder was found at \"${zygiskNextConfigurationFolderPath}\". "
 	else
@@ -721,7 +726,7 @@ then
 		fi
 	fi
 else
-	echo "The Zygisk Next installation folder \"${zygiskNextInstallationFolderPath}\" did not exist. "
+	echo "The Zygisk Next installation folder \"${zygiskSolutionInstallationFolderPath}\" did not exist. "
 fi
 echo ""
 
