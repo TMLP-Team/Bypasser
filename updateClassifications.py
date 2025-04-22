@@ -209,13 +209,13 @@ def gitPush() -> bool:
 	for commandline in commandlines:
 		with Popen(commandline, stdout = PIPE, stderr = PIPE, shell = True) as process:
 			output, error = process.communicate()
-			print("Standard Output:")
-			print(type(output))
-			print("Standard Error:")
-			print(type(error))
+			if output or error:
+				print("Abort ``git`` operations due to the following issue. ")
+				print({"commandline":commandline, "output":output.decode(), "error":error.decode()})
+				return False
 	commandlines = ["git add .", "git commit -m \"{0}\"".format(commitMessage), "git push"]
 	for commandline in commandlines:
-		if os.system(commandline) != 0:
+		if os.system(commandline) != EXIT_SUCCESS:
 			return False
 	return True
 

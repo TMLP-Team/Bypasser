@@ -24,7 +24,7 @@ function setPermissions
 {
 	returnCode=${EXIT_SUCCESS}
 	find . -type d -exec chmod 755 {} \;
-	if [[ $? != ${EXIT_SUCCESS};
+	if [[ $? != ${EXIT_SUCCESS} ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
