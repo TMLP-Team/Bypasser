@@ -210,9 +210,9 @@ def gitPush() -> bool:
 		with Popen(commandline, stdout = PIPE, stderr = PIPE, shell = True) as process:
 			output, error = process.communicate()
 			print("Standard Output:")
-			print(output.decode())
+			print(type(output))
 			print("Standard Error:")
-			print(error.decode())
+			print(type(error))
 	commandlines = ["git add .", "git commit -m \"{0}\"".format(commitMessage), "git push"]
 	for commandline in commandlines:
 		if os.system(commandline) != 0:
