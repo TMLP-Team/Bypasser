@@ -10,7 +10,10 @@ readonly moduleName="Bypasser"
 readonly moduleId="bypasser"
 readonly defaultTimeout=5
 readonly actionFolderPath="$(dirname "$0")"
-readonly actionPropFilePath="action.prop"
+readonly webrootName="webroot"
+readonly webrootFolderPath="${webrootName}"
+readonly actionPropFileName="action.prop"
+readonly actionPropFilePath="${webrootFolderPath}/${actionPropFileName}"
 exitCode=${EXIT_SUCCESS}
 
 function clearCaches
@@ -84,6 +87,17 @@ chmod 755 "${actionFolderPath}" 2>/dev/null && cd "${actionFolderPath}" 2>/dev/n
 if [[ $? == ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleId}" ]];
 then
 	setPermissions &> /dev/null
+	if [[ ! -f "${actionPropFilePath}" ]];
+	then
+		mkdir -p "${webrootFolderPath}" && echo "A" > "${actionPropFilePath}"
+		if [[ $? -eq ${EXIT_SUCCESS} ]];
+		then
+			echo "The action configuration file \"${actionPropFilePath}\" was missing and recovered successfully. "
+		else
+			echo "The action configuration file \"${actionPropFilePath}\" was missing and could not be recovered. "
+		fi
+		setPermissions &> /dev/null
+	fi
 	if [[ -f "${actionPropFilePath}" ]];
 	then
 		target="$(cat "${actionPropFilePath}")";
@@ -114,12 +128,12 @@ then
 				exitCode=${EXIT_FAILURE}
 			fi
 		else
-			echo "Failed to execute \`\`action.sh\`\` since improper configurations were detected. "
+			echo "Failed to execute \`\`action.sh\`\` since an improper action configuration file was detected. "
 			echo "Please try to flash the latest version of the ${moduleName} Magisk Module. "
 			exitCode=${EXIT_FAILURE}
 		fi
 	else
-		echo "Failed to execute \`\`action.sh\`\` since configurations are missing. "
+		echo "Failed to execute \`\`action.sh\`\` since the action configuration file \"${actionPropFilePath}\" was missing and unrecoverable. "
 		echo "Please try to flash the latest version of the ${moduleName} Magisk Module. "
 		exitCode=${EXIT_FAILURE}
 	fi

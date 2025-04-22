@@ -106,7 +106,6 @@ readonly blacklistConfigurationFilePath="${configFolderPath}/${blacklistConfigur
 readonly whitelistConfigurationFileName=".HMAL_Whitelist_Config.json"
 readonly whitelistConfigurationFilePath="${configFolderPath}/${whitelistConfigurationFileName}"
 readonly reportLink="https://github.com/TMLP-Team/Bypasser"
-readonly sensitiveApplications="com.google.android.safetycore com.google.android.contactkeys"
 gapTime=0
 
 function getClassification
@@ -521,19 +520,6 @@ if [[ -z "${blacklistAppList}" || -z "${blacklistScopeList}" || -z "${whitelistA
 then
 	echo "At least one list was empty. Please check the configurations generated before importing. "
 fi
-for sensitiveApplication in ${sensitiveApplications}
-do
-	if pm list packages | grep -q "${sensitiveApplication}";
-	then
-		if pm disable "${sensitiveApplication}" &> /dev/null;
-		then
-			echo "The sensitive application \"${sensitiveApplication}\" was detected, which has been disabled. "
-		else
-			exitCode=$(expr ${exitCode} \| 2)
-			echo "The sensitive application \"${sensitiveApplication}\" was detected, which failed to be disabled. "
-		fi
-	fi
-done
 echo ""
 
 # Tricky Store (0b000X00) #
@@ -614,8 +600,13 @@ else
 fi
 echo ""
 
-# Shamiko (0b00X000) #
-echo "# Shamiko (0b00X000) #"
+# Zygisk Traces (0b00X000) #
+echo "# Zygisk Traces (0b00X000) #"
+readonly zygiskSolutionInstallationFolderPath="../../modules/zygisksu"
+readonly neozygiskConfigurationFolderPath="../../neozygisk"
+readonly zygiskNextConfigurationFolderPath="../../zygisksu"
+readonly zygiskNextDenylistConfigurationFileName="denylist_enforce"
+readonly zygiskNextDenylistConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistConfigurationFileName}"
 readonly shamikoInstallationFolderPath="../../modules/zygisk_shamiko"
 readonly shamikoConfigurationFolderPath="../../shamiko"
 readonly shamikoWhitelistConfigurationFileName="whitelist"
@@ -636,58 +627,11 @@ function doFoldersExistToBeNonEmpty
 	return ${EXIT_SUCCESS}
 }
 
-if doFoldersExistToBeNonEmpty "${shamikoInstallationFolderPath}";
-then
-	echo "The shamiko installation folder was found at \"${shamikoInstallationFolderPath}\". "
-	abortFlag=${EXIT_SUCCESS}
-	if [[ -d "${shamikoConfigurationFolderPath}" ]];
-	then
-		echo "The shamiko configuration folder was found at \"${shamikoConfigurationFolderPath}\". "
-	else
-		echo "The shamiko configuration folder \"${shamikoConfigurationFolderPath}\" did not exist. "
-		mkdir -p "${shamikoConfigurationFolderPath}"
-		if [[ $? -eq ${EXIT_SUCCESS} && -d "${shamikoConfigurationFolderPath}" ]];
-		then
-			echo "Successfully created the shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
-		else
-			exitCode=$(expr ${exitCode} \| 8)
-			abortFlag=${EXIT_FAILURE}
-			echo "Failed to create the shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
-		fi
-	fi
-	if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
-	then
-		if [[ -f "${shamikoWhitelistConfigurationFilePath}" ]];
-		then
-			echo "The shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" already existed. "
-		else
-			echo "The shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" did not exist. "
-			touch "${shamikoWhitelistConfigurationFilePath}"
-			if [[ $? -eq ${EXIT_SUCCESS} && -f "${shamikoWhitelistConfigurationFilePath}" ]];
-			then
-				echo "Successfully created the shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\". "
-			else
-				exitCode=$(expr ${exitCode} \| 8)
-				echo "Failed to create the shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\". "
-			fi
-		fi
-	fi
-else
-	echo "The shamiko installation folder \"${shamikoInstallationFolderPath}\" did not exist. "
-fi
-echo ""
-
-# Zygisk Next (0b0X0000) #
-echo "# Zygisk Next (0b0X0000) #"
-readonly zygiskSolutionInstallationFolderPath="../../modules/zygisksu"
-readonly neozygiskConfigurationFolderPath="../../neozygisk"
-readonly zygiskNextConfigurationFolderPath="../../zygisksu"
-readonly zygiskNextDenylistConfigurationFileName="denylist_enforce"
-readonly zygiskNextDenylistConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistConfigurationFileName}"
-
 if doFoldersExistToBeNonEmpty "${zygiskSolutionInstallationFolderPath}";
 then
 	echo "The installation folder of the Zygisk solution module was found at \"${zygiskSolutionInstallationFolderPath}\". "
+	
+	# Zygisk Next #
 	abortFlag=${EXIT_SUCCESS}
 	if [[ -d "${neozygiskConfigurationFolderPath}" ]];
 	then
@@ -703,7 +647,7 @@ then
 		then
 			echo "Successfully created the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
 		else
-			exitCode=$(expr ${exitCode} \| 16)
+			exitCode=$(expr ${exitCode} \| 8)
 			abortFlag=${EXIT_FAILURE}
 			echo "Failed to create the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
 		fi
@@ -720,13 +664,97 @@ then
 			then
 				echo "Successfully created the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
 			else
-				exitCode=$(expr ${exitCode} \| 16)
+				exitCode=$(expr ${exitCode} \| 8)
 				echo "Failed to create the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
 			fi
 		fi
 	fi
+	
+	# Zygisk Shamiko #
+	if doFoldersExistToBeNonEmpty "${shamikoInstallationFolderPath}";
+	then
+		echo "The shamiko installation folder was found at \"${shamikoInstallationFolderPath}\". "
+		if [[ "${APATCH}" == "true" ]];
+		then
+			echo "Please kindly acknowledge that Shamiko does not work with Apatch. "
+		fi
+		abortFlag=${EXIT_SUCCESS}
+		if [[ -d "${shamikoConfigurationFolderPath}" ]];
+		then
+			echo "The shamiko configuration folder was found at \"${shamikoConfigurationFolderPath}\". "
+		else
+			echo "The shamiko configuration folder \"${shamikoConfigurationFolderPath}\" did not exist. "
+			mkdir -p "${shamikoConfigurationFolderPath}"
+			if [[ $? -eq ${EXIT_SUCCESS} && -d "${shamikoConfigurationFolderPath}" ]];
+			then
+				echo "Successfully created the shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
+			else
+				exitCode=$(expr ${exitCode} \| 8)
+				abortFlag=${EXIT_FAILURE}
+				echo "Failed to create the shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
+			fi
+		fi
+		if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
+		then
+			if [[ -f "${shamikoWhitelistConfigurationFilePath}" ]];
+			then
+				echo "The shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" already existed. "
+			else
+				echo "The shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" did not exist. "
+				touch "${shamikoWhitelistConfigurationFilePath}"
+				if [[ $? -eq ${EXIT_SUCCESS} && -f "${shamikoWhitelistConfigurationFilePath}" ]];
+				then
+					echo "Successfully created the shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\". "
+				else
+					exitCode=$(expr ${exitCode} \| 8)
+					echo "Failed to create the shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\". "
+				fi
+			fi
+		fi
+	else
+		echo "The shamiko installation folder \"${shamikoInstallationFolderPath}\" did not exist. "
+	fi
 else
-	echo "The Zygisk Next installation folder \"${zygiskSolutionInstallationFolderPath}\" did not exist. "
+	echo "The installation folder of the Zygisk solution module \"${zygiskSolutionInstallationFolderPath}\" did not exist. "
+fi
+echo ""
+
+# Shell (0b0X0000) #
+echo "# Shell (0b0X0000) #"
+readonly sensitiveApplications="com.google.android.safetycore com.google.android.contactkeys"
+
+for sensitiveApplication in ${sensitiveApplications}
+do
+	if pm list packages | grep -q "${sensitiveApplication}";
+	then
+		if pm disable "${sensitiveApplication}" &> /dev/null;
+		then
+			echo "The sensitive application \"${sensitiveApplication}\" was detected, which has been disabled. "
+		else
+			exitCode=$(expr ${exitCode} \| 16)
+			echo "The sensitive application \"${sensitiveApplication}\" was detected, which failed to be disabled. "
+		fi
+	fi
+done
+settings delete global hidden_api_policy
+if [[ $? -ne ${EXIT_SUCCESS};
+then
+	exitCode=$(expr ${exitCode} \| 16)
+fi
+settings delete global hidden_api_policy_p_apps
+if [[ $? -ne ${EXIT_SUCCESS};
+then
+	exitCode=$(expr ${exitCode} \| 16)
+fi
+settings delete global hidden_api_policy_pre_p_apps
+if [[ $? -ne ${EXIT_SUCCESS};
+then
+	exitCode=$(expr ${exitCode} \| 16)
+fi
+settings delete global hidden_api_blacklist_exemptions
+if [[ $? -ne ${EXIT_SUCCESS};
+then
+	exitCode=$(expr ${exitCode} \| 16)
 fi
 echo ""
 
@@ -738,8 +766,8 @@ readonly webrootFilePath="${webrootName}.zip"
 readonly webrootUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot.zip"
 readonly webrootDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot.zip.sha512"
 readonly actionPropFileName="action.prop"
-readonly actionPropFilePath="${actionPropFileName}"
-readonly webrootActionPropFilePath="${webrootFolderPath}/${actionPropFileName}"
+readonly actionPropFilePath="${webrootFolderPath}/${actionPropFileName}"
+readonly currentAB="A"
 readonly targetAB="B"
 readonly targetAction="action${targetAB}.sh"
 readonly actionUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/${targetAction}"
@@ -816,18 +844,18 @@ then
 	if [[ -f "${targetAction}" && "$(sha512sum "${targetAction}" | cut -d " " -f1)" == "${shellDigest}" ]];
 	then
 		echo "The target action \`\`${targetAction}\`\` is already up-to-date. "
-		if [[ -f "${actionPropFilePath}" && -f "${webrootActionPropFilePath}" && "$(cat "${actionPropFilePath}")" == "$(cat "${webrootActionPropFilePath}")" ]];
+		if [[ -f "${actionPropFilePath}" && "$(cat "${actionPropFilePath}")" == "${currentAB}" ]];
 		then
-			echo "The action slot of the web UI seemed correct. "
+			echo "The action slot remained ${currentAB}. "
 		else
-			echo "The action slot of the web UI was inconsistent with the actual one. "
-			rm -f "${webrootActionPropFilePath}" && echo -n "$(cat "${actionPropFilePath}")" > "${webrootActionPropFilePath}"
-			if [[ $? -eq ${EXIT_SUCCESS} && -f "${actionPropFilePath}" && -f "${webrootActionPropFilePath}" ]];
+			echo "The action slot seemed inconsistent with the actual one. "
+			rm -f "${actionPropFilePath}" && echo -n "${currentAB}" > "${actionPropFilePath}"
+			if [[ $? -eq ${EXIT_SUCCESS} && -f "${actionPropFilePath}" ]];
 			then
-				echo "Successfully synchronized \"${webrootActionPropFilePath}\" from \"${actionPropFilePath}\". "
+				echo "Successfully synchronized the actual action slot to \"${actionPropFilePath}\". "
 			else
 				exitCode=$(expr ${exitCode} \| 32)
-				echo "Failed to synchronize \"${webrootActionPropFilePath}\" from \"${actionPropFilePath}\". "
+				echo "Failed to synchronize the actual action slot to \"${actionPropFilePath}\". "
 			fi
 		fi
 	else
@@ -847,14 +875,13 @@ then
 					if [[ $? -eq ${EXIT_SUCCESS} && -f "${targetAction}" ]];
 					then
 						echo "Successfully updated \`\`${targetAction}\`\`. "
-						rm -f "${actionPropFilePath}" "${webrootActionPropFilePath}"
-						echo -n "${targetAB}" > "${actionPropFilePath}" && echo -n "${targetAB}" > "${webrootActionPropFilePath}"
-						if [[ $? -eq ${EXIT_SUCCESS} && -f "${actionPropFilePath}" && -f "${webrootActionPropFilePath}" ]];
+						rm -f "${actionPropFilePath}" && echo -n "${targetAB}" > "${actionPropFilePath}"
+						if [[ $? -eq ${EXIT_SUCCESS} && -f "${actionPropFilePath}" ]];
 						then
-							echo "Successfully switched to \`\`${targetAction}\`\` in \"${actionPropFilePath}\" and \"${webrootActionPropFilePath}\". "
+							echo "Successfully switched the action slot to ${targetAB} in \"${actionPropFilePath}\". "
 						else
 							exitCode=$(expr ${exitCode} \| 32)
-							echo "Failed to switch to \`\`${targetAction}\`\` in \"${actionPropFilePath}\" or \"${webrootActionPropFilePath}\". "
+							echo "Failed to switch the action slot to ${targetAB} in \"${actionPropFilePath}\". "
 						fi
 					else
 						exitCode=$(expr ${exitCode} \| 32)
