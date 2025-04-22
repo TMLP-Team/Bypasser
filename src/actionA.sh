@@ -737,22 +737,22 @@ do
 	fi
 done
 settings delete global hidden_api_policy
-if [[ $? -ne ${EXIT_SUCCESS};
+if [[ $? -ne ${EXIT_SUCCESS} ]];
 then
 	exitCode=$(expr ${exitCode} \| 16)
 fi
 settings delete global hidden_api_policy_p_apps
-if [[ $? -ne ${EXIT_SUCCESS};
+if [[ $? -ne ${EXIT_SUCCESS} ]];
 then
 	exitCode=$(expr ${exitCode} \| 16)
 fi
 settings delete global hidden_api_policy_pre_p_apps
-if [[ $? -ne ${EXIT_SUCCESS};
+if [[ $? -ne ${EXIT_SUCCESS} ]];
 then
 	exitCode=$(expr ${exitCode} \| 16)
 fi
 settings delete global hidden_api_blacklist_exemptions
-if [[ $? -ne ${EXIT_SUCCESS};
+if [[ $? -ne ${EXIT_SUCCESS} ]];
 then
 	exitCode=$(expr ${exitCode} \| 16)
 fi
