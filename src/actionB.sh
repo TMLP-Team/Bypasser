@@ -529,7 +529,7 @@ readonly trickyStoreTargetFileName="target.txt"
 readonly trickyStoreSecurityPatchFileName="security_patch.txt"
 readonly trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
 readonly trickyStoreSecurityPatchFilePath="${trickyStoreFolderPath}/${trickyStoreSecurityPatchFileName}"
-readonly patchContent="$(date +%Y%m%d)"
+readonly patchContent="$(date +%Y%m01)"
 
 if [[ -d "${trickyStoreFolderPath}" ]];
 then
