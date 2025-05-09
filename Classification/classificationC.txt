@@ -1,5 +1,5 @@
-com.androidfung.drminfo
 com.android.nativetest
+com.androidfung.drminfo
 com.byxiaorun.detector
 com.henrikherzig.playintegritychecker
 com.reveny.nativecheck

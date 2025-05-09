@@ -102,6 +102,13 @@ class Classification:
 					for v in vector:
 						if isinstance(v, dict) and "name" in v:
 							self.__s.update(findall(self.__pattern, v["name"]))
+				elif isinstance(vector, dict) and "Detectors" in vector and isinstance(vector["Detectors"], list):
+					for v in vector["Detectors"]:
+						if isinstance(v, dict) and "name" in v:
+							self.__s.update(findall(self.__pattern, v["name"]))
+				else:
+					print("Failed to update from the URL \"{0}\" due to the unrecognized data structure. ".format(url))
+					return False
 				self.__exclude()
 				currentSize = len(self.__s)
 				sizeDelta = currentSize - originalSize
@@ -222,8 +229,9 @@ def gitPush() -> bool:
 def main() -> int:
 	# Parameters #
 	filePathB = "Classification/classificationB.txt"
-	url = "https://modules.lsposed.org/modules.json"
+	urlB = "https://modules.lsposed.org/modules.json"
 	filePathC = "Classification/classificationC.txt"
+	urlC = "https://raw.githubusercontent.com/TMLP-Team/TMLP-Detectors-and-Bypassers/main/Detectors/README.json"
 	filePathD = "Classification/classificationD.txt"
 	srcFolderPath = "src"
 	webrootName = "webroot"
@@ -235,11 +243,15 @@ def main() -> int:
 	# Update $B$ #
 	classificationB, classificationC, classificationD = Classification(), Classification(), Classification()
 	bRet = classificationB.configureFile(filePathB) and bRet
-	bRet = classificationB.configureUrl(url) and bRet
+	bRet = classificationB.configureUrl(urlB) and bRet
 	bRet = classificationB.writeTo(filePathB) and bRet
 	
+	# Update $C$ #
+	bRet = classificationC.configureFile(filePathC) and bRet
+	bRet = classificationC.configureUrl(urlC) and bRet
+	bRet = classificationC.writeTo(filePathC) and bRet
+	
 	# Compute Intersections #
-	bRet = classificationC.configureFile(filePathC)
 	bRet = classificationD.configureFile(filePathD)
 	setBC = classificationB.intersection(classificationC)
 	setBD = classificationB.intersection(classificationD)
