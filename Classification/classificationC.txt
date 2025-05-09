@@ -17,6 +17,7 @@ io.github.vvb2060.keyattestation
 io.github.vvb2060.magiskdetector
 io.github.vvb2060.mahoshojo
 io.github.vvb2060.xposeddetector
+luna.safe.luna
 me.garfieldhan.hiapatch
 me.garfieldhan.holmes
 ml.w568w.checkxposed

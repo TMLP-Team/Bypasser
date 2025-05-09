@@ -11,6 +11,9 @@ readonly moduleName="Bypasser"
 readonly moduleId="bypasser"
 readonly defaultTimeout=5
 readonly actionFolderPath="$(dirname "$0")"
+readonly adbFolder="../.."
+readonly magiskFolder="${adbFolder}/magisk"
+readonly apatchFolder="${adbFolder}/ap"
 readonly startTime=$(date +%s%N)
 exitCode=${EXIT_SUCCESS}
 
@@ -42,7 +45,7 @@ function setPermissions
 }
 
 echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
-echo "The absolute path to this script is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
+echo "The absolute path to this script slot is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
 clearCaches
 if [[ $? -eq ${EXIT_SUCCESS} ]];
 then
@@ -69,24 +72,59 @@ else
 fi
 if $BOOTMODE;
 then
-	if [[ "${APATCH}" == "true" ]];
+	if [[ "${KSU}" == "true" ]];
 	then
-		echo "Apatch (${APATCH_VER_CODE}): Please deploy the latest \`\`action\`\` version of the Apatch with only applications requiring root privileges configured and granted in the Apatch Manager, \
-embed the Cherish Peekaboo as a kernel module, install the NeoZygisk module as a system module, install the Play Integrity Fix (PIF) module as a system module, install the Tricky Store (TS) module as a system module with the correct configurations, \
-install the latest Jing Matrix \`\`action\`\` version of the LSPosed module as a system module with the narrowest scope for each plugin, install the VBMetaFixer module as a system module if TEE is not broken, \
-and activate the HMAL plugin with the correct configurations. "
-	elif [[ "${KSU}" == "true" ]];
+		echo "KSU (${KSU_VER_CODE}): Please deploy the latest KSU / KSU Next with only applications requiring root privileges configured and granted in the KSU / KSU Next Manager, embed the latest SUSFS as a kernel module, \
+install the latest Zygisk Next module as a system module with the denylist disabled, install the latest Shamiko module as a system module with the whitelist mode enabled, install the latest Play Integrity Fix (PIF) module as a system module, \
+install the latest Tricky Store (TS) module as a system module with the correct configurations, install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository as a system module \
+with the narrowest scope configured for each plugin, and activate the latest HMAL plugin with the correct configurations. "
+		if [[ -d "${magiskFolder}" ]];
+		then
+			echo "The Magisk folder exists while the KSU / KSU Next is using. Please consider removing the Magisk folder. "
+		fi
+		if [[ -d "${apatchFolder}" ]];
+		then
+			echo "The Apatch folder exists while the KSU / KSU Next is using. Please consider removing the Apatch folder. "
+		fi
+	elif [[ "${APATCH}" == "true" ]];
 	then
-		echo "KSU (${KSU_VER_CODE}): Please deploy the latest KSU or KSU Next with only applications requiring root privileges configured and granted in the manager, embed the SUSFS as a kernel module, \
-install the NeoZygisk module as a system module, install the Shamiko module as a system module with the whitelist mode enabled if you wish to, install the Play Integrity Fix (PIF) module as a system module, \
-install the Tricky Store (TS) module as a system module with the correct configurations, install the latest Jing Matrix \`\`action\`\` version of the LSPosed module as a system module with the narrowest scope for each plugin, \
-install the VBMetaFixer module as a system module if TEE is not broken, and activate the HMAL plugin with the correct configurations. "
+		echo "Apatch (${APATCH_VER_CODE}): Please deploy the latest Apatch from the \`\`action\`\` tab of its GitHub repository with only applications requiring root privileges configured and granted in the Apatch Manager, \
+embed the latest Cherish Peekaboo as a kernel module, install the latest NeoZygisk module as a system module from the \`\`action\`\` tab of its GitHub repository, install the latest Play Integrity Fix (PIF) module as a system module, \
+install the latest Tricky Store (TS) module as a system module with the correct configurations, install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository as a system module \
+with the narrowest scope for each plugin, and activate the latest HMAL plugin with the correct configurations. "
+		if [[ -d "${magiskFolder}" ]];
+		then
+			echo "The Magisk folder exists while the Apatch is using. Please consider removing the Magisk folder. "
+		fi
 	elif [[ -n "${MAGISK_VER_CODE}" ]];
 	then
-		echo "Magisk (${MAGISK_VER_CODE}): Please deploy the latest Magisk Manager with the Zygisk enabled by built-in Zygisk or the NeoZygisk module, execute applications requiring root privileges with root privileges granted, \
-install the Shamiko module with the whitelist mode enabled if not using Magisk Delta, install the Play Integrity Fix (PIF) module, install the Tricky Store (TS) module with the correct configurations, \
-install the latest Jing Matrix \`\`action\`\` version of the LSPosed module with the narrowest scope for each plugin, install the VBMetaFixer module if TEE is not broken, install the bindhosts or the built-in Systemless hosts module, \
-and activate the HMAL plugin with the correct configurations. "
+		if [[ ${MAGISK_VER} == *-kitsune || ${MAGISK_VER} == *-delta ]];
+		then
+			echo "Magisk Delta (${MAGISK_VER_CODE}): Please deploy the latest Magisk Delta with the built-in Zygisk enabled, the whitelist mode enabled, and only applications requiring root privileges configured and granted \
+in the Magisk Delta Manager, install the latest Play Integrity Fix (PIF) module, install the latest Tricky Store (TS) module with the correct configurations, install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab \
+of its GitHub repository with the narrowest scope configured for each plugin, install the latest bindhosts or the built-in Systemless hosts module (optional), and activate the latest HMAL plugin with the correct configurations. "
+		else
+			if [[ ${MAGISK_VER} == *-alpha ]];
+			then
+				echo -n "Magisk Alpha "
+			elif [[ ${MAGISK_VER} == *-beta ]];
+			then
+				echo -n "Magisk Beta "
+			elif [[ ${MAGISK_VER} == *-canary ]];
+			then
+				echo -n "Magisk Canary "
+			else
+				echo -n "Magisk "
+			fi
+			echo "(${MAGISK_VER_CODE}): Please deploy the latest Magisk Alpha with the built-in Zygisk and denylist disabled, execute applications requiring root privileges with root privileges granted, \
+install the latest Zygisk Next module with the denylist disabled, install the latest Shamiko module with the whitelist mode enabled, install the latest Play Integrity Fix (PIF) module, install the latest Tricky Store (TS) module with the correct configurations, \
+install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository with the narrowest scope configured for each plugin, install the latest bindhosts or the built-in Systemless hosts module (optional), \
+and activate the latest HMAL plugin with the correct configurations. "
+		fi
+		if [[ -d "${apatchFolder}" ]];
+		then
+			echo "The Apatch folder exists while the Magisk is using. Please consider removing the Apatch folder. "
+		fi
 	else
 		echo "Unknown: The rooting solution used is unknown. "
 	fi	
@@ -100,11 +138,16 @@ echo "# HMA/HMAL (0b0000X0) #"
 readonly dataAppFolder="/data/app"
 readonly blacklistName="Blacklist"
 readonly whitelistName="Whitelist"
-readonly configFolderPath="/sdcard/Download"
+if [[ -n "${EXTERNAL_STORAGE}" ]];
+then
+	readonly downloadFolderPath="${EXTERNAL_STORAGE}/Download"
+else
+	readonly downloadFolderPath="/sdcard/Download"
+fi
 readonly blacklistConfigurationFileName=".HMAL_Blacklist_Config.json"
-readonly blacklistConfigurationFilePath="${configFolderPath}/${blacklistConfigurationFileName}"
+readonly blacklistConfigurationFilePath="${downloadFolderPath}/${blacklistConfigurationFileName}"
 readonly whitelistConfigurationFileName=".HMAL_Whitelist_Config.json"
-readonly whitelistConfigurationFilePath="${configFolderPath}/${whitelistConfigurationFileName}"
+readonly whitelistConfigurationFilePath="${downloadFolderPath}/${whitelistConfigurationFileName}"
 readonly reportLink="https://github.com/TMLP-Team/Bypasser"
 gapTime=0
 
@@ -316,9 +359,7 @@ then
 else
 	lengthD=0
 fi
-classificationL=""
-lengthL=0
-if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
+if [[ ${returnCodeB} -eq ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub. "
 	if [[ $# -ge 1 ]];
@@ -337,75 +378,65 @@ then
 		localCount=0
 		folderCount=0
 		fileCount=0
+		failureInstallationCount=0
+		failureInstallationRemovedCount=0
 		for item in "${dataAppFolder}/"*
 		do
 			if [[ -d "${item}" ]];
 			then
-				folderCount=$(expr ${folderCount} + 1)
-				subItems="$(ls -1 "${item}")"
-				if [[ $(echo "${subItems}" | wc -l) == 1 ]];
+				if basename "${item}" | grep -qE "^vmdl[0-9]+\\.tmp\$";
 				then
-					firstItem="$(echo "${subItems}" | awk "NR==1")"
-					printableStrings="$(cat "${item}/${firstItem}/base.apk" | strings)"
-					packageName="$(basename "${firstItem}" | cut -d "-" -f 1)"
-					if echo -n "${packageName}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
+					failureInstallationCount=$(expr ${failureInstallationCount} + 1)
+					if rm -rf "${item}";
 					then
-						if [[ "${packageName}" != "com.google.android.gms" && ! "$(echo -e -n "${classificationB}\n${classificationC}\n${classificationD}")" =~ "${packageName}" ]];
-						then
-							if [[ -z "${classificationL}" ]];
-							then
-								classificationL="${packageName}"
-							else
-								classificationL="$(echo -e -n "${classificationL}\n${packageName}")"
-							fi
-						fi
-						if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
-						then
-							localCount=$(expr ${localCount} + 1)
-							echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
-							if [[ "${classificationB}" =~ "${packageName}" ]];
-							then
-								echo "which is already in Classification \$B\$. "
-							else
-								echo "which was not in and has been added to Classification \$B\$. "
-								classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
-							fi
-						fi
+						failureInstallationRemovedCount=$(expr ${failureInstallationRemovedCount} + 1)
+						echo "Found a failure installation at \"${item}\", which has been removed. "
 					else
-						echo "Failed to resolve the folder \"${item}\". "
+						echo "Found a failure installation at \"${item}\", which could not be removed. "
 					fi
 				else
-					echo "There is at least 1 additional item in \"${item}\", which should not exist. "
+					folderCount=$(expr ${folderCount} + 1)
+					subItems="$(ls -1 "${item}")"
+					if [[ $(echo "${subItems}" | wc -l) == 1 ]];
+					then
+						firstItem="$(echo "${subItems}" | awk "NR==1")"
+						packageName="$(basename "${firstItem}" | cut -d "-" -f 1)"
+						if echo -n "${packageName}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
+						then
+							if ! echo -n "${classificationB}" | grep -qF "${packageName}";
+							then
+								printableStrings="$(cat "${item}/${firstItem}/base.apk" | strings)"
+								if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
+								then
+									localCount=$(expr ${localCount} + 1)
+									classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
+									echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, which was not in and has been added to Classification \$B\$. "
+								fi
+							fi
+						else
+							echo "Failed to resolve the folder \"${item}\". "
+						fi
+					else
+						echo "There is at least 1 additional item in \"${item}\", which should not exist. "
+					fi
 				fi
 			elif [ -f "${item}" ];
 			then
 				if [[ "${item}" == *.apk ]];
 				then
 					fileCount=$(expr ${fileCount} + 1)
-					printableStrings="$(cat "${item}" | strings)"
 					packageName="$(basename "${item}")"
 					packageName="${packageName%.apk}"
 					if echo -n "${packageName}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
 					then
-						if [[ "${packageName}" != "com.google.android.gms" && ! "$(echo -e -n "${classificationB}\n${classificationC}\n${classificationD}")" =~ "${packageName}" ]];
+						if ! echo -n "${classificationB}" | grep -qF "${packageName}";
 						then
-							if [[ -z "${classificationL}" ]];
+							printableStrings="$(cat "${item}/${firstItem}/base.apk" | strings)"
+							if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
 							then
-								classificationL="${packageName}"
-							else
-								classificationL="$(echo -e -n "${classificationL}\n${packageName}")"
-							fi
-						fi
-						if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
-						then
-							localCount=$(expr ${localCount} + 1)
-							echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, "
-							if [[ "${classificationB}" =~ "${packageName}" ]];
-							then
-								echo "which is already in Classification \$B\$. "
-							else
-								echo "which was not in and has been added to Classification \$B\$. "
+								localCount=$(expr ${localCount} + 1)
 								classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
+								echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, which was not in and has been added to Classification \$B\$. "
 							fi
 						fi
 					else
@@ -420,6 +451,16 @@ then
 		then
 			echo "A mixture of folders and files was detected in the \"${dataAppFolder}\" folder. "
 		fi
+		if [[ ${failureInstallationCount} -ge 1 ]];
+		then
+			echo "Found ${failureInstallationCount} failure installation(s) in the \"${dataAppFolder}\" folder with ${failureInstallationRemovedCount} removed successfully. "
+		fi
+		if [[ ${localCount} -ge 1 ]];
+		then
+			echo "Successfully fetched ${localCount} package name(s) of Classification $B$ from the local machine. "
+			echo "Kindly report the package name(s) with the corresponding classification(s) to \"${reportLink}\" if you wish to. "
+		fi
+		originalLengthB=${lengthB}
 		classificationB=$(echo -n "${classificationB}" | sort | uniq)
 		if [[ -n "${classificationB}" ]];
 		then
@@ -427,22 +468,14 @@ then
 		else
 			lengthB=0
 		fi
-		echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub and the local machine. "
-		if [[ -n "${classificationL}" ]];
-		then
-			lengthL=$(echo "${classificationL}" | wc -l)
-			echo "Successfully fetched ${lengthL} additional package name(s) from the local machine. "
-			echo "Kindly report the package name(s) with the corresponding classification(s) to \"${reportLink}\" if you wish to. "
-		else
-			echo "No additional package names were fetched from the local machine. "
-		fi
+		echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub (${originalLengthB}) and the local machine (${localCount}). "
 	fi
 else
 	classificationB=""
 	lengthB=0
 	echo "Failed to fetch package names of Classification \$B\$ from GitHub. "
 fi
-if [[ ${returnCodeC} == ${EXIT_SUCCESS} ]];
+if [[ ${returnCodeC} -eq ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully fetched ${lengthC} package name(s) of Classification \$C\$ from GitHub. "
 else
@@ -450,7 +483,7 @@ else
 	lengthC=0
 	echo "Failed to fetch package names of Classification \$C\$ from GitHub. "
 fi
-if [[ ${returnCodeD} == ${EXIT_SUCCESS} ]];
+if [[ ${returnCodeD} -eq ${EXIT_SUCCESS} ]];
 then
 	echo "Successfully fetched ${lengthD} package name(s) of Classification \$D\$ from GitHub. "
 else
@@ -458,7 +491,7 @@ else
 	lengthD=0
 	echo "Failed to fetch package names of Classification \$D\$ from GitHub. "
 fi
-if [[ ${returnCodeB} == ${EXIT_SUCCESS} ]];
+if [[ ${returnCodeB} -eq ${EXIT_SUCCESS} ]];
 then
 	blacklistAppList="$(getArray "${classificationB}")"
 	whitelistScopeList="$(getWhitelistScopeString "${classificationC}" "${classificationD}")"
@@ -466,10 +499,10 @@ else
 	blacklistAppList=""
 	whitelistScopeList=""
 fi
-if [[ ${returnCodeD} == ${EXIT_SUCCESS} ]];
+if [[ ${returnCodeD} -eq ${EXIT_SUCCESS} ]];
 then
 	whitelistAppList=$(getArray "${classificationD}")
-	if [[ ${returnCodeC} == ${EXIT_SUCCESS} ]];
+	if [[ ${returnCodeC} -eq ${EXIT_SUCCESS} ]];
 	then
 		blacklistScopeListC="$(getBlacklistScopeStringC "${classificationC}")"
 		blacklistScopeListD="$(getBlacklistScopeStringD "${classificationD}" "${classificationC}")"
@@ -489,32 +522,32 @@ fi
 commonConfigContent="{\"configVersion\":90,\"forceMountData\":true,\"templates\":{\"${blacklistName}\":{\"isWhitelist\":false,\"appList\":[${blacklistAppList}]},\"${whitelistName}\":{\"isWhitelist\":true,\"appList\":[${whitelistAppList}]}},"
 blacklistConfigContent="${commonConfigContent}\"scope\":{${blacklistScopeList}}}"
 whitelistConfigContent="${commonConfigContent}\"scope\":{${whitelistScopeList}}}"
-if [[ ! -d "${configFolderPath}" ]];
+if [[ ! -d "${downloadFolderPath}" ]];
 then
-	mkdir -p "${configFolderPath}"
+	mkdir -p "${downloadFolderPath}"
 fi
-if [[ -d "${configFolderPath}" ]];
+if [[ -d "${downloadFolderPath}" ]];
 then
-	echo "Successfully created the folder \"${configFolderPath}\". "
+	echo "Successfully created the folder \"${downloadFolderPath}\". "
 	echo -n "${blacklistConfigContent}" > "${blacklistConfigurationFilePath}"
 	if [[ $? -eq ${EXIT_SUCCESS} && -f "${blacklistConfigurationFilePath}" ]];
 	then
-		echo "Successfully generated the config file \"${blacklistConfigurationFilePath}\". "
+		echo "Successfully generated the configuration file \"${blacklistConfigurationFilePath}\". "
 	else
 		exitCode=$(expr ${exitCode} \| 2)
-		echo "Failed to generate the config file \"${blacklistConfigurationFilePath}\". "
+		echo "Failed to generate the configuration file \"${blacklistConfigurationFilePath}\". "
 	fi
 	echo -n "${whitelistConfigContent}" > "${whitelistConfigurationFilePath}"
 	if [[ $? -eq ${EXIT_SUCCESS} && -f "${whitelistConfigurationFilePath}" ]];
 	then
-		echo "Successfully generated the config file \"${whitelistConfigurationFilePath}\". "
+		echo "Successfully generated the configuration file \"${whitelistConfigurationFilePath}\". "
 	else
 		exitCode=$(expr ${exitCode} \| 2)
-		echo "Failed to generate the config file \"${whitelistConfigurationFilePath}\". "
+		echo "Failed to generate the configuration file \"${whitelistConfigurationFilePath}\". "
 	fi
 else
 	exitCode=$(expr ${exitCode} \| 2)
-	echo "Failed to create the folder \"${configFolderPath}\". "
+	echo "Failed to create the folder \"${downloadFolderPath}\". "
 fi
 if [[ -z "${blacklistAppList}" || -z "${blacklistScopeList}" || -z "${whitelistAppList}" || -z "${whitelistScopeList}" ]];
 then
@@ -524,204 +557,267 @@ echo ""
 
 # Tricky Store (0b000X00) #
 echo "# Tricky Store (0b000X00) #"
-readonly trickyStoreFolderPath="../../tricky_store"
+readonly trickyStoreModuleId="tricky_store"
+readonly trickyStoreConfigurationFolderPath="${adbFolder}/tricky_store"
 readonly trickyStoreTargetFileName="target.txt"
 readonly trickyStoreSecurityPatchFileName="security_patch.txt"
-readonly trickyStoreTargetFilePath="${trickyStoreFolderPath}/${trickyStoreTargetFileName}"
-readonly trickyStoreSecurityPatchFilePath="${trickyStoreFolderPath}/${trickyStoreSecurityPatchFileName}"
+readonly trickyStoreTargetFilePath="${trickyStoreConfigurationFolderPath}/${trickyStoreTargetFileName}"
+readonly trickyStoreSecurityPatchFilePath="${trickyStoreConfigurationFolderPath}/${trickyStoreSecurityPatchFileName}"
+readonly classificationS="$(echo -e -n "com.google.android.gsf\ncom.google.android.gms\ncom.android.vending")"
+readonly lengthS=$(echo "${classificationS}" | wc -l)
 readonly patchContent="$(date +%Y%m01)"
 
-if [[ -d "${trickyStoreFolderPath}" ]];
-then
-	echo "The tricky store folder was found at \"${trickyStoreFolderPath}\". "
-	echo "${patchContent}" > "${trickyStoreSecurityPatchFilePath}"
-	if [[ $? -eq ${EXIT_SUCCESS} && -f "${trickyStoreSecurityPatchFilePath}" ]];
+function isModuleInstalled
+{
+	moduleInstallationFolderPath="${adbFolder}/modules/$1"
+	if [[ -d "${moduleInstallationFolderPath}" ]];
 	then
-		echo "Successfully wrote \"${patchContent}\" to \"${trickyStoreSecurityPatchFilePath}\". "
-	else
-		exitCode=$(expr ${exitCode} \| 4)
-		echo "Failed to write \"${patchContent}\" to \"${trickyStoreSecurityPatchFilePath}\". "
-	fi
-	abortFlag=${EXIT_SUCCESS}
-	if [[ -f "${trickyStoreTargetFilePath}" ]];
-	then
-		echo "The tricky store target file was found at \"${trickyStoreTargetFilePath}\". "
-		cp -fp "${trickyStoreTargetFilePath}" "${trickyStoreTargetFilePath}.bak"
-		if [[ $? -eq ${EXIT_SUCCESS} && -f "${trickyStoreTargetFilePath}.bak" ]];
+		modulePropFileName="module.prop"
+		modulePropFilePath="${moduleInstallationFolderPath}/${modulePropFileName}"
+		if [[ -f "${modulePropFilePath}" ]];
 		then
-			echo "Successfully copied \"${trickyStoreTargetFilePath}\" to \"${trickyStoreTargetFilePath}.bak\". "
-		else
-			abortFlag=${EXIT_FAILURE}
-			echo "Failed to copy \"${trickyStoreTargetFilePath}\" to \"${trickyStoreTargetFilePath}.bak\". "
-		fi
-	else
-		echo "The copying has been skipped since no tricky store target files were detected. "
-	fi
-	if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
-	then
-		lines="$(echo -n "com.google.android.gms")"
-		if [[ -n "${classificationB}" ]];
-		then
-			lines="$(echo -e -n "${lines}\n$(echo -n "${classificationB}")")"
-		fi
-		if [[ -n "${classificationC}" ]];
-		then
-			lines="$(echo -e -n "${lines}\n$(echo -n "${classificationC}")")"
-		fi
-		if [[ -n "${classificationD}" ]];
-		then
-			lines="$(echo -e -n "${lines}\n$(echo -n "${classificationD}")")"
-		fi
-		if [[ -n "${classificationL}" ]];
-		then
-			lines="$(echo -e -n "${lines}\n$(echo -n "${classificationL}")")"
-		fi
-		lines=$(echo -n "${lines}" | sort | uniq)
-		echo "${lines}" > "${trickyStoreTargetFilePath}"
-		if [[ $? -eq ${EXIT_SUCCESS} && -f "${trickyStoreTargetFilePath}" ]];
-		then
-			cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
-			echo "Successfully wrote ${cnt} target(s) to \"${trickyStoreTargetFilePath}\". "
-			expectedCount=$(expr 1 + ${lengthB} + ${lengthC} + ${lengthD} + ${lengthL})
-			if [[ ${cnt} == ${expectedCount} ]];
+			if grep -q "^id=$1\$" "${modulePropFilePath}";
 			then
-				echo "Successfully verified \"${trickyStoreTargetFilePath}\" (${cnt} = ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD} + ${lengthL}). "
-			else
-				exitCode=$(expr ${exitCode} \| 4)
-				echo "Failed to verify \"${trickyStoreTargetFilePath}\" (${cnt} != ${expectedCount} = 1 + ${lengthB} + ${lengthC} + ${lengthD} + ${lengthL}). "
+				grep "^name=" "${modulePropFilePath}" | cut -d '=' -f2
+				return ${EXIT_SUCCESS}
 			fi
+		fi
+	fi
+	return ${EXIT_FAILURE}
+}
+
+if isModuleInstalled "${trickyStoreModuleId}" > /dev/null;
+then
+	echo "The Tricky Store module was installed. "
+	if [[ -d "${trickyStoreConfigurationFolderPath}" ]];
+	then
+		echo "The Tricky Store configuration folder was found at \"${trickyStoreConfigurationFolderPath}\". "
+		echo "${patchContent}" > "${trickyStoreSecurityPatchFilePath}"
+		if [[ $? -eq ${EXIT_SUCCESS} && -f "${trickyStoreSecurityPatchFilePath}" ]];
+		then
+			echo "Successfully wrote \"${patchContent}\" to \"${trickyStoreSecurityPatchFilePath}\". "
 		else
 			exitCode=$(expr ${exitCode} \| 4)
-			echo "Failed to write to \"${trickyStoreTargetFilePath}\". "
+			echo "Failed to write \"${patchContent}\" to \"${trickyStoreSecurityPatchFilePath}\". "
 		fi
+		abortFlag=${EXIT_SUCCESS}
+		if [[ -f "${trickyStoreTargetFilePath}" ]];
+		then
+			echo "The Tricky Store target file was found at \"${trickyStoreTargetFilePath}\". "
+			cp -fp "${trickyStoreTargetFilePath}" "${trickyStoreTargetFilePath}.bak"
+			if [[ $? -eq ${EXIT_SUCCESS} && -f "${trickyStoreTargetFilePath}.bak" ]];
+			then
+				echo "Successfully copied \"${trickyStoreTargetFilePath}\" to \"${trickyStoreTargetFilePath}.bak\". "
+			else
+				abortFlag=${EXIT_FAILURE}
+				echo "Failed to copy \"${trickyStoreTargetFilePath}\" to \"${trickyStoreTargetFilePath}.bak\". "
+			fi
+		else
+			echo "The copying has been skipped since no Tricky Store target files were detected. "
+		fi
+		if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
+		then
+			lines="${classificationS}"
+			if [[ -n "${classificationB}" ]];
+			then
+				lines="$(echo -e -n "${lines}\n$(echo -n "${classificationB}")")"
+			fi
+			if [[ -n "${classificationC}" ]];
+			then
+				lines="$(echo -e -n "${lines}\n$(echo -n "${classificationC}")")"
+			fi
+			if [[ -n "${classificationD}" ]];
+			then
+				lines="$(echo -e -n "${lines}\n$(echo -n "${classificationD}")")"
+			fi
+			classificationL="$(pm list packages | cut -d ':' -f 2)"
+			if [[ -n "${classificationL}" ]];
+			then
+				lengthL=$(echo "${classificationL}" | wc -l)
+				echo "Successfully fetched ${lengthL} package name(s) from the local machine. "
+			else
+				lengthL=0
+				echo "No package names were fetched from the local machine. "
+			fi
+			if [[ -n "${classificationL}" ]];
+			then
+				lines="$(echo -e -n "${lines}\n$(echo -n "${classificationL}")")"
+			fi
+			lines=$(echo -n "${lines}" | sort | uniq)
+			echo "${lines}" > "${trickyStoreTargetFilePath}"
+			if [[ $? -eq ${EXIT_SUCCESS} && -f "${trickyStoreTargetFilePath}" ]];
+			then
+				cnt=$(cat "${trickyStoreTargetFilePath}" | wc -l)
+				echo "Successfully wrote ${cnt} target(s) to \"${trickyStoreTargetFilePath}\". "
+				expectedCount=$(expr ${lengthS} + ${lengthB} + ${lengthC} + ${lengthD} + ${lengthL})
+				if [[ ${cnt} -le ${expectedCount} ]];
+				then
+					echo "Successfully verified \"${trickyStoreTargetFilePath}\" (${cnt} <= ${expectedCount} = ${lengthS} + ${lengthB} + ${lengthC} + ${lengthD} + ${lengthL}). "
+				else
+					exitCode=$(expr ${exitCode} \| 4)
+					echo "Failed to verify \"${trickyStoreTargetFilePath}\" (${cnt} > ${expectedCount} = ${lengthS} + ${lengthB} + ${lengthC} + ${lengthD} + ${lengthL}). "
+				fi
+			else
+				exitCode=$(expr ${exitCode} \| 4)
+				echo "Failed to write to \"${trickyStoreTargetFilePath}\". "
+			fi
+		fi
+	else
+		echo "No Tricky Store configuration folders were detected. "
 	fi
 else
-	echo "No tricky store folders were detected. "
+	echo "The Tricky Store module was not installed. "
 fi
 echo ""
 
 # Zygisk Traces (0b00X000) #
 echo "# Zygisk Traces (0b00X000) #"
-readonly zygiskSolutionInstallationFolderPath="../../modules/zygisksu"
-readonly neozygiskConfigurationFolderPath="../../neozygisk"
-readonly zygiskNextConfigurationFolderPath="../../zygisksu"
+readonly zygiskSolutionModuleId="zygisksu"
+readonly zygiskNextConfigurationFolderPath="${adbFolder}/zygisksu"
 readonly zygiskNextDenylistConfigurationFileName="denylist_enforce"
 readonly zygiskNextDenylistConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistConfigurationFileName}"
-readonly shamikoInstallationFolderPath="../../modules/zygisk_shamiko"
-readonly shamikoConfigurationFolderPath="../../shamiko"
+readonly shamikoModuleId="zygisk_shamiko"
+readonly shamikoConfigurationFolderPath="${adbFolder}/shamiko"
 readonly shamikoWhitelistConfigurationFileName="whitelist"
 readonly shamikoWhitelistConfigurationFilePath="${shamikoConfigurationFolderPath}/${shamikoWhitelistConfigurationFileName}"
+readonly neozygiskConfigurationFolderPath="${adbFolder}/neozygisk"
+readonly rezygiskConfigurationFolderPath="${adbFolder}/rezygisk"
+readonly builtInZygiskFilePath="${adbFolder}/magisk/zygisk"
 
-function doFoldersExistToBeNonEmpty
-{
-	for folder in "$@";
-	do
-		if [[ ! -d "${folder}" ]];
-		then
-			return ${EXIT_FAILURE}
-		elif [[ -z "$(find "${folder}" -maxdepth 1 -mindepth 1 -print -quit)" ]];
-		then
-			return ${EXIT_FAILURE}
-		fi
-	done
-	return ${EXIT_SUCCESS}
-}
-
-if doFoldersExistToBeNonEmpty "${zygiskSolutionInstallationFolderPath}";
+if [[ "${ZYGISK_ENABLED}" == "1" ]];
 then
-	echo "The installation folder of the Zygisk solution module was found at \"${zygiskSolutionInstallationFolderPath}\". "
-	
-	# Zygisk Next #
-	abortFlag=${EXIT_SUCCESS}
-	if [[ -d "${neozygiskConfigurationFolderPath}" ]];
+	zygiskSolutionModuleName="$(isModuleInstalled "${zygiskSolutionModuleId}")"
+	if [[ $? -eq ${EXIT_SUCCESS} ]];
 	then
-		echo "As Neozygisk is the Zygisk solution module, nothing is required to be handled. "
-		abortFlag=${EXIT_FAILURE}
-	elif [[ -d "${zygiskNextConfigurationFolderPath}" ]];
-	then
-		echo "The Zygisk Next configuration folder was found at \"${zygiskNextConfigurationFolderPath}\". "
-	else
-		echo "The Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\" did not exist. "
-		mkdir -p "${zygiskNextConfigurationFolderPath}"
-		if [[ $? -eq ${EXIT_SUCCESS} && -d "${zygiskNextConfigurationFolderPath}" ]];
+		echo "The Zygisk solution was implemented by ${zygiskSolutionModuleName}. "
+		if [[ "Zygisk Next" == "${zygiskSolutionModuleName}" ]];
 		then
-			echo "Successfully created the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
-		else
-			exitCode=$(expr ${exitCode} \| 8)
-			abortFlag=${EXIT_FAILURE}
-			echo "Failed to create the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
-		fi
-	fi
-	if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
-	then
-		if [[ -f "${zygiskNextDenylistConfigurationFilePath}" && "1" == "$(cat "${zygiskNextDenylistConfigurationFilePath}")" ]];
-		then
-			echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" is already configured. "
-		else
-			echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" was not configured. "
-			echo -n "1" > "${zygiskNextDenylistConfigurationFilePath}"
-			if [[ $? -eq ${EXIT_SUCCESS} && -f "${zygiskNextDenylistConfigurationFilePath}" ]];
+			if isModuleInstalled "${shamikoModuleId}" > /dev/null;
 			then
-				echo "Successfully created the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
-			else
-				exitCode=$(expr ${exitCode} \| 8)
-				echo "Failed to create the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
-			fi
-		fi
-	fi
-	
-	# Zygisk Shamiko #
-	if doFoldersExistToBeNonEmpty "${shamikoInstallationFolderPath}";
-	then
-		echo "The shamiko installation folder was found at \"${shamikoInstallationFolderPath}\". "
-		if [[ "${APATCH}" == "true" ]];
-		then
-			echo "Please kindly acknowledge that Shamiko does not work with Apatch. "
-		fi
-		abortFlag=${EXIT_SUCCESS}
-		if [[ -d "${shamikoConfigurationFolderPath}" ]];
-		then
-			echo "The shamiko configuration folder was found at \"${shamikoConfigurationFolderPath}\". "
-		else
-			echo "The shamiko configuration folder \"${shamikoConfigurationFolderPath}\" did not exist. "
-			mkdir -p "${shamikoConfigurationFolderPath}"
-			if [[ $? -eq ${EXIT_SUCCESS} && -d "${shamikoConfigurationFolderPath}" ]];
-			then
-				echo "Successfully created the shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
-			else
-				exitCode=$(expr ${exitCode} \| 8)
-				abortFlag=${EXIT_FAILURE}
-				echo "Failed to create the shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
-			fi
-		fi
-		if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
-		then
-			if [[ -f "${shamikoWhitelistConfigurationFilePath}" ]];
-			then
-				echo "The shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" already existed. "
-			else
-				echo "The shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" did not exist. "
-				touch "${shamikoWhitelistConfigurationFilePath}"
-				if [[ $? -eq ${EXIT_SUCCESS} && -f "${shamikoWhitelistConfigurationFilePath}" ]];
+				toBeWritten="0"
+				echo "The Shamiko module was installed. "
+				if [[ "${APATCH}" == "true" ]];
 				then
-					echo "Successfully created the shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\". "
+					echo "Please kindly acknowledge that Shamiko does not work with Apatch. "
+				fi
+				abortFlag=${EXIT_SUCCESS}
+				if [[ -d "${shamikoConfigurationFolderPath}" ]];
+				then
+					echo "The Shamiko configuration folder was found at \"${shamikoConfigurationFolderPath}\". "
 				else
-					exitCode=$(expr ${exitCode} \| 8)
-					echo "Failed to create the shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\". "
+					echo "The Shamiko configuration folder \"${shamikoConfigurationFolderPath}\" did not exist. "
+					mkdir -p "${shamikoConfigurationFolderPath}"
+					if [[ $? -eq ${EXIT_SUCCESS} && -d "${shamikoConfigurationFolderPath}" ]];
+					then
+						echo "Successfully created the Shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
+					else
+						exitCode=$(expr ${exitCode} \| 8)
+						abortFlag=${EXIT_FAILURE}
+						echo "Failed to create the Shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
+					fi
+				fi
+				if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
+				then
+					if [[ -f "${shamikoWhitelistConfigurationFilePath}" ]];
+					then
+						echo "The Shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" already existed. "
+					else
+						echo "The Shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" did not exist. "
+						touch "${shamikoWhitelistConfigurationFilePath}"
+						if [[ $? -eq ${EXIT_SUCCESS} && -f "${shamikoWhitelistConfigurationFilePath}" ]];
+						then
+							echo "Successfully created the Shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\". "
+						else
+							exitCode=$(expr ${exitCode} \| 8)
+							echo "Failed to create the Shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\". "
+						fi
+					fi
+				fi
+			else
+				toBeWritten="1"
+				echo "The Shamiko module was not installed. "
+				if [[ "${APATCH}" != "true" ]];
+				then
+					echo "Please consider using Zygisk Next (disable the denylist) + Shamiko (enable the whitelist) since you are not using Apatch. "
 				fi
 			fi
+			abortFlag=${EXIT_SUCCESS}
+			if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
+			then
+				echo "The Zygisk Next configuration folder was found at \"${zygiskNextConfigurationFolderPath}\". "
+			else
+				echo "The Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\" did not exist. "
+				mkdir -p "${zygiskNextConfigurationFolderPath}"
+				if [[ $? -eq ${EXIT_SUCCESS} && -d "${zygiskNextConfigurationFolderPath}" ]];
+				then
+					echo "Successfully created the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
+				else
+					exitCode=$(expr ${exitCode} \| 8)
+					abortFlag=${EXIT_FAILURE}
+					echo "Failed to create the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
+				fi
+			fi
+			if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
+			then
+				if [[ -f "${zygiskNextDenylistConfigurationFilePath}" && "1" == "$(cat "${zygiskNextDenylistConfigurationFilePath}")" ]];
+				then
+					echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" is already configured. "
+				else
+					echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" was not configured. "
+					echo -n "${toBeWritten}" > "${zygiskNextDenylistConfigurationFilePath}"
+					if [[ $? -eq ${EXIT_SUCCESS} && -f "${zygiskNextDenylistConfigurationFilePath}" ]];
+					then
+						echo "Successfully wrote ${toBeWritten} to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+					else
+						exitCode=$(expr ${exitCode} \| 8)
+						echo "Failed to write ${toBeWritten} to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+					fi
+				fi
+			fi
+			if [[ -d "${neozygiskConfigurationFolderPath}" ]];
+			then
+				echo "The NeoZygisk configuration folder exists while the Zygisk Next is using. Please consider removing the NeoZygisk configuration folder. "
+			fi
+			if [[ -d "${rezygiskConfigurationFolderPath}" ]];
+			then
+				echo "The ReZygisk configuration folder exists while the Zygisk Next is using. Please consider removing the ReZygisk configuration folder. "
+			fi
+		elif [[ "NeoZygisk" == "${zygiskSolutionModuleName}" ]];
+		then
+			if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
+			then
+				echo "The Zygisk Next configuration folder exists while the NeoZygisk is using. Please consider removing the Zygisk Next configuration folder. "
+			fi
+			if [[ -d "${rezygiskConfigurationFolderPath}" ]];
+			then
+				echo "The ReZygisk configuration folder exists while the NeoZygisk is using. Please consider removing the ReZygisk configuration folder. "
+			fi
+		elif [[ "ReZygisk" == "${zygiskSolutionModuleName}" ]];
+		then
+			if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
+			then
+				echo "The Zygisk Next configuration folder exists while the ReZygisk is using. Please consider removing the Zygisk Next configuration folder. "
+			fi
+			if [[ -d "${neozygiskConfigurationFolderPath}" ]];
+			then
+				echo "The NeoZygisk configuration folder exists while the ReZygisk is using. Please consider removing the NeoZygisk configuration folder. "
+			fi
 		fi
+	elif [[ -f "${builtInZygiskFilePath}" ]]
+	then
+		echo "The Zygisk solution was implemented by Magisk built-in Zygisk. "
 	else
-		echo "The shamiko installation folder \"${shamikoInstallationFolderPath}\" did not exist. "
+		echo "The Zygisk was enabled but the implementation was unknown. "
 	fi
 else
-	echo "The installation folder of the Zygisk solution module \"${zygiskSolutionInstallationFolderPath}\" did not exist. "
+	echo "The Zygisk was not enabled. "
 fi
 echo ""
 
 # Shell (0b0X0000) #
 echo "# Shell (0b0X0000) #"
 readonly sensitiveApplications="com.google.android.safetycore com.google.android.contactkeys"
+readonly policiesToBeDeleted="hidden_api_policy hidden_api_policy_p_apps hidden_api_policy_pre_p_apps hidden_api_blacklist_exemptions"
 
 for sensitiveApplication in ${sensitiveApplications}
 do
@@ -736,25 +832,31 @@ do
 		fi
 	fi
 done
-settings delete global hidden_api_policy
-if [[ $? -ne ${EXIT_SUCCESS} ]];
+for policyToBeDeleted in ${policiesToBeDeleted}
+do
+	echo -n "\$settings delete global ${policyToBeDeleted} -> "
+	executionContent="$(settings delete global ${policyToBeDeleted})"
+	if [[ $? -eq ${EXIT_SUCCESS} && "${executionContent}" == "Deleted 0 rows" ]];
+	then
+		echo "Succeeded"
+	else
+		exitCode=$(expr ${exitCode} \| 16)
+		echo "Failed"
+	fi
+done
+executionContent="$(getprop ro.boot.verifiedbootstate)"
+if [[ $? -eq ${EXIT_SUCCESS} && "${executionContent}" == "green" ]];
 then
-	exitCode=$(expr ${exitCode} \| 16)
+	echo "The value of \`\`ro.boot.verifiedbootstate\`\` is \"${executionContent}\", which is proper. "
+else
+	echo "The value of \`\`ro.boot.verifiedbootstate\`\` is \"${executionContent}\", which should be \"green\". "
 fi
-settings delete global hidden_api_policy_p_apps
-if [[ $? -ne ${EXIT_SUCCESS} ]];
+executionContent="$(getprop ro.boot.vbmeta.device_state)"
+if [[ $? -eq ${EXIT_SUCCESS} && "${executionContent}" == "locked" ]];
 then
-	exitCode=$(expr ${exitCode} \| 16)
-fi
-settings delete global hidden_api_policy_pre_p_apps
-if [[ $? -ne ${EXIT_SUCCESS} ]];
-then
-	exitCode=$(expr ${exitCode} \| 16)
-fi
-settings delete global hidden_api_blacklist_exemptions
-if [[ $? -ne ${EXIT_SUCCESS} ]];
-then
-	exitCode=$(expr ${exitCode} \| 16)
+	echo "The value of \`\`ro.boot.vbmeta.device_state\`\` is \"${executionContent}\", which is proper. "
+else
+	echo "The value of \`\`ro.boot.vbmeta.device_state\`\` is \"${executionContent}\", which should be \"locked\". "
 fi
 echo ""
 

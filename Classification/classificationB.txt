@@ -46,6 +46,7 @@ cn.lliiooll.ppbuff
 cn.lliiooll.pphelper
 cn.lovesykun.miui_force_fps
 cn.lyric.getter
+cn.martinkay.autocheckinplugin
 cn.myflv.noactive
 cn.tinyhai.ban_uninstall
 cn.unicorn369.HookEuicc
@@ -72,6 +73,7 @@ com.alex193a.pixelthermometerbtenabler
 com.alex193a.tguseridviewer
 com.alex193a.watweaker
 com.alex193a.xdowngrader
+com.alphi.activitystartmanager
 com.alphi.actvityopenmanager
 com.amanoteam.kanni
 com.amanoteam.nai
@@ -188,6 +190,7 @@ com.hiiro.fuckddvip
 com.hiwechart.translate
 com.hook.fuckmimarket
 com.houvven.impad
+com.houvven.olocalnstall
 com.htetz.monopatch
 com.hujiayucc.hook
 com.hujiayucc.notask
@@ -260,11 +263,13 @@ com.queallytech.omapi
 com.raincat.dolby_beta
 com.rdstory.miuiperfsaver
 com.rel.languager
+com.rel.mujde
 com.reveny.protecttai.bypass
 com.reveny.vbmetafix.service
 com.richardluo.globalIconPack
 com.rifsxd.ksunext
 com.rifsxd.processhook
+com.rosan.dhizuku.api.xposed
 com.setoskins.hook
 com.sevtinge.cemiuiler
 com.sevtinge.hyperceiler
@@ -316,6 +321,7 @@ com.vivian8421.mipushenhance
 com.w2016.sensorfilter
 com.w311ang.disable_flag_keep_screen_on
 com.weverses.modempro
+com.wizpizz.onepluspluslauncher
 com.wmods.wppenhacer
 com.wmods.wppenhacer.w4b
 com.wovow.youtubehelper
@@ -415,6 +421,7 @@ io.github.howard20181.notificationiconfix
 io.github.huskydg.magisk
 io.github.icepony.alwaysbatterysaver
 io.github.icepony.alwayscreateuser
+io.github.invalidsudo.nocharginganimation
 io.github.jeffshee.nekumorimod
 io.github.jqssun.gpssetter
 io.github.jqssun.seaccess
@@ -519,6 +526,7 @@ pub.chara.miuipadmeta
 rikka.riru
 ru.bluecat.alfabankpatcher
 ru.bluecat.android.xposed.mods.appsettings
+ru.bluecat.marketplaceadaway
 ru.bluecat.megafoncleaner
 ru.bluecat.mirpaysecurity
 ru.bluecat.sberbankpatcher
@@ -532,6 +540,7 @@ ru.mike.mcroot
 ru.mike.rootobywatel
 ru.mike.sidestories
 ru.mike.updatelocker
+ru.mike.wallettweaks
 sb.firefds.pie.firefdskit
 sb.firefds.q.firefdskit
 sb.firefds.r.firefdskit
@@ -550,6 +559,7 @@ tn.amin.phantom_mic
 tn.payoneer.loukious
 top.canyie.settingsfirewall
 top.hookvip.pro
+top.ltfan.notdeveloper
 top.sacz.timtool
 top.trangle.mbga
 top.weixiansen574.alarmshell
