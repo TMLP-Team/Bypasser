@@ -767,10 +767,10 @@ then
 					echo -n "${toBeWritten}" > "${zygiskNextDenylistConfigurationFilePath}"
 					if [[ $? -eq ${EXIT_SUCCESS} && -f "${zygiskNextDenylistConfigurationFilePath}" ]];
 					then
-						echo "Successfully wrote ${toBeWritten} to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+						echo "Successfully wrote \"${toBeWritten}\" to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
 					else
 						exitCode=$(expr ${exitCode} \| 8)
-						echo "Failed to write ${toBeWritten} to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+						echo "Failed to write \"${toBeWritten}\" to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
 					fi
 				fi
 			fi
