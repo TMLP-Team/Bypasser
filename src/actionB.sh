@@ -70,7 +70,7 @@ else
 	echo "The working directory \"$(pwd)\" is unexpected. "
 	exitCode=$(expr ${exitCode} \| ${EXIT_FAILURE})
 fi
-if $BOOTMODE;
+if ${BOOTMODE};
 then
 	if [[ "${KSU}" == "true" ]];
 	then
@@ -96,38 +96,48 @@ with the narrowest scope for each plugin, and activate the latest HMAL plugin wi
 		then
 			echo "The Magisk folder exists while the Apatch is using. Please consider removing the Magisk folder. "
 		fi
-	elif [[ -n "${MAGISK_VER_CODE}" ]];
-	then
-		if [[ ${MAGISK_VER} == *-kitsune || ${MAGISK_VER} == *-delta ]];
-		then
-			echo "Magisk Delta (${MAGISK_VER_CODE}): Please deploy the latest Magisk Delta with the built-in Zygisk enabled, the whitelist mode enabled, and only applications requiring root privileges configured and granted \
-in the Magisk Delta Manager, install the latest Play Integrity Fix (PIF) module, install the latest Tricky Store (TS) module with the correct configurations, install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab \
-of its GitHub repository with the narrowest scope configured for each plugin, install the latest bindhosts or the built-in Systemless hosts module (optional), and activate the latest HMAL plugin with the correct configurations. "
-		else
-			if [[ ${MAGISK_VER} == *-alpha ]];
-			then
-				echo -n "Magisk Alpha "
-			elif [[ ${MAGISK_VER} == *-beta ]];
-			then
-				echo -n "Magisk Beta "
-			elif [[ ${MAGISK_VER} == *-canary ]];
-			then
-				echo -n "Magisk Canary "
-			else
-				echo -n "Magisk "
-			fi
-			echo "(${MAGISK_VER_CODE}): Please deploy the latest Magisk Alpha with the built-in Zygisk and denylist disabled, execute applications requiring root privileges with root privileges granted, \
-install the latest Zygisk Next module with the denylist disabled, install the latest Shamiko module with the whitelist mode enabled, install the latest Play Integrity Fix (PIF) module, install the latest Tricky Store (TS) module with the correct configurations, \
-install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository with the narrowest scope configured for each plugin, install the latest bindhosts or the built-in Systemless hosts module (optional), \
-and activate the latest HMAL plugin with the correct configurations. "
-		fi
-		if [[ -d "${apatchFolder}" ]];
-		then
-			echo "The Apatch folder exists while the Magisk is using. Please consider removing the Apatch folder. "
-		fi
 	else
-		echo "Unknown: The rooting solution used is unknown. "
-	fi	
+		if [[ -z "${MAGISK_VER_CODE}" ]];
+		then
+			MAGISK_VER_CODE="$(magisk -V)" &> /dev/null
+		fi
+		if [[ -z "${MAGISK_VER}" ]];
+		then
+			MAGISK_VER="$(magisk -v | cut -d ':' -f1)" &> /dev/null
+		fi
+		if [[ -n "${MAGISK_VER_CODE}" ]];
+		then
+			if [[ ${MAGISK_VER} == *-kitsune || ${MAGISK_VER} == *-delta ]];
+			then
+				echo "Magisk Delta (${MAGISK_VER_CODE}): Please deploy the latest Magisk Delta with the built-in Zygisk enabled, the whitelist mode enabled, and only applications requiring root privileges configured and granted \
+	in the Magisk Delta Manager, install the latest Play Integrity Fix (PIF) module, install the latest Tricky Store (TS) module with the correct configurations, install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab \
+	of its GitHub repository with the narrowest scope configured for each plugin, install the latest bindhosts or the built-in Systemless hosts module (optional), and activate the latest HMAL plugin with the correct configurations. "
+			else
+				if [[ ${MAGISK_VER} == *-alpha ]];
+				then
+					echo -n "Magisk Alpha "
+				elif [[ ${MAGISK_VER} == *-beta ]];
+				then
+					echo -n "Magisk Beta "
+				elif [[ ${MAGISK_VER} == *-canary ]];
+				then
+					echo -n "Magisk Canary "
+				else
+					echo -n "Magisk "
+				fi
+				echo "(${MAGISK_VER_CODE}): Please deploy the latest Magisk Alpha with the built-in Zygisk and denylist disabled, execute applications requiring root privileges with root privileges granted, \
+	install the latest Zygisk Next module with the denylist disabled, install the latest Shamiko module with the whitelist mode enabled, install the latest Play Integrity Fix (PIF) module, install the latest Tricky Store (TS) module with the correct configurations, \
+	install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository with the narrowest scope configured for each plugin, install the latest bindhosts or the built-in Systemless hosts module (optional), \
+	and activate the latest HMAL plugin with the correct configurations. "
+			fi
+			if [[ -d "${apatchFolder}" ]];
+			then
+				echo "The Apatch folder exists while the Magisk is using. Please consider removing the Apatch folder. "
+			fi
+		else
+			echo "Unknown: The rooting solution used is unknown. "
+		fi
+	fi
 else
 	echo "Unbooted: The device is not working in the boot mode. "
 fi
@@ -767,10 +777,10 @@ then
 					echo -n "${toBeWritten}" > "${zygiskNextDenylistConfigurationFilePath}"
 					if [[ $? -eq ${EXIT_SUCCESS} && -f "${zygiskNextDenylistConfigurationFilePath}" ]];
 					then
-						echo "Successfully wrote \"${toBeWritten}\" to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+						echo "Successfully wrote ${toBeWritten} to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
 					else
 						exitCode=$(expr ${exitCode} \| 8)
-						echo "Failed to write \"${toBeWritten}\" to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+						echo "Failed to write ${toBeWritten} to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
 					fi
 				fi
 			fi
