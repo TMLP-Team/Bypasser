@@ -446,6 +446,7 @@ io.github.tehcneko.sslunpinning
 io.github.tehcneko.telespeed
 io.github.vvb2060.callrecording
 io.github.vvb2060.magisk
+io.github.wzhy.xaudiocapture
 io.github.yagiyuu.linextra
 io.github.yangyiyu08.taplusext
 io.kazutoiris.infinite.illusion
