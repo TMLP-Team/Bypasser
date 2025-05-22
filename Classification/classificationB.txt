@@ -4,6 +4,7 @@ Fuck.RollingSky.Pay
 Hook.JiuWu.Xp
 It.dhd.oxygencustomizer
 Telegram.Speed.Hook
+admin.vsetting
 ai.noads.ozon
 akhil.alltrans
 android.xiaolan.ppxshare.tools
@@ -293,6 +294,7 @@ com.sumver.fixmiaod
 com.sumver.keepaod
 com.suqi8.oshin
 com.surcumference.fingerprintpay
+com.sweet
 com.tcgg.imjhook
 com.termux
 com.test.unlockmiui
