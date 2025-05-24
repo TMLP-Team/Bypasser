@@ -769,7 +769,7 @@ then
 			fi
 			if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
 			then
-				if [[ -f "${zygiskNextDenylistConfigurationFilePath}" && "1" == "$(cat "${zygiskNextDenylistConfigurationFilePath}")" ]];
+				if [[ -f "${zygiskNextDenylistConfigurationFilePath}" && "${toBeWritten}" == "$(cat "${zygiskNextDenylistConfigurationFilePath}")" ]];
 				then
 					echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" is already configured. "
 				else
