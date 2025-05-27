@@ -26,7 +26,7 @@ class Classification:
 	def __init__(self:object, s:tuple|list|set|None = None) -> object:
 		self.__s = set(s) if isinstance(s, (tuple, list, set)) else set()
 		self.__pattern = "^[A-Za-z][A-Za-z0-9_]*(?:\\.[A-Za-z][A-Za-z0-9_]*)+$"
-		self.__exclusionList = ["com.google.android.gms"]
+		self.__exclusionList = ["com.google.android.gsf", "com.google.android.gms", "com.android.vending"]
 	def __exclude(self:object) -> int:
 		cnt = 0
 		for package in self.__exclusionList:
@@ -104,8 +104,12 @@ class Classification:
 							self.__s.update(findall(self.__pattern, v["name"]))
 				elif isinstance(vector, dict) and "Detectors" in vector and isinstance(vector["Detectors"], list):
 					for v in vector["Detectors"]:
-						if isinstance(v, dict) and "name" in v:
-							self.__s.update(findall(self.__pattern, v["name"]))
+						if isinstance(v, dict) and "packageName" in v and "sourceStatus" in v and "D" not in v["sourceStatus"] and "developingPurpose" in v and "D" not in v["developingPurpose"]:
+							if isinstance(v["packageName"], (tuple, list, set)):
+								for pkg in v["packageName"]:
+									self.__s.update(findall(self.__pattern, pkg))
+							else:
+								self.__s.update(findall(self.__pattern, v["packageName"]))
 				else:
 					print("Failed to update from the URL \"{0}\" due to the unrecognized data structure. ".format(url))
 					return False
@@ -228,11 +232,11 @@ def gitPush() -> bool:
 
 def main() -> int:
 	# Parameters #
-	filePathB = "Classification/classificationB.txt"
+	folderPath = "src/webroot/classifications"
+	fileNameB, fileNameC, fileNameD = "classificationB.txt", "classificationC.txt", "classificationD.txt"
+	filePathB, filePathC, filePathD = os.path.join(folderPath, fileNameB), os.path.join(folderPath, fileNameC), os.path.join(folderPath, fileNameD)
 	urlB = "https://modules.lsposed.org/modules.json"
-	filePathC = "Classification/classificationC.txt"
 	urlC = "https://raw.githubusercontent.com/TMLP-Team/TMLP-Detectors-and-Bypassers/main/Detectors/README.json"
-	filePathD = "Classification/classificationD.txt"
 	srcFolderPath = "src"
 	webrootName = "webroot"
 	webrootFolderPath = os.path.join(srcFolderPath, webrootName)

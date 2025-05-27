@@ -25,11 +25,21 @@
 			fetch("action.prop")
 				.then(response => response.text())
 				.then(data => {
-					document.getElementById("actionSlot").innerHTML = "The current action slot is " + data + ". ";
+					const trimmedData = data.trim();
+					if (trimmedData === "A" || trimmedData === "B") {
+						document.getElementById("actionSlot").innerHTML = "The current action slot is " + trimmedData + ". ";
+						document.getElementById("actionSlot").style.color = "#00FF00";
+					} else {
+						document.getElementById("actionSlot").innerHTML = "Error: An invalid action slot value is detected. ";
+						document.getElementById("actionSlot").style.color = "#FF0000";
+					}
 				})
 				.catch(error => console.error("Error: ", error));
 		</script>
 		<div id="welcome">Welcome to the web UI of the Bypasser Magisk Module! </div><br />
-		<div id="actionSlot">Cannot fetch the current action slot. </div><br />
+		<div id="actionSlot">Error: Cannot fetch the current action slot. </div><br />
+		<div id="classificationB"><a href="classifications/classificationB.txt">Classification $B$</a></div>
+		<div id="classificationC"><a href="classifications/classificationC.txt">Classification $C$</a></div>
+		<div id="classificationD"><a href="classifications/classificationD.txt">Classification $D$</a></div><br />
 	</body>
 </html>

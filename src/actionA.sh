@@ -167,7 +167,7 @@ function getClassification
 	then
 		if [[ "B" == "$1" || "C" == "$1" || "D" == "$1" ]];
 		then
-			arr="$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Classification/classification$1.txt")"
+			arr="$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot/classifications/Classification$1.txt")"
 			if [[ $? -eq ${EXIT_SUCCESS} ]];
 			then
 				arr="$(echo -n ${arr} | sort | uniq)"
