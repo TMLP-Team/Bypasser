@@ -3,7 +3,7 @@
 This is a developing Magisk module for bypassing Android environment detection related to TMLP. The abbreviation "TMLP" stands for anything related to TWRP, Magisk, LSPosed, and Plugins. 
 
 - Welcome (0b00000X): Perform built-in configurations for this module. 
-- HMA/HMAL (0b0000X0): Generate HMA/HMAL configurations based on cloud libraries and local packages. Users are required to manually import the configurations via HMA/HMAL. Networks to GitHub are required. 
+- HMA/HMAL (0b0000X0): Generate HMA/HMAL configurations based on cloud libraries (along with the web UI updating) and local packages. Users are required to manually import the configurations via HMA/HMAL. Networks to GitHub are optional. 
 - Tricky Store (0b000X00): Generate Tricky Store configurations directly based on cloud libraries and local packages. The configurations will be written to the Tricky Store configuration folder directly. Networks to GitHub are optional. 
 - Zygisk Traces (0b00X000): Enforce denylist if ``Zygisk Next`` is used and make Shamiko work in the whitelist mode. 
 - Shell (0b0X0000): Perform some shell commands. Please check ``actionA.sh``. 
