@@ -945,14 +945,15 @@ then
 else
 	echo "The value of \`\`ro.boot.vbmeta.device_state\`\` is \"${executionContent}\", which should be \"locked\". "
 fi
-if [[ ${API} -ge 29 ]];
+androidVersion=$(getprop ro.build.version.release)
+if [[ ${androidVersion} -ge 10 ]];
 then
 	settings put global show_hidden_icon_apps_enabled 0
 	if [[ $? -eq ${EXIT_SUCCESS} ]];
 	then
-		echo "Successfully enabled the feature of hiding desktop icons (Android $(expr ${API} - 19)). "
+		echo "Successfully enabled the feature of hiding desktop icons (Android ${androidVersion}). "
 	else
-		echo "Failed to enable the feature of hiding desktop icons (Android $(expr ${API} - 19)). "
+		echo "Failed to enable the feature of hiding desktop icons (Android ${androidVersion}). "
 	fi
 fi
 echo ""
