@@ -448,7 +448,7 @@ else
 fi
 if [[ ${returnCodeB} -eq ${EXIT_SUCCESS} ]];
 then
-	echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub. "
+	echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from the library. "
 	if [[ $# -ge 1 ]];
 	then
 		keyCode="$1"
@@ -555,28 +555,28 @@ then
 		else
 			lengthB=0
 		fi
-		echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from GitHub (${originalLengthB}) and the local machine (${localCount}). "
+		echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from the library (${originalLengthB}) and the local machine (${localCount}). "
 	fi
 else
 	classificationB=""
 	lengthB=0
-	echo "Failed to fetch package names of Classification \$B\$ from GitHub. "
+	echo "Failed to fetch package names of Classification \$B\$ from the library. "
 fi
 if [[ ${returnCodeC} -eq ${EXIT_SUCCESS} ]];
 then
-	echo "Successfully fetched ${lengthC} package name(s) of Classification \$C\$ from GitHub. "
+	echo "Successfully fetched ${lengthC} package name(s) of Classification \$C\$ from the library. "
 else
 	classificationC=""
 	lengthC=0
-	echo "Failed to fetch package names of Classification \$C\$ from GitHub. "
+	echo "Failed to fetch package names of Classification \$C\$ from the library. "
 fi
 if [[ ${returnCodeD} -eq ${EXIT_SUCCESS} ]];
 then
-	echo "Successfully fetched ${lengthD} package name(s) of Classification \$D\$ from GitHub. "
+	echo "Successfully fetched ${lengthD} package name(s) of Classification \$D\$ from the library. "
 else
 	classificationD=""
 	lengthD=0
-	echo "Failed to fetch package names of Classification \$D\$ from GitHub. "
+	echo "Failed to fetch package names of Classification \$D\$ from the library. "
 fi
 if [[ ${returnCodeB} -eq ${EXIT_SUCCESS} ]];
 then
