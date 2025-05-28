@@ -145,6 +145,13 @@ echo ""
 
 # HMA/HMAL (0b0000X0) #
 echo "# HMA/HMAL (0b0000X0) #"
+readonly webrootName="webroot"
+readonly webrootFolderPath="${webrootName}"
+readonly webrootFilePath="${webrootName}.zip"
+readonly webrootUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot.zip"
+readonly webrootDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot.zip.sha512"
+readonly classificationFolderName="classifications"
+readonly classificationFolderPath="${webrootFolderPath}/${classificationFolderName}"
 readonly dataAppFolder="/data/app"
 readonly blacklistName="Blacklist"
 readonly whitelistName="Whitelist"
@@ -163,31 +170,37 @@ gapTime=0
 
 function getClassification
 {
-	if [[ $# == 1 ]];
+	if [[ $# -eq 1 ]];
 	then
 		if [[ "B" == "$1" || "C" == "$1" || "D" == "$1" ]];
 		then
-			arr="$(curl -s "https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot/classifications/Classification$1.txt")"
-			if [[ $? -eq ${EXIT_SUCCESS} ]];
+			classificationFilePath="${classificationFolderPath}/classification$1.txt"
+			if [[ -f "${classificationFilePath}" ]];
 			then
-				arr="$(echo -n ${arr} | sort | uniq)"
-				echoFlag=0
-				for package in ${arr}
-				do
-					if echo -n "${package}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
-					then
-						if [[ 1 == ${echoFlag} ]];
+				arr="$(cat "${classificationFilePath}")"
+				if [[ $? -eq ${EXIT_SUCCESS} && -n "${arr}" ]];
+				then
+					arr="$(echo -n ${arr} | sort | uniq)"
+					echoFlag=0
+					for package in ${arr}
+					do
+						if echo -n "${package}" | grep -qE '^[A-Za-z][0-9A-Za-z_]*(\.[A-Za-z][0-9A-Za-z_]*)+$';
 						then
-							echo -e -n "\n${package}"
-						else
-							echo -n "${package}"
-							echoFlag=1
+							if [[ 1 == ${echoFlag} ]];
+							then
+								echo -e -n "\n${package}"
+							else
+								echo -n "${package}"
+								echoFlag=1
+							fi
 						fi
-					fi
-				done
-				return ${EXIT_SUCCESS}
+					done
+					return ${EXIT_SUCCESS}
+				else
+					return $?
+				fi
 			else
-				return $?
+				return ${EOF}
 			fi
 		else
 			return ${EOF}
@@ -345,6 +358,70 @@ function getWhitelistScopeString
 	fi
 }
 
+webrootDigest="$(curl -s "${webrootDigestUrl}")"
+if [[ $? -eq ${EXIT_SUCCESS} && -n "${webrootDigest}" ]];
+then
+	echo "Successfully fetched the SHA-512 value of the latest ZIP file of the web UI. "
+	if [[ -d "${webrootFolderPath}" && "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" ! -name "*.prop" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
+	then
+		echo "The current web UI is already up-to-date. "
+	else
+		echo "The current web UI is out-of-date and needs to be updated. "
+		abortFlag=${EXIT_SUCCESS}
+		if [[ -d "${webrootFolderPath}" ]];
+		then
+			rm -rf "${webrootFolderPath}.bak" && mv -fT "${webrootFolderPath}" "${webrootFolderPath}.bak"
+			if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}.bak" ]];
+			then
+				echo "Successfully moved \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
+			else
+				abortFlag=${EXIT_FAILURE}
+				exitCode=$(expr ${exitCode} \| 32)
+				echo "Failed to move \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
+			fi
+		else
+			echo "No old web UI folders were found to be backed up. "
+		fi
+		if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
+		then
+			curl -s "${webrootUrl}" -o "${webrootFilePath}" && unzip "${webrootFilePath}" -d "${webrootFolderPath}" && rm -f "${webrootFilePath}"
+			if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}" && "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" ! -name "*.prop" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
+			then
+				echo "Successfully updated and verified the web UI. "
+				if [[ -d "${webrootFolderPath}.bak" ]];
+				then
+					rm -rf "${webrootFolderPath}.bak"
+					if [[ $? -eq ${EXIT_SUCCESS} && ! -d "${webrootFolderPath}.bak" ]];
+					then
+						echo "Successfully removed \"${webrootFolderPath}.bak\". "
+					else
+						echo "Failed to remove \"${webrootFolderPath}.bak\". "
+					fi
+				else
+					echo "No old web UI folders that should be removed were found. "
+				fi
+			else
+				exitCode=$(expr ${exitCode} \| 32)
+				echo "Failed to update or verify the web UI. "
+				if [[ -d "${webrootFolderPath}.bak" ]];
+				then
+					rm -rf "${webrootFolderPath}" && mv -fT "${webrootFolderPath}.bak" "${webrootFolderPath}"
+					if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}" ]];
+					then
+						echo "Successfully restored \"${webrootFolderPath}.bak\" to \"${webrootFolderPath}\". "
+					else
+						echo "Failed to restore \"${webrootFolderPath}.bak\" to \"${webrootFolderPath}\". "
+					fi
+				else
+					echo "No old web UI folders were found for restoring. "
+				fi
+			fi
+		fi
+	fi
+else
+	exitCode=$(expr ${exitCode} \| 32)
+	echo "Failed to fetch the SHA-512 value of the latest ZIP file of the web UI. "
+fi
 classificationB="$(getClassification "B")"
 returnCodeB=$?
 if [[ -n "${classificationB}" ]];
@@ -872,11 +949,6 @@ echo ""
 
 # Update (0bX00000) #
 echo "# Update (0bX00000) #"
-readonly webrootName="webroot"
-readonly webrootFolderPath="${webrootName}"
-readonly webrootFilePath="${webrootName}.zip"
-readonly webrootUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot.zip"
-readonly webrootDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/webroot.zip.sha512"
 readonly actionPropFileName="action.prop"
 readonly actionPropFilePath="${webrootFolderPath}/${actionPropFileName}"
 readonly currentAB="B"
@@ -885,70 +957,6 @@ readonly targetAction="action${targetAB}.sh"
 readonly actionUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/${targetAction}"
 readonly actionDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/src/${targetAction}.sha512"
 
-webrootDigest="$(curl -s "${webrootDigestUrl}")"
-if [[ $? -eq ${EXIT_SUCCESS} && -n "${webrootDigest}" ]];
-then
-	echo "Successfully fetched the SHA-512 value of the latest ZIP file of the web UI. "
-	if [[ -d "${webrootFolderPath}" && "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" ! -name "*.prop" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
-	then
-		echo "The current web UI is already up-to-date. "
-	else
-		echo "The current web UI is out-of-date and needs to be updated. "
-		abortFlag=${EXIT_SUCCESS}
-		if [[ -d "${webrootFolderPath}" ]];
-		then
-			rm -rf "${webrootFolderPath}.bak" && mv -fT "${webrootFolderPath}" "${webrootFolderPath}.bak"
-			if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}.bak" ]];
-			then
-				echo "Successfully moved \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
-			else
-				abortFlag=${EXIT_FAILURE}
-				exitCode=$(expr ${exitCode} \| 32)
-				echo "Failed to move \"${webrootFolderPath}\" to \"${webrootFolderPath}.bak\". "
-			fi
-		else
-			echo "No old web UI folders were found to be backed up. "
-		fi
-		if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
-		then
-			curl -s "${webrootUrl}" -o "${webrootFilePath}" && unzip "${webrootFilePath}" -d "${webrootFolderPath}" && rm -f "${webrootFilePath}"
-			if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}" && "$(find "${webrootFolderPath}" -type f ! -name "*.sha512" ! -name "*.prop" -exec sha512sum {} \; | sort)" == "${webrootDigest}" ]];
-			then
-				echo "Successfully updated and verified the web UI. "
-				if [[ -d "${webrootFolderPath}.bak" ]];
-				then
-					rm -rf "${webrootFolderPath}.bak"
-					if [[ $? -eq ${EXIT_SUCCESS} && ! -d "${webrootFolderPath}.bak" ]];
-					then
-						echo "Successfully removed \"${webrootFolderPath}.bak\". "
-					else
-						echo "Failed to remove \"${webrootFolderPath}.bak\". "
-					fi
-				else
-					echo "No old web UI folders that should be removed were found. "
-				fi
-			else
-				exitCode=$(expr ${exitCode} \| 32)
-				echo "Failed to update or verify the web UI. "
-				if [[ -d "${webrootFolderPath}.bak" ]];
-				then
-					rm -rf "${webrootFolderPath}" && mv -fT "${webrootFolderPath}.bak" "${webrootFolderPath}"
-					if [[ $? -eq ${EXIT_SUCCESS} && -d "${webrootFolderPath}" ]];
-					then
-						echo "Successfully restored \"${webrootFolderPath}.bak\" to \"${webrootFolderPath}\". "
-					else
-						echo "Failed to restore \"${webrootFolderPath}.bak\" to \"${webrootFolderPath}\". "
-					fi
-				else
-					echo "No old web UI folders were found for restoring. "
-				fi
-			fi
-		fi
-	fi
-else
-	exitCode=$(expr ${exitCode} \| 32)
-	echo "Failed to fetch the SHA-512 value of the latest ZIP file of the web UI. "
-fi
 shellDigest="$(curl -s "${actionDigestUrl}")"
 if [[ $? -eq ${EXIT_SUCCESS} && -n "${shellDigest}" ]];
 then
