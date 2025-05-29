@@ -74,10 +74,15 @@ if ${BOOTMODE};
 then
 	if [[ "${KSU}" == "true" ]];
 	then
-		echo "KSU (${KSU_VER_CODE}): Please deploy the latest KSU / KSU Next with only applications requiring root privileges configured and granted in the KSU / KSU Next Manager, embed the latest SUSFS as a kernel module, \
-install the latest Zygisk Next module as a system module with the denylist disabled, install the latest Shamiko module as a system module with the whitelist mode enabled, install the latest Play Integrity Fix (PIF) module as a system module, \
-install the latest Tricky Store (TS) module as a system module with the correct configurations, install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository as a system module \
-with the narrowest scope configured for each plugin, and activate the latest HMAL plugin with the correct configurations. "
+		echo "KSU (${KSU_VER_CODE}): Please "
+		echo "- deploy the latest KSU Next with only applications requiring root privileges configured and granted in the KSU Next Manager, "
+		echo "- embed the latest SUSFS as a kernel module, "
+		echo "- install the latest Zygisk Next module as a system module with the denylist disabled, "
+		echo "- install the latest Shamiko module as a system module with the whitelist mode enabled, "
+		echo "- install the latest Play Integrity Fix (PIF) module as a system module, "
+		echo "- install the latest Tricky Store (TS) module as a system module with the correct configurations, "
+		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, and "
+		echo "- activate the latest HMAL plugin from the \`\`action\`\` tab of its GitHub repository with the correct configurations. "
 		if [[ -d "${magiskFolder}" ]];
 		then
 			echo "The Magisk folder exists while the KSU / KSU Next is using. Please consider removing the Magisk folder. "
@@ -88,10 +93,14 @@ with the narrowest scope configured for each plugin, and activate the latest HMA
 		fi
 	elif [[ "${APATCH}" == "true" ]];
 	then
-		echo "Apatch (${APATCH_VER_CODE}): Please deploy the latest Apatch from the \`\`action\`\` tab of its GitHub repository with only applications requiring root privileges configured and granted in the Apatch Manager, \
-embed the latest Cherish Peekaboo as a kernel module, install the latest NeoZygisk module as a system module from the \`\`action\`\` tab of its GitHub repository, install the latest Play Integrity Fix (PIF) module as a system module, \
-install the latest Tricky Store (TS) module as a system module with the correct configurations, install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository as a system module \
-with the narrowest scope for each plugin, and activate the latest HMAL plugin with the correct configurations. "
+		echo "Apatch (${APATCH_VER_CODE}): Please "
+		echo "- deploy the latest Apatch from the \`\`action\`\` tab of its GitHub repository with only applications requiring root privileges configured and granted in the Apatch Manager, "
+		echo "- embed the latest Cherish Peekaboo as a kernel module, "
+		echo "- install the latest NeoZygisk module as a system module from the \`\`action\`\` tab of its GitHub repository, "
+		echo "- install the latest Play Integrity Fix (PIF) module as a system module, "
+		echo "- install the latest Tricky Store (TS) module as a system module with the correct configurations, "
+		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository as a system module with the narrowest scope for each plugin, and "
+		echo "- activate the latest HMAL plugin from the \`\`action\`\` tab of its GitHub repository with the correct configurations. "
 		if [[ -d "${magiskFolder}" ]];
 		then
 			echo "The Magisk folder exists while the Apatch is using. Please consider removing the Magisk folder. "
@@ -109,9 +118,14 @@ with the narrowest scope for each plugin, and activate the latest HMAL plugin wi
 		then
 			if [[ ${MAGISK_VER} == *-kitsune || ${MAGISK_VER} == *-delta ]];
 			then
-				echo "Magisk Delta (${MAGISK_VER_CODE}): Please deploy the latest Magisk Delta with the built-in Zygisk enabled, the whitelist mode enabled, and only applications requiring root privileges configured and granted \
-	in the Magisk Delta Manager, install the latest Play Integrity Fix (PIF) module, install the latest Tricky Store (TS) module with the correct configurations, install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab \
-	of its GitHub repository with the narrowest scope configured for each plugin, install the latest bindhosts or the built-in Systemless hosts module (optional), and activate the latest HMAL plugin with the correct configurations. "
+				echo "Magisk Delta (${MAGISK_VER_CODE}): Please "
+				echo "- deploy the latest Magisk Delta with the built-in Zygisk enabled, the whitelist mode enabled, and only applications requiring root privileges configured and granted in the Magisk Delta Manager, "
+				echo "- install the latest Play Integrity Fix (PIF) module, "
+				echo "- install the latest Tricky Store (TS) module with the correct configurations, "
+				echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository with the narrowest scope configured for each plugin, "
+				echo "- install the latest bindhosts or the built-in Systemless hosts module (optional), and "
+				echo "- activate the latest HMAL plugin from the \`\`action\`\` tab of its GitHub repository with the correct configurations. "
+				echo "Please consider switching to the latest Magisk Alpha if possible. "
 			else
 				if [[ ${MAGISK_VER} == *-alpha ]];
 				then
@@ -125,10 +139,16 @@ with the narrowest scope for each plugin, and activate the latest HMAL plugin wi
 				else
 					echo -n "Magisk "
 				fi
-				echo "(${MAGISK_VER_CODE}): Please deploy the latest Magisk Alpha with the built-in Zygisk and denylist disabled, execute applications requiring root privileges with root privileges granted, \
-	install the latest Zygisk Next module with the denylist disabled, install the latest Shamiko module with the whitelist mode enabled, install the latest Play Integrity Fix (PIF) module, install the latest Tricky Store (TS) module with the correct configurations, \
-	install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository with the narrowest scope configured for each plugin, install the latest bindhosts or the built-in Systemless hosts module (optional), \
-	and activate the latest HMAL plugin with the correct configurations. "
+				echo "(${MAGISK_VER_CODE}): Please "
+				echo "- deploy the latest Magisk Alpha with the built-in Zygisk and denylist disabled, "
+				echo "- execute applications requiring root privileges with root privileges granted, "
+				echo "- install the latest Zygisk Next module with the denylist disabled, "
+				echo "- install the latest Shamiko module with the whitelist mode enabled, "
+				echo "- install the latest Play Integrity Fix (PIF) module, "
+				echo "- install the latest Tricky Store (TS) module with the correct configurations, "
+				echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository with the narrowest scope configured for each plugin, "
+				echo "- install the latest bindhosts or the built-in Systemless hosts module (optional), and "
+				echo "- activate the latest HMAL plugin from the \`\`action\`\` tab of its GitHub repository with the correct configurations. "
 			fi
 			if [[ -d "${apatchFolder}" ]];
 			then
@@ -421,6 +441,10 @@ then
 else
 	exitCode=$(expr ${exitCode} \| 32)
 	echo "Failed to fetch the SHA-512 value of the latest ZIP file of the web UI. "
+fi
+if [[ $(expr ${exitCode} \& 32) -ne ${EXIT_SUCCESS} ]];
+then
+	echo "The updating of the classifications might fail. This will use the classification cache files to generate the HMA/HMAL configurations. "
 fi
 classificationB="$(getClassification "B")"
 returnCodeB=$?

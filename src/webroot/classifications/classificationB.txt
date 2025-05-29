@@ -565,6 +565,7 @@ tn.amin.phantom_mic
 tn.payoneer.loukious
 top.canyie.settingsfirewall
 top.hookvip.pro
+top.hookvip.wxtablet
 top.ltfan.notdeveloper
 top.sacz.timtool
 top.trangle.mbga
@@ -578,6 +579,7 @@ vn.kwaiching.live
 vn.kwaiching.tao
 vn.kwaiching.yauyin
 wx.myfriends
+wx.repair.tool
 xdc.destinyImm
 xeed.xposed.cbppmod
 xmnh.soulfrog

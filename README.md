@@ -7,7 +7,7 @@ This is a developing Magisk module for bypassing Android environment detection r
 - Tricky Store (0b000X00): Generate Tricky Store configurations directly based on cloud libraries and local packages. The configurations will be written to the Tricky Store configuration folder directly. Networks to GitHub are optional. 
 - Zygisk Traces (0b00X000): Enforce denylist if ``Zygisk Next`` is used and make Shamiko work in the whitelist mode. 
 - Shell (0b0X0000): Perform some shell commands. Please check ``actionA.sh``. 
-- Update (0bX00000): Perform regular dynamic updates. Networks to GitHub are required. 
+- Update (0bX00000): Perform regular dynamic updates for ``action.sh`` and the web UI (processed in the HMA/HMAL stage). Networks to GitHub are required. 
 
 # Compilation
 
