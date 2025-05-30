@@ -15,6 +15,7 @@ balti.xposed.pixelifygooglephotos
 be.mygod.oplus.batterywaster
 be.mygod.unmeteredvpn
 bin.mt.plus
+bin.mt.termex
 cat.app.bicleaner
 cc.aoeiuv020.hookcimoc
 cc.aoeiuv020.hookfanqie
