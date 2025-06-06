@@ -418,6 +418,7 @@ io.github.chipppppppppp.binnosoko
 io.github.chipppppppppp.lime
 io.github.chsbuffer.miuihelper
 io.github.cloudburst.messengerex
+io.github.dixtdf.oplus.display
 io.github.duzhaokun123.darkaischedule
 io.github.duzhaokun123.fuckcainiao
 io.github.duzhaokun123.tasklabelastasktitle

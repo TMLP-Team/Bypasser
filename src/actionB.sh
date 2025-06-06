@@ -791,6 +791,10 @@ readonly shamikoModuleId="zygisk_shamiko"
 readonly shamikoConfigurationFolderPath="${adbFolder}/shamiko"
 readonly shamikoWhitelistConfigurationFileName="whitelist"
 readonly shamikoWhitelistConfigurationFilePath="${shamikoConfigurationFolderPath}/${shamikoWhitelistConfigurationFileName}"
+readonly noHelloModuleId="zygisk_nohello"
+readonly noHelloConfigurationFolderPath="${adbFolder}/nohello"
+readonly noHelloWhitelistConfigurationFileName="whitelist"
+readonly noHelloWhitelistConfigurationFilePath="${noHelloConfigurationFolderPath}/${noHelloWhitelistConfigurationFileName}"
 readonly neozygiskConfigurationFolderPath="${adbFolder}/neozygisk"
 readonly rezygiskConfigurationFolderPath="${adbFolder}/rezygisk"
 readonly builtInZygiskFilePath="${adbFolder}/magisk/zygisk"
@@ -803,13 +807,14 @@ then
 		echo "The Zygisk solution was implemented by ${zygiskSolutionModuleName}. "
 		if [[ "Zygisk Next" == "${zygiskSolutionModuleName}" ]];
 		then
+			toBeWritten="1"
 			if isModuleInstalled "${shamikoModuleId}" > /dev/null;
 			then
 				toBeWritten="0"
 				echo "The Shamiko module was installed. "
 				if [[ "${APATCH}" == "true" ]];
 				then
-					echo "Please kindly acknowledge that Shamiko does not work with Apatch. "
+					echo "Please kindly acknowledge that the Shamiko module does not work with Apatch. "
 				fi
 				abortFlag=${EXIT_SUCCESS}
 				if [[ -d "${shamikoConfigurationFolderPath}" ]];
@@ -845,12 +850,65 @@ then
 					fi
 				fi
 			else
-				toBeWritten="1"
 				echo "The Shamiko module was not installed. "
 				if [[ "${APATCH}" != "true" ]];
 				then
 					echo "Please consider using Zygisk Next (disable the denylist) + Shamiko (enable the whitelist) since you are not using Apatch. "
 				fi
+			fi
+			if isModuleInstalled "${noHelloModuleId}" > /dev/null;
+			then
+				if [[ "0" == "${toBeWritten}" ]];
+				then
+					if [[ -z "${APATCH}" ]];
+					then
+						echo "The NoHello module was installed while the Shamiko module was installed. Please consider only using the Shamiko module even though the two are compatible. "
+					else
+						echo "The NoHello module was installed while the Shamiko module was installed. Please consider only using the NoHello module when the rooting solution used is Apatch, since the Shamiko module does not work in this situation. "
+					fi
+				else
+					echo "The NoHello module was installed. "
+					if [[ -z "${APATCH}" ]];
+					then
+						echo "Please kindly acknowledge that the Shamiko module could be better than the NoHello module when the rooting solution used is not Apatch. "
+					fi
+				fi
+				toBeWritten="0"					
+				abortFlag=${EXIT_SUCCESS}
+				if [[ -d "${noHelloConfigurationFolderPath}" ]];
+				then
+					echo "The NoHello configuration folder was found at \"${noHelloConfigurationFolderPath}\". "
+				else
+					echo "The NoHello configuration folder \"${noHelloConfigurationFolderPath}\" did not exist. "
+					mkdir -p "${noHelloConfigurationFolderPath}"
+					if [[ $? -eq ${EXIT_SUCCESS} && -d "${noHelloConfigurationFolderPath}" ]];
+					then
+						echo "Successfully created the NoHello configuration folder \"${noHelloConfigurationFolderPath}\". "
+					else
+						exitCode=$(expr ${exitCode} \| 8)
+						abortFlag=${EXIT_FAILURE}
+						echo "Failed to create the NoHello configuration folder \"${noHelloConfigurationFolderPath}\". "
+					fi
+				fi
+				if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
+				then
+					if [[ -f "${noHelloWhitelistConfigurationFilePath}" ]];
+					then
+						echo "The NoHello whitelist configuration file \"${noHelloWhitelistConfigurationFilePath}\" already existed. "
+					else
+						echo "The NoHello whitelist configuration file \"${noHelloWhitelistConfigurationFilePath}\" did not exist. "
+						touch "${noHelloWhitelistConfigurationFilePath}"
+						if [[ $? -eq ${EXIT_SUCCESS} && -f "${noHelloWhitelistConfigurationFilePath}" ]];
+						then
+							echo "Successfully created the NoHello whitelist configuration file \"${noHelloWhitelistConfigurationFilePath}\". "
+						else
+							exitCode=$(expr ${exitCode} \| 8)
+							echo "Failed to create the NoHello whitelist configuration file \"${noHelloWhitelistConfigurationFilePath}\". "
+						fi
+					fi
+				fi
+			else
+				echo "The NoHello module was not installed. "
 			fi
 			abortFlag=${EXIT_SUCCESS}
 			if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
