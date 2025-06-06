@@ -988,6 +988,19 @@ echo "# Shell (0b0X0000) #"
 readonly sensitiveApplications="com.google.android.safetycore com.google.android.contactkeys"
 readonly policiesToBeDeleted="hidden_api_policy hidden_api_policy_p_apps hidden_api_policy_pre_p_apps hidden_api_blacklist_exemptions"
 
+function handleProp
+{
+	executionContent="$(getprop "$1")"
+	if [[ $? -eq ${EXIT_SUCCESS} && "${executionContent}" == "$2" ]];
+	then
+		echo "The value of \`\`$1\`\` is \"${executionContent}\", which is proper. "
+		return ${EXIT_SUCCESS}
+	else
+		echo "The value of \`\`$1\`\` is \"${executionContent}\", which should be \"$2\". "
+		return ${EXIT_FAILURE}
+	fi
+}
+
 for sensitiveApplication in ${sensitiveApplications}
 do
 	if pm list packages | grep -q "${sensitiveApplication}";
@@ -1013,20 +1026,9 @@ do
 		echo "Failed"
 	fi
 done
-executionContent="$(getprop ro.boot.verifiedbootstate)"
-if [[ $? -eq ${EXIT_SUCCESS} && "${executionContent}" == "green" ]];
-then
-	echo "The value of \`\`ro.boot.verifiedbootstate\`\` is \"${executionContent}\", which is proper. "
-else
-	echo "The value of \`\`ro.boot.verifiedbootstate\`\` is \"${executionContent}\", which should be \"green\". "
-fi
-executionContent="$(getprop ro.boot.vbmeta.device_state)"
-if [[ $? -eq ${EXIT_SUCCESS} && "${executionContent}" == "locked" ]];
-then
-	echo "The value of \`\`ro.boot.vbmeta.device_state\`\` is \"${executionContent}\", which is proper. "
-else
-	echo "The value of \`\`ro.boot.vbmeta.device_state\`\` is \"${executionContent}\", which should be \"locked\". "
-fi
+handleProp "ro.boot.vbmeta.device_state" "locked"
+handleProp "ro.boot.verifiedbootstate" "green"
+handleProp "vendor.boot.secboot" "enabled"
 androidVersion=$(getprop ro.build.version.release)
 if [[ ${androidVersion} -ge 10 ]];
 then
