@@ -1093,7 +1093,7 @@ fi
 for propertyToBeDeleted in ${propertiesToBeDeleted}
 do
 	resetprop --delete "${propertyToBeDeleted}"
-	if [[ $? -eq ${EXIT_SUCCESS} ]];
+	if [[ $? -eq ${EXIT_SUCCESS} || $? -eq 255 ]];
 	then
 		echo "- The execution of \`\`resetprop --delete \"${propertyToBeDeleted}\"\`\` succeeded. "
 	else
