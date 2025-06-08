@@ -961,6 +961,24 @@ then
 			then
 				echo "The ReZygisk configuration folder exists while the NeoZygisk is using. Please consider removing the ReZygisk configuration folder. "
 			fi
+			if isModuleInstalled "${shamikoModuleId}" > /dev/null;
+			then
+				if [[ "${APATCH}" == "true" ]];
+				then
+					echo "The Shamiko module does not work with Apatch or NeoZygisk. Please consider removing this module. "
+				else
+					echo "The Shamiko module does not work with NeoZygisk. Please consider either switching to Zygisk Next or removing this module. "
+				fi
+			fi
+			if isModuleInstalled "${noHelloModuleId}" > /dev/null;
+			then
+				if [[ "${APATCH}" == "true" ]];
+				then
+					echo "The NoHello module does not work with Apatch or NeoZygisk. Please consider removing this module. "
+				else
+					echo "The NoHello module does not work with NeoZygisk. Please consider either switching to Zygisk Next or removing this module. "
+				fi
+			fi
 		elif [[ "ReZygisk" == "${zygiskSolutionModuleName}" ]];
 		then
 			if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
@@ -970,6 +988,24 @@ then
 			if [[ -d "${neozygiskConfigurationFolderPath}" ]];
 			then
 				echo "The NeoZygisk configuration folder exists while the ReZygisk is using. Please consider removing the NeoZygisk configuration folder. "
+			fi
+			if isModuleInstalled "${shamikoModuleId}" > /dev/null;
+			then
+				if [[ "${APATCH}" == "true" ]];
+				then
+					echo "The Shamiko module does not work with Apatch or ReZygisk. Please consider removing this module. "
+				else
+					echo "The Shamiko module does not work with ReZygisk. Please consider either switching to Zygisk Next or removing this module. "
+				fi
+			fi
+			if isModuleInstalled "${noHelloModuleId}" > /dev/null;
+			then
+				if [[ "${APATCH}" == "true" ]];
+				then
+					echo "The NoHello module does not work with Apatch or ReZygisk. Please consider removing this module. "
+				else
+					echo "The NoHello module does not work with ReZygisk. Please consider either switching to Zygisk Next or removing this module. "
+				fi
 			fi
 		fi
 	elif [[ -f "${builtInZygiskFilePath}" ]]
@@ -988,6 +1024,8 @@ echo "# Shell (0b0X0000) #"
 readonly sensitiveApplications="com.google.android.safetycore com.google.android.contactkeys"
 readonly policiesToBeDeleted="hidden_api_policy hidden_api_policy_p_apps hidden_api_policy_pre_p_apps hidden_api_blacklist_exemptions"
 readonly propertiesToBeDeleted="persist.sys.vold_app_data_isolation_enabled persist.zygote.app_data_isolation"
+readonly sourceXmlFilePath="/etc/compatconfig/services-platform-compat-config.xml"
+readonly targetXmlFilePath="system${sourceXmlFilePath}"
 
 function handleProperty
 {
@@ -1073,6 +1111,26 @@ then
 	else
 		echo "Failed to enable the feature of hiding desktop icons (Android ${androidVersion}). "
 	fi
+fi
+targetXmlFolderPath="$(dirname "${targetXmlFilePath}")"
+if mkdir -p "${targetXmlFolderPath}";
+then
+	echo "Successfully created the folder \"${targetXmlFolderPath}\". "
+	sed -E 's/(enableAfterTargetSdk=")[0-9]+(" id="143937733")/\10\2/g' "${sourceXmlFilePath}" > "${targetXmlFilePath}"
+	if [[ $? -eq ${EXIT_SUCCESS} && -f "${targetXmlFilePath}" ]];
+	then
+		echo "Successfully generated \"${targetXmlFilePath}\". "
+		if grep -q 'enableAfterTargetSdk="0" id="143937733"' "${sourceXmlFilePath}";
+		then
+			echo "The current \"${sourceXmlFilePath}\" is a replaced one. "
+		else
+			echo "The \"${sourceXmlFilePath}\" will be replaced after the device reboots. "
+		fi
+	else
+		echo "Failed to generate \"${targetXmlFilePath}\". "
+	fi
+else
+	echo "Failed to create the folder \"${targetXmlFolderPath}\". "
 fi
 echo ""
 
