@@ -987,48 +987,82 @@ echo ""
 echo "# Shell (0b0X0000) #"
 readonly sensitiveApplications="com.google.android.safetycore com.google.android.contactkeys"
 readonly policiesToBeDeleted="hidden_api_policy hidden_api_policy_p_apps hidden_api_policy_pre_p_apps hidden_api_blacklist_exemptions"
+readonly propertiesToBeDeleted="persist.sys.vold_app_data_isolation_enabled persist.zygote.app_data_isolation"
 
-function handleProp
+function handleProperty
 {
 	executionContent="$(getprop "$1")"
 	if [[ $? -eq ${EXIT_SUCCESS} && "${executionContent}" == "$2" ]];
 	then
-		echo "The value of \`\`$1\`\` is \"${executionContent}\", which is proper. "
+		echo "- The value of \`\`$1\`\` is \"${executionContent}\", which is proper. "
 		return ${EXIT_SUCCESS}
 	else
-		echo "The value of \`\`$1\`\` is \"${executionContent}\", which should be \"$2\". "
-		return ${EXIT_FAILURE}
+		resetprop "$1" "$2"
+		if [[ $? -eq ${EXIT_SUCCESS} && "$(getprop "$1")" == "$2" ]];
+		then
+			echo "- The value of \`\`$1\`\` is \"${executionContent}\", which should be and successfully set to \"$2\". "
+			return ${EXIT_SUCCESS}
+		else
+			echo "- The value of \`\`$1\`\` is \"${executionContent}\", which should be but failed to set to \"$2\". "
+			return ${EXIT_FAILURE}
+		fi
 	fi
 }
 
+echo "The sensitive applications are being handled. "
 for sensitiveApplication in ${sensitiveApplications}
 do
 	if pm list packages | grep -q "${sensitiveApplication}";
 	then
 		if pm disable "${sensitiveApplication}" &> /dev/null;
 		then
-			echo "The sensitive application \"${sensitiveApplication}\" was detected, which has been disabled. "
+			echo "- The sensitive application \"${sensitiveApplication}\" was detected, which has been disabled. "
 		else
 			exitCode=$(expr ${exitCode} \| 16)
-			echo "The sensitive application \"${sensitiveApplication}\" was detected, which failed to be disabled. "
+			echo "- The sensitive application \"${sensitiveApplication}\" was detected, which failed to be disabled. "
 		fi
 	fi
 done
+echo "The policies are being handled. "
 for policyToBeDeleted in ${policiesToBeDeleted}
 do
-	echo -n "\$settings delete global ${policyToBeDeleted} -> "
+
 	executionContent="$(settings delete global ${policyToBeDeleted})"
 	if [[ $? -eq ${EXIT_SUCCESS} && "${executionContent}" == "Deleted 0 rows" ]];
 	then
-		echo "Succeeded"
+		echo "- The execution of \`\`settings delete global ${policyToBeDeleted}\`\` succeeded. "
 	else
 		exitCode=$(expr ${exitCode} \| 16)
-		echo "Failed"
+		echo "- The execution of \`\`settings delete global ${policyToBeDeleted}\`\` failed. "
 	fi
 done
-handleProp "ro.boot.vbmeta.device_state" "locked"
-handleProp "ro.boot.verifiedbootstate" "green"
-handleProp "vendor.boot.secboot" "enabled"
+echo "The properties are being handled. "
+handleProperty "ro.boot.vbmeta.device_state" "locked"
+if [[ $? -ne ${EXIT_SUCCESS} ]];
+then
+	exitCode=$(expr ${exitCode} \| 16)
+fi
+handleProperty "ro.boot.verifiedbootstate" "green"
+if [[ $? -ne ${EXIT_SUCCESS} ]];
+then
+	exitCode=$(expr ${exitCode} \| 16)
+fi
+handleProperty "vendor.boot.secboot" "enabled"
+if [[ $? -ne ${EXIT_SUCCESS} ]];
+then
+	exitCode=$(expr ${exitCode} \| 16)
+fi
+for propertyToBeDeleted in ${propertiesToBeDeleted}
+do
+	resetprop --delete "${propertyToBeDeleted}"
+	if [[ $? -eq ${EXIT_SUCCESS} ]];
+	then
+		echo "- The execution of \`\`resetprop --delete \"${propertyToBeDeleted}\"\`\` succeeded. "
+	else
+		echo "- The execution of \`\`resetprop --delete \"${propertyToBeDeleted}\"\`\` failed. "
+		exitCode=$(expr ${exitCode} \| 16)
+	fi
+done
 androidVersion=$(getprop ro.build.version.release)
 if [[ ${androidVersion} -ge 10 ]];
 then

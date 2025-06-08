@@ -151,6 +151,7 @@ com.fuck.snotes
 com.fuckcoolapk
 com.fun.mtp
 com.function.mtp
+com.game.reschange
 com.garyodernichts.downgrader
 com.gauravssnl.bypassrootcheck.pro
 com.gauravssnl.mobileradioadaway
@@ -305,6 +306,7 @@ com.th7.fcsdk
 com.th7.flinspirer.admin
 com.thinkdifferent.anywebview
 com.three.minit.batteryresources
+com.tlsu.opluscamerapro
 com.topjohnwu.magisk
 com.topmiaohan.superlist
 com.toxic.prime.ff
@@ -463,6 +465,7 @@ io.noisyfox.oplongshotxposed
 it.kapfer.digitalesamt.liberator
 its.madruga.warevamp
 junzi.xposed.hook
+kz.enpf.enabler
 lialh4.ldf
 lin.xposed
 lozn.hookui
