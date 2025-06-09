@@ -1,4 +1,5 @@
 chunqiu.safe
+com.OrangeEnvironment.Detector
 com.android.nativetest
 com.androidfung.drminfo
 com.byxiaorun.detector
@@ -24,3 +25,4 @@ me.garfieldhan.holmes
 ml.w568w.checkxposed
 org.akanework.checker
 rikka.safetynetchecker
+wu.Rookie.Detector
