@@ -293,6 +293,7 @@ com.strawing.alwaysthemedicon
 com.strawing.fuckdevicepolicy
 com.suisho.disablescreenshotsound
 com.suisho.pixelposed
+com.sukisu.ultra
 com.sumver.fixmiaod
 com.sumver.keepaod
 com.suqi8.oshin
@@ -480,6 +481,7 @@ me.documenthook
 me.garfieldhan.apatch.next
 me.hd.hookgg
 me.hd.hookwzry
+me.hd.nullavatar
 me.hd.wauxv
 me.hoshino.novpndetect
 me.iacn.biliroaming
