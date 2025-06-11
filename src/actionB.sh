@@ -26,18 +26,15 @@ function clearCaches
 function setPermissions
 {
 	returnCode=${EXIT_SUCCESS}
-	find . -type d -exec chmod 755 {} \;
-	if [[ $? != ${EXIT_SUCCESS} ]];
+	if [[ -n "$(find . -type d -exec chmod 555 {} \; 2>&1)" ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
-	find . ! -name "*.sh" -type f -exec chmod 444 {} \;
-	if [[ $? != ${EXIT_SUCCESS} ]];
+	if [[ -n "$(find . ! -name "*.sh" -type f -exec chmod 444 {} \; 2>&1)" ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
-	find . -name "*.sh" -type f -exec chmod 544 {} \;
-	if [[ $? != ${EXIT_SUCCESS} ]];
+	if [[ -n "$(find . -name "*.sh" -type f -exec chmod 544 {} \; 2>&1)" ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
@@ -75,7 +72,7 @@ then
 	if [[ "${KSU}" == "true" ]];
 	then
 		echo "KSU (${KSU_VER_CODE}): Please "
-		echo "- deploy the latest KSU Next with only applications requiring root privileges configured and granted in the KSU Next Manager, "
+		echo "- deploy the latest SukiSU with only applications requiring root privileges configured and granted in the SukiSU Manager, "
 		echo "- embed the latest SUSFS as a kernel module, "
 		echo "- install the latest Zygisk Next module as a system module with the denylist disabled, "
 		echo "- install the latest Shamiko module as a system module with the whitelist mode enabled, "
@@ -85,7 +82,7 @@ then
 		echo "- activate the latest HMAL plugin from the \`\`action\`\` tab of its GitHub repository with the correct configurations. "
 		if [[ -d "${magiskFolder}" ]];
 		then
-			echo "The Magisk folder exists while the KSU / KSU Next is using. Please consider removing the Magisk folder. "
+			echo "The Magisk folder exists while the KSU / KSU Next / SukiSU is using. Please consider removing the Magisk folder. "
 		fi
 		if [[ -d "${apatchFolder}" ]];
 		then
@@ -163,8 +160,8 @@ else
 fi
 echo ""
 
-# HMA/HMAL (0b0000X0) #
-echo "# HMA/HMAL (0b0000X0) #"
+# HMAL/HMA (0b0000X0) #
+echo "# HMAL/HMA (0b0000X0) #"
 readonly webrootName="webroot"
 readonly webrootFolderPath="${webrootName}"
 readonly webrootFilePath="${webrootName}.zip"
@@ -173,6 +170,7 @@ readonly webrootDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/
 readonly classificationFolderName="classifications"
 readonly classificationFolderPath="${webrootFolderPath}/${classificationFolderName}"
 readonly dataAppFolder="/data/app"
+readonly hmalHmaScanningScope="/data"
 readonly blacklistName="Blacklist"
 readonly whitelistName="Whitelist"
 if [[ -n "${EXTERNAL_STORAGE}" ]];
@@ -444,7 +442,7 @@ else
 fi
 if [[ $(expr ${exitCode} \& 32) -ne ${EXIT_SUCCESS} ]];
 then
-	echo "The updating of the classifications might fail. This will use the classification cache files to generate the HMA/HMAL configurations. "
+	echo "The updating of the classifications might fail. This will use the classification cache files to generate the HMAL/HMA configurations. "
 fi
 classificationB="$(getClassification "B")"
 returnCodeB=$?
@@ -477,7 +475,7 @@ then
 	then
 		keyCode="$1"
 	else
-		echo "Please press the [+] or [-] key in ${defaultTimeout} seconds if you want to scan the local user application installation directory. Otherwise, you may touch the screen to skip the timing. "
+		echo "Please press the [+] or [-] key in ${defaultTimeout} seconds if you want to perform the local scanning (\`\`/data\`\`). Otherwise, you may touch the screen to skip the timing. "
 		startGapTime=$(date +%s%N)
 		getTheKeyPressed
 		keyCode=$?
@@ -491,6 +489,7 @@ then
 		fileCount=0
 		failureInstallationCount=0
 		failureInstallationRemovedCount=0
+		echo "Performing local user application installation directory scanning. "
 		for item in "${dataAppFolder}/"*
 		do
 			if [[ -d "${item}" ]];
@@ -501,14 +500,14 @@ then
 					if rm -rf "${item}";
 					then
 						failureInstallationRemovedCount=$(expr ${failureInstallationRemovedCount} + 1)
-						echo "Found a failure installation at \"${item}\", which has been removed. "
+						echo "[${failureInstallationRemovedCount}/${failureInstallationCount}] Found a failure installation at \"${item}\", which has been removed. "
 					else
-						echo "Found a failure installation at \"${item}\", which could not be removed. "
+						echo "[${failureInstallationRemovedCount}/${failureInstallationCount}] Found a failure installation at \"${item}\", which could not be removed. "
 					fi
 				else
 					folderCount=$(expr ${folderCount} + 1)
 					subItems="$(ls -1 "${item}")"
-					if [[ $(echo "${subItems}" | wc -l) == 1 ]];
+					if [[ $(echo "${subItems}" | wc -l) -eq 1 ]];
 					then
 						firstItem="$(echo "${subItems}" | awk "NR==1")"
 						packageName="$(basename "${firstItem}" | cut -d "-" -f 1)"
@@ -525,10 +524,10 @@ then
 								fi
 							fi
 						else
-							echo "Failed to resolve the folder \"${item}\". "
+							echo "- Failed to resolve the folder \"${item}\". "
 						fi
 					else
-						echo "There is at least 1 additional item in \"${item}\", which should not exist. "
+						echo "- There is at least 1 additional item in \"${item}\", which should not exist. "
 					fi
 				fi
 			elif [ -f "${item}" ];
@@ -551,24 +550,24 @@ then
 							fi
 						fi
 					else
-						echo "Failed to resolve the APK file \"${item}\". "
+						echo "- Failed to resolve the APK file \"${item}\". "
 					fi
 				else
-					echo "A file that should not exist was found at \"${item}\". "
+					echo "- A file that should not exist was found at \"${item}\". "
 				fi
 			fi
 		done
 		if [[ ${folderCount} -gt 0 ]] && [[ ${fileCount} -gt 0 ]];
 		then
-			echo "A mixture of folders and files was detected in the \"${dataAppFolder}\" folder. "
+			echo "A mixture of folders and files was detected in the \"${dataAppFolder}\" directory. "
 		fi
 		if [[ ${failureInstallationCount} -ge 1 ]];
 		then
-			echo "Found ${failureInstallationCount} failure installation(s) in the \"${dataAppFolder}\" folder with ${failureInstallationRemovedCount} removed successfully. "
+			echo "Found ${failureInstallationCount} failure installation(s) in the \"${dataAppFolder}\" directory with ${failureInstallationRemovedCount} removed successfully. "
 		fi
 		if [[ ${localCount} -ge 1 ]];
 		then
-			echo "Successfully fetched ${localCount} package name(s) of Classification $B$ from the local machine. "
+			echo "Successfully fetched ${localCount} package name(s) of Classification \$B\$ from the local machine. "
 			echo "Kindly report the package name(s) with the corresponding classification(s) to \"${reportLink}\" if you wish to. "
 		fi
 		originalLengthB=${lengthB}
@@ -580,6 +579,32 @@ then
 			lengthB=0
 		fi
 		echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from the library (${originalLengthB}) and the local machine (${localCount}). "
+		oldHmalHmaConfigurationFolderCount=0
+		removedHmalHmaConfigurationFolderCount=0
+		echo "Removing old HMAL/HMA configuration directories. "
+		for hmalHmaPath in $(find "${hmalHmaScanningScope}" -type d -name "*hmal*" -name "*hml*" -name "h_m_a_l*" -name "hide_my_applist*" -name "hma1*")
+		do
+			if [[ -e "${hmalHmaPath}/config.json" && -d "${hmalHmaPath}/log" ]];
+			then
+				oldHmalHmaConfigurationFolderCount=$(expr ${oldHmalHmaConfigurationFolderCount} + 1)
+				if rm -rf "${hmalHmaPath}";
+				then
+					removedHmalHmaConfigurationFolderCount=$(expr ${removedHmalHmaConfigurationFolderCount} + 1)
+					echo "[${removedHmalHmaConfigurationFolderCount}/${oldHmalHmaConfigurationFolderCount}] Successfully removed \"${hmalHmaPath}\". "
+				else
+					echo "[${removedHmalHmaConfigurationFolderCount}/${oldHmalHmaConfigurationFolderCount}] Failed to remove \"${hmalHmaPath}\". "
+				fi
+			fi
+		done
+		if [[ ${oldHmalHmaConfigurationFolderCount} -ge 2 ]];
+		then
+			echo "Found ${oldHmalHmaConfigurationFolderCount} old HMAL/HMA configuration directories in the \"${hmalHmaScanningScope}\" directory, with ${removedHmalHmaConfigurationFolderCount} removed successfully. "
+		elif [[ ${oldHmalHmaConfigurationFolderCount} -eq 1 ]];
+		then
+			echo "Found 1 old HMAL/HMA configuration directory in the \"${hmalHmaScanningScope}\" directory, with ${removedHmalHmaConfigurationFolderCount} removed successfully. "
+		else
+			echo "No old HMAL/HMA configuration folders were found. "
+		fi
 	fi
 else
 	classificationB=""
@@ -1024,8 +1049,39 @@ echo "# Shell (0b0X0000) #"
 readonly sensitiveApplications="com.google.android.safetycore com.google.android.contactkeys"
 readonly policiesToBeDeleted="hidden_api_policy hidden_api_policy_p_apps hidden_api_policy_pre_p_apps hidden_api_blacklist_exemptions"
 readonly propertiesToBeDeleted="persist.sys.vold_app_data_isolation_enabled persist.zygote.app_data_isolation"
+readonly persistentPropertyFilePath="/data/property/persistent_properties"
+readonly shellPackageName="com.android.shell"
+readonly plainUserExecution="$(echo -e "if [[ -n \"\${EXTERNAL_STORAGE}\" ]];\n\
+then\n\
+	readonly folders=\"/data/data /data/user/0 /data/user_de/0 \${EXTERNAL_STORAGE}/Android/data\"\n\
+else\n\
+	readonly folders=\"/data/data /data/user/0 /data/user_de/0 /sdcard/Android/data\"\n\
+fi\n\
+for packageName in \$(cat \"${classificationFolderPath}/classificationB.txt\")\n\
+do\n\
+	for folder in \${folders}\n\
+	do\n\
+		leakedPath=\"\${folder}/\${packageName}\"
+		if [[ -e \"\${leakedPath}\" ]];\n\
+		then\n\
+			echo \"- Found \\\"\${leakedPath}\\\" (Classification \\\$B\\\$). \"\n\
+		fi\n\
+	done\n\
+done\n\
+for packageName in \$(cat \"${classificationFolderPath}/classificationC.txt\")\n\
+do\n\
+	for folder in \${folders}\n\
+	do\n\
+		leakedPath=\"\${folder}/\${packageName}\"
+		if [[ -e \"\${leakedPath}\" ]];\n\
+		then\n\
+			echo \"- Found \\\"\${leakedPath}\\\" (Classification \\\$C\\\$). \"\n\
+		fi\n\
+	done\n\
+done")"
 readonly sourceXmlFilePath="/etc/compatconfig/services-platform-compat-config.xml"
-readonly targetXmlFilePath="system${sourceXmlFilePath}"
+readonly replacementEntry="system"
+readonly targetXmlFilePath="${replacementEntry}${sourceXmlFilePath}"
 
 function handleProperty
 {
@@ -1101,6 +1157,63 @@ do
 		exitCode=$(expr ${exitCode} \| 16)
 	fi
 done
+if [[ -f "${persistentPropertyFilePath}" ]];
+then
+	sed -i '/persist\.sys\.vold_app_data_isolation_enabled/d; /persist\.zygote\.app_data_isolation/d' "${persistentPropertyFilePath}"
+	if [[ $? -eq ${EXIT_SUCCESS} ]];
+	then
+		echo "- Successfully removed persistent property traces from \"${persistentPropertyFilePath}\". "
+	else
+		echo "- Failed to remove persistent property traces from \"${persistentPropertyFilePath}\". "
+	fi
+else
+	echo "- The persistent property file \"${persistentPropertyFilePath}\" did not exist. "
+fi
+echo "Checking the existence of applications in Classifications \$B\$ and \$C\$ as a plain user. "
+shellUserId=$(dumpsys package "${shellPackageName}" | grep userId | cut -d '=' -f2 | cut -d ' ' -f1 | uniq)
+if [[ $(echo "${shellUserId}" | wc -l) -eq 1 && -n "$(echo "${shellUserId}" | grep -E '^[0-9]+$')" ]];
+then
+	#su -g ${shellUserId} shell -c "${plainUserExecution}"
+	echo "Successfully checked the existence of applications in Classification \$B\$ as a plain user. "
+else
+	exitCode=$(expr ${exitCode} \| 16)
+	echo "Failed to check due to unknown shell user ID (\`\`${shellPackageName}\`\`). "
+fi
+if [[ -s "${sourceXmlFilePath}" ]];
+then
+	if grep -q 'enableAfterTargetSdk="0" id="143937733"' "${sourceXmlFilePath}";
+	then
+		echo "The current \"${sourceXmlFilePath}\" is already a replaced one. "
+	else
+		echo "Generating replacement, the \"${sourceXmlFilePath}\" will be replaced after the device reboots. "
+		targetXmlFolderPath="$(dirname "${targetXmlFilePath}")"
+		if mkdir -p "${targetXmlFolderPath}";
+		then
+			echo "Successfully created the folder \"${targetXmlFolderPath}\". "
+			toBeWritten=$(sed -E 's/(enableAfterTargetSdk=")[0-9]+(" id="143937733")/\10\2/g' "${sourceXmlFilePath}")
+			echo -n "${toBeWritten}" > "${targetXmlFilePath}"
+			if [[ $? -eq ${EXIT_SUCCESS} && -f "${targetXmlFilePath}" ]];
+			then
+				echo "Successfully generated \"${targetXmlFilePath}\". "
+			else
+				exitCode=$(expr ${exitCode} \| 16)
+				echo "Failed to generate \"${targetXmlFilePath}\". "
+			fi
+		else
+			exitCode=$(expr ${exitCode} \| 16)
+			echo "Failed to create the folder \"${targetXmlFolderPath}\". "
+		fi
+	fi
+else
+	echo "The \"${sourceXmlFilePath}\" did not exist or was found to be empty. "
+	rm -rf "${replacementEntry}" && mkdir -p "${replacementEntry}"
+	if [[ $? -eq ${EXIT_SUCCESS} && -d "${replacementEntry}" ]];
+	then
+		echo "Successfully removed replacement in this module. "
+	else
+		echo "Failed to remove replacement in this module. "
+	fi
+fi
 androidVersion=$(getprop ro.build.version.release)
 if [[ ${androidVersion} -ge 10 ]];
 then
@@ -1111,26 +1224,6 @@ then
 	else
 		echo "Failed to enable the feature of hiding desktop icons (Android ${androidVersion}). "
 	fi
-fi
-targetXmlFolderPath="$(dirname "${targetXmlFilePath}")"
-if mkdir -p "${targetXmlFolderPath}";
-then
-	echo "Successfully created the folder \"${targetXmlFolderPath}\". "
-	sed -E 's/(enableAfterTargetSdk=")[0-9]+(" id="143937733")/\10\2/g' "${sourceXmlFilePath}" > "${targetXmlFilePath}"
-	if [[ $? -eq ${EXIT_SUCCESS} && -f "${targetXmlFilePath}" ]];
-	then
-		echo "Successfully generated \"${targetXmlFilePath}\". "
-		if grep -q 'enableAfterTargetSdk="0" id="143937733"' "${sourceXmlFilePath}";
-		then
-			echo "The current \"${sourceXmlFilePath}\" is a replaced one. "
-		else
-			echo "The \"${sourceXmlFilePath}\" will be replaced after the device reboots. "
-		fi
-	else
-		echo "Failed to generate \"${targetXmlFilePath}\". "
-	fi
-else
-	echo "Failed to create the folder \"${targetXmlFolderPath}\". "
 fi
 echo ""
 

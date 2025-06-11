@@ -202,7 +202,7 @@ def compress(zipFolderPath:str, zipFilePath:str, extensionsExcluded:tuple|list|s
 	else:
 		return False
 
-def gitPush() -> bool:
+def gitPush(filePathA:str, filePathB:str, encoding:str = "utf-8") -> bool:
 	commitMessage = "Regular Update ({0})".format(datetime.now().strftime("%Y%m%d%H%M%S"))
 	print("The commit message is \"{0}\". ".format(commitMessage))
 	if __import__("platform").system().upper() == "WINDOWS":
@@ -224,6 +224,19 @@ def gitPush() -> bool:
 				print("Abort ``git`` operations due to the following issue. ")
 				print({"commandline":commandline, "output":output.decode(), "error":error.decode()})
 				return False
+	try:
+		with open(filePathA, "r", encoding = encoding) as f:
+			contentA = f.read()
+		with open(filePathB, "r", encoding = encoding) as f:
+			contentB = f.read()
+	except BaseException as e:
+		print("Cannot verify the differences between \"{0}\" and \"{1}\" due to exceptions. Details are as follows. \n\t{2}".format(filePathA, filePathB, e))
+		return False
+	if contentA.replace("readonly currentAB=\"A\"", "readonly currentAB=\"B\"").replace("readonly targetAB=\"B\"", "readonly targetAB=\"A\"") == contentB:
+		print("Successfully verified the differences between \"{0}\" and \"{1}\"".format(filePathA, filePathB))
+	else:
+		print("Failed to verify the differences between \"{0}\" and \"{1}\"".format(filePathA, filePathB))
+		return False
 	commandlines = ["git add .", "git commit -m \"{0}\"".format(commitMessage), "git push"]
 	for commandline in commandlines:
 		if os.system(commandline) != EXIT_SUCCESS:
@@ -242,6 +255,8 @@ def main() -> int:
 	webrootFolderPath = os.path.join(srcFolderPath, webrootName)
 	webrootFilePath = os.path.join(srcFolderPath, webrootName + ".zip")
 	extensionsExcluded = [".prop", ".sha512"]
+	actionAFileName, actionBFileName = "actionA.sh", "actionB.sh"
+	actionAFilePath, actionBFilePath = os.path.join(srcFolderPath, actionAFileName), os.path.join(srcFolderPath, actionBFileName)
 	bRet = True
 	
 	# Update $B$ #
@@ -283,7 +298,7 @@ def main() -> int:
 		except:
 			choice = True
 		if choice:
-			bRet = gitPush()
+			bRet = gitPush(actionAFilePath, actionBFilePath)
 	
 	# Exit #
 	iRet = EXIT_SUCCESS if bRet else EXIT_FAILURE

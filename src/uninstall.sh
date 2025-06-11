@@ -15,18 +15,15 @@ function clearCaches
 function setPermissions
 {
 	returnCode=${EXIT_SUCCESS}
-	find . -type d -exec chmod 755 {} \;
-	if [[ $? != ${EXIT_SUCCESS} ]];
+	if [[ -n "$(find . -type d -exec chmod 555 {} \; 2>&1)" ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
-	find . ! -name "*.sh" -type f -exec chmod 444 {} \;
-	if [[ $? != ${EXIT_SUCCESS} ]];
+	if [[ -n "$(find . ! -name "*.sh" -type f -exec chmod 444 {} \; 2>&1)" ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
-	find . -name "*.sh" -type f -exec chmod 544 {} \;
-	if [[ $? != ${EXIT_SUCCESS} ]];
+	if [[ -n "$(find . -name "*.sh" -type f -exec chmod 544 {} \; 2>&1)" ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi

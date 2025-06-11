@@ -1,5 +1,5 @@
 #!/bin/bash
-# Module #
+# Module (11--12) #
 readonly EXIT_SUCCESS=0
 readonly EXIT_FAILURE=1
 readonly EOF=255
@@ -11,28 +11,25 @@ readonly moduleFolderPath="$(dirname "$0")"
 function setPermissions
 {
 	returnCode=${EXIT_SUCCESS}
-	find . -type d -exec chmod 755 {} \;
-	if [[ $? != ${EXIT_SUCCESS} ]];
+	if [[ -n "$(find . -type d -exec chmod 755 {} \; 2>&1)" ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
-	find . ! -name "LICENSE" ! -name "build.sh" ! -name "*.sha512" -type f -exec chmod 644 {} \;
-	if [[ $? != ${EXIT_SUCCESS} ]];
+	if [[ -n "$(find . ! -name "*.sha512" ! -name "LICENSE" ! -name "build.sh" -type f -exec chmod 644 {} \; 2>&1)" ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
-	find . -name "*.sha512" -type f -exec chmod 444 {} \;
-	if [[ $? != ${EXIT_SUCCESS} ]];
+	if [[ -n "$(find . -name "*.sha512" -type f -exec chmod 444 {} \; 2>&1)" ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
 	chmod 444 "LICENSE"
-	if [[ $? != ${EXIT_SUCCESS} ]];
+	if [[ $? -ne ${EXIT_SUCCESS} ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
 	chmod 744 "build.sh"
-	if [[ $? != ${EXIT_SUCCESS} ]];
+	if [[ $? -ne ${EXIT_SUCCESS} ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
@@ -46,7 +43,7 @@ if [[ $? == ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleName}" ]]; the
 	echo "The current working directory is \"$(pwd)\". "
 else
 	echo "The working directory \"$(pwd)\" is unexpected. "
-	exit ${EOF}
+	exit 11
 fi
 setPermissions
 if [[ $? == ${EXIT_SUCCESS} ]];
@@ -54,21 +51,37 @@ then
 	echo "Successfully set permissions. "
 else
 	echo "Failed to set permissions. "
+	exit 12
 fi
 
-# Check #
+# Check (13--14) #
 readonly srcFolderPath="src"
+readonly shellAFileName="actionA.sh"
+readonly shellAFilePath="${srcFolderPath}/${shellAFileName}"
+readonly shellBFileName="actionB.sh"
+readonly shellBFilePath="${srcFolderPath}/${shellBFileName}"
+readonly differences="$(echo -e "< readonly currentAB=\"A\"\n\
+< readonly targetAB=\"B\"\n\
+---\n\
+> readonly currentAB=\"B\"\n\
+> readonly targetAB=\"A\"")"
 
-find . -name "*.sh" -exec bash -n {} \;
-if [[ $? == ${EXIT_SUCCESS} ]];
+if [[ -z "$(find . -name "*.sh" -exec bash -n {} \; 2>&1)" ]];
 then
 	echo "All the scripts successfully passed the local shell syntax check (bash). "
 else
 	echo "Some of the scripts failed to pass the local shell syntax check (bash). "
-	exit ${EXIT_FAILURE}
+	exit 13
+fi
+if [[ "$(diff "${shellAFilePath}" "${shellBFilePath}" | tail -5)" == "${differences}" ]];
+then
+	echo "Successfully verified the differences between \"${shellAFilePath}\" and \"${shellBFilePath}\". "
+else
+	echo "Failed to verify the differences between \"${shellAFilePath}\" and \"${shellBFilePath}\". "
+	exit 14
 fi
 
-# Pack #
+# Pack (21--27) #
 readonly webrootName="webroot"
 readonly webrootFolderPath="${srcFolderPath}/${webrootName}"
 readonly webrootFilePath="${srcFolderPath}/${webrootName}.zip"
@@ -96,19 +109,18 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 			echo "Successfully packed the web UI folder. "
 		else
 			echo "Failed to pack the web UI folder. "
-			exit 2
+			exit 21
 		fi
 	fi
 	echo -e "${propContent}" > "${propFilePath}"
 	if [[ $? -eq ${EXIT_SUCCESS} && -f "${propFilePath}" ]]; then
 		echo "Successfully generated the property file \"${propFilePath}\". "
-		find "${srcFolderPath}" -type f -name "*.sha512" -delete
-		if [[ $? -eq ${EXIT_SUCCESS} ]];
+		if [[ -z "$(find "${srcFolderPath}" -type f -name "*.sha512" -delete 2>&1)" ]]
 		then
 			echo "Successfully removed all the previous SHA-512 value files. "
 		else
 			echo "Failed to remove all the previous SHA-512 value files. "
-			exit 3
+			exit 22
 		fi
 		sha512SuccessCount=0
 		sha512TotalCount=0
@@ -146,7 +158,7 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 		echo "Successfully generated ${sha512SuccessCount} / ${sha512TotalCount} sha512 file(s). "
 		if [[ sha512SuccessCount -ne sha512TotalCount ]];
 		then
-			exit 4
+			exit 23
 		fi
 		if [[ ! -d "${zipFolderPath}" ]]; then
 			mkdir -p "${zipFolderPath}"
@@ -158,22 +170,22 @@ if [[ -d "${srcFolderPath}" && -d "${srcFolderPath}/META-INF" && -d "${srcFolder
 				echo "Successfully packed the ${moduleName} Magisk module to \"${zipFilePath}\" via the ``zip`` command! "
 			else
 				echo "Failed to pack the ${moduleName} Magisk module to \"${zipFilePath}\" via the ``zip`` command. "
-				exit 5
+				exit 24
 			fi
 		else
 			echo "Failed to create the ZIP folder path \"${zipFolderPath}\". "
-			exit 6
+			exit 25
 		fi
 	else
 		echo "Failed to generate the property file \"${propFilePath}\". "
-		exit 7
+		exit 26
 	fi
 else
 	echo "No sources were found to be packed. "
-	exit 8
+	exit 27
 fi
 
-# Log #
+# Log (31--33) #
 readonly changelogFolderPath="Changelog"
 readonly changelogFileName="${moduleName}_v${moduleVersion}.md"
 readonly changelogFilePath="${changelogFolderPath}/${changelogFileName}"
@@ -200,18 +212,18 @@ if [[ -d "${changelogFolderPath}" ]]; then
 			echo "Successfully wrote the change log to \"${changelogFilePath}\". "
 		else
 			echo "Failed to write the change log to \"${changelogFilePath}\". "
-			exit 9
+			exit 31
 		fi
 	else
 		echo "Failed to create the log \"${changelogFilePath}\". "
-		exit 10
+		exit 32
 	fi
 else
 	echo "Failed to create the log folder path \"${changelogFolderPath}\". "
-	exit 11
+	exit 33
 fi
 
-# Update #
+# Update (34--36) #
 readonly updateFolderPath="."
 readonly updateFileName="Update.json"
 readonly updateFilePath="${updateFolderPath}/${updateFileName}"
@@ -232,11 +244,11 @@ if [[ -d "${updateFolderPath}" ]]; then
 		echo "Successfully created the update JSON file \"${updateFilePath}\". "
 	else
 		echo "Failed to create the update JSON file \"${updateFilePath}\". "
-		exit 12
+		exit 34
 	fi
 else
 	echo "Failed to create the update folder path \"${updateFolderPath}\". "
-	exit 13
+	exit 35
 fi
 setPermissions && chmod 755 "${moduleFolderPath}"
 if [[ $? == ${EXIT_SUCCESS} ]];
@@ -244,15 +256,16 @@ then
 	echo "Successfully set permissions. "
 else
 	echo "Failed to set permissions. "
+	exit 36
 fi
 
-# Git #
+# Git (37) #
 git add . && git commit -m "Module Update (${moduleVersion})" && git push
 if [[ $? -eq ${EXIT_SUCCESS} ]]; then
 	echo "Successfully pushed to GitHub. "
 else
 	echo "Failed to push to GitHub. "
-	exit 14
+	exit 37
 fi
 
 # Exit #
