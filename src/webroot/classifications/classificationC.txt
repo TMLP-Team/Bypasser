@@ -4,6 +4,7 @@ com.android.nativetest
 com.androidfung.drminfo
 com.byxiaorun.detector
 com.henrikherzig.playintegritychecker
+com.lingqing.detector
 com.reveny.nativecheck
 com.sefu.vmessfree
 com.thend.integritychecker

@@ -93,7 +93,8 @@ then
 		echo "Apatch (${APATCH_VER_CODE}): Please "
 		echo "- deploy the latest Apatch from the \`\`action\`\` tab of its GitHub repository with only applications requiring root privileges configured and granted in the Apatch Manager, "
 		echo "- embed the latest Cherish Peekaboo as a kernel module, "
-		echo "- install the latest NeoZygisk module as a system module from the \`\`action\`\` tab of its GitHub repository, "
+		echo "- install the latest Zygisk Next module as a system module with the denylist disabled, "
+		echo "- install the latest NoHello module as a system module with the whitelist mode enabled, "
 		echo "- install the latest Play Integrity Fix (PIF) module as a system module, "
 		echo "- install the latest Tricky Store (TS) module as a system module with the correct configurations, "
 		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository as a system module with the narrowest scope for each plugin, and "
@@ -997,12 +998,7 @@ then
 			fi
 			if isModuleInstalled "${noHelloModuleId}" > /dev/null;
 			then
-				if [[ "${APATCH}" == "true" ]];
-				then
-					echo "The NoHello module does not work with Apatch or NeoZygisk. Please consider removing this module. "
-				else
-					echo "The NoHello module does not work with NeoZygisk. Please consider either switching to Zygisk Next or removing this module. "
-				fi
+				echo "The NoHello module does not work with NeoZygisk. Please consider either switching to Zygisk Next/ReZygisk or removing this module. "
 			fi
 		elif [[ "ReZygisk" == "${zygiskSolutionModuleName}" ]];
 		then
@@ -1023,15 +1019,6 @@ then
 					echo "The Shamiko module does not work with ReZygisk. Please consider either switching to Zygisk Next or removing this module. "
 				fi
 			fi
-			if isModuleInstalled "${noHelloModuleId}" > /dev/null;
-			then
-				if [[ "${APATCH}" == "true" ]];
-				then
-					echo "The NoHello module does not work with Apatch or ReZygisk. Please consider removing this module. "
-				else
-					echo "The NoHello module does not work with ReZygisk. Please consider either switching to Zygisk Next or removing this module. "
-				fi
-			fi
 		fi
 	elif [[ -f "${builtInZygiskFilePath}" ]]
 	then
@@ -1048,6 +1035,8 @@ echo ""
 echo "# Shell (0b0X0000) #"
 readonly sensitiveApplications="com.google.android.safetycore com.google.android.contactkeys"
 readonly policiesToBeDeleted="hidden_api_policy hidden_api_policy_p_apps hidden_api_policy_pre_p_apps hidden_api_blacklist_exemptions"
+readonly propertiesToBeSet="ro.boot.vbmeta.device_state:locked ro.boot.verifiedbootstate:green vendor.boot.secboot:enabled"
+readonly propertiesToExist="ro.boot.vbmeta.avb_version ro.boot.vbmeta.hash_alg ro.boot.vbmeta.size ro.boot.vbmeta.digest"
 readonly propertiesToBeDeleted="persist.sys.vold_app_data_isolation_enabled persist.zygote.app_data_isolation"
 readonly persistentPropertyFilePath="/data/property/persistent_properties"
 readonly shellPackageName="com.android.shell"
@@ -1083,26 +1072,6 @@ readonly sourceXmlFilePath="/etc/compatconfig/services-platform-compat-config.xm
 readonly replacementEntry="system"
 readonly targetXmlFilePath="${replacementEntry}${sourceXmlFilePath}"
 
-function handleProperty
-{
-	executionContent="$(getprop "$1")"
-	if [[ $? -eq ${EXIT_SUCCESS} && "${executionContent}" == "$2" ]];
-	then
-		echo "- The value of \`\`$1\`\` is \"${executionContent}\", which is proper. "
-		return ${EXIT_SUCCESS}
-	else
-		resetprop "$1" "$2"
-		if [[ $? -eq ${EXIT_SUCCESS} && "$(getprop "$1")" == "$2" ]];
-		then
-			echo "- The value of \`\`$1\`\` is \"${executionContent}\", which should be and successfully set to \"$2\". "
-			return ${EXIT_SUCCESS}
-		else
-			echo "- The value of \`\`$1\`\` is \"${executionContent}\", which should be but failed to set to \"$2\". "
-			return ${EXIT_FAILURE}
-		fi
-	fi
-}
-
 echo "The sensitive applications are being handled. "
 for sensitiveApplication in ${sensitiveApplications}
 do
@@ -1131,21 +1100,36 @@ do
 	fi
 done
 echo "The properties are being handled. "
-handleProperty "ro.boot.vbmeta.device_state" "locked"
-if [[ $? -ne ${EXIT_SUCCESS} ]];
-then
-	exitCode=$(expr ${exitCode} \| 16)
-fi
-handleProperty "ro.boot.verifiedbootstate" "green"
-if [[ $? -ne ${EXIT_SUCCESS} ]];
-then
-	exitCode=$(expr ${exitCode} \| 16)
-fi
-handleProperty "vendor.boot.secboot" "enabled"
-if [[ $? -ne ${EXIT_SUCCESS} ]];
-then
-	exitCode=$(expr ${exitCode} \| 16)
-fi
+for propertyKeyValue in ${propertiesToBeSet}
+do
+	propertyKey="$(echo "${propertyKeyValue}" | cut -d ':' -f1)"
+	propertyValue="$(echo "${propertyKeyValue}" | cut -d ':' -f2)"
+	executionContent="$(getprop "${propertyKey}")"
+	if [[ $? -eq ${EXIT_SUCCESS} && "${executionContent}" == "${propertyValue}" ]];
+	then
+		echo "- The value of \`\`${propertyKey}\`\` was \"${executionContent}\", which was proper. "
+	else
+		resetprop "${propertyKey}" "${propertyValue}"
+		if [[ $? -eq ${EXIT_SUCCESS} && "$(getprop "${propertyKey}")" == "${propertyValue}" ]];
+		then
+			echo "- The value of \`\`${propertyKey}\`\` was \"${executionContent}\", which should be and successfully set to \"${propertyValue}\". "
+		else
+			echo "- The value of \`\`${propertyKey}\`\` was \"${executionContent}\", which should be but failed to set to \"${propertyValue}\". "
+			exitCode=$(expr ${exitCode} \| 16)
+		fi
+	fi
+done
+propertyToExistFlag=${EXIT_SUCCESS}
+for propertyToExist in ${propertiesToExist}
+do
+	if [[ -n "$(getprop "${propertyToExist}")" ]];
+	then
+		echo "- The property \"${propertyToExist}\" existed and its value was not empty, which was normal. "
+	else
+		propertyToExistFlag=${EXIT_FAILURE}
+		echo "- The property \"${propertyToExist}\" did not exist or its value was empty, which was abnormal. "
+	fi
+done
 for propertyToBeDeleted in ${propertiesToBeDeleted}
 do
 	resetprop --delete "${propertyToBeDeleted}"
@@ -1168,6 +1152,15 @@ then
 	fi
 else
 	echo "- The persistent property file \"${persistentPropertyFilePath}\" did not exist. "
+fi
+if [[ ${propertyToExistFlag} -eq ${EXIT_FAILURE} ]];
+then
+	if [[ "${KSU}" == "true" || "${APATCH}" == "true" ]];
+	then
+		echo "Missing properties, please install the latest [VBMeta Fixer](https://github.com/reveny/Android-VBMeta-Fixer) module as a system module. "
+	else
+		echo "Missing properties, please install the latest [VBMeta Fixer](https://github.com/reveny/Android-VBMeta-Fixer) module. "
+	fi
 fi
 echo "Checking the existence of applications in Classifications \$B\$ and \$C\$ as a plain user. "
 shellUserId=$(dumpsys package "${shellPackageName}" | grep userId | cut -d '=' -f2 | cut -d ' ' -f1 | uniq)
