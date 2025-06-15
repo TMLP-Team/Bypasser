@@ -485,7 +485,7 @@ then
 	fi
 	if [[ ${VK_UP} -eq ${keyCode} || ${VK_DOWN} -eq ${keyCode} ]];
 	then
-		localCount=0
+		localBCount=0
 		folderCount=0
 		fileCount=0
 		failureInstallationCount=0
@@ -519,9 +519,9 @@ then
 								printableStrings="$(cat "${item}/${firstItem}/base.apk" | strings)"
 								if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
 								then
-									localCount=$(expr ${localCount} + 1)
+									localBCount=$(expr ${localBCount} + 1)
 									classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
-									echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, which was not in and has been added to Classification \$B\$. "
+									echo -n "[${localBCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, which was not in and has been added to Classification \$B\$. "
 								fi
 							fi
 						else
@@ -545,9 +545,9 @@ then
 							printableStrings="$(cat "${item}/${firstItem}/base.apk" | strings)"
 							if echo "${printableStrings}" | grep -qE "/xposed/|xposed_init";
 							then
-								localCount=$(expr ${localCount} + 1)
+								localBCount=$(expr ${localBCount} + 1)
 								classificationB="$(echo -e -n "${classificationB}\n${packageName}")"
-								echo -n "[${localCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, which was not in and has been added to Classification \$B\$. "
+								echo -n "[${localBCount}] Found the string \"/xposed/\" or \"xposed_init\" in \`\`${packageName}\`\`, which was not in and has been added to Classification \$B\$. "
 							fi
 						fi
 					else
@@ -566,9 +566,9 @@ then
 		then
 			echo "Found ${failureInstallationCount} failure installation(s) in the \"${dataAppFolder}\" directory with ${failureInstallationRemovedCount} removed successfully. "
 		fi
-		if [[ ${localCount} -ge 1 ]];
+		if [[ ${localBCount} -ge 1 ]];
 		then
-			echo "Successfully fetched ${localCount} package name(s) of Classification \$B\$ from the local machine. "
+			echo "Successfully fetched ${localBCount} package name(s) of Classification \$B\$ from the local machine. "
 			echo "Kindly report the package name(s) with the corresponding classification(s) to \"${reportLink}\" if you wish to. "
 		fi
 		originalLengthB=${lengthB}
@@ -579,7 +579,7 @@ then
 		else
 			lengthB=0
 		fi
-		echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from the library (${originalLengthB}) and the local machine (${localCount}). "
+		echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from the library (${originalLengthB}) and the local machine (${localBCount}). "
 		oldHmalHmaConfigurationFolderCount=0
 		removedHmalHmaConfigurationFolderCount=0
 		echo "Removing old HMAL/HMA configuration directories. "
@@ -622,7 +622,24 @@ else
 fi
 if [[ ${returnCodeD} -eq ${EXIT_SUCCESS} ]];
 then
-	echo "Successfully fetched ${lengthD} package name(s) of Classification \$D\$ from the library. "
+	localDCount=0
+	for packageName in $(pm list packages -3 | cut -d ':' -f2)
+	do
+		if ! echo -e -n "${classificationB}\n${classificationC}\n${classificationD}" | grep -qF "${packageName}";
+		then
+			localDCount=$(expr ${localDCount} + 1)
+			classificationD="$(echo -e -n "${classificationD}\n${packageName}")"
+		fi
+	done
+	originalLengthD=${lengthD}
+	classificationD=$(echo -n "${classificationD}" | sort | uniq)
+	if [[ -n "${classificationD}" ]];
+	then
+		lengthD=$(echo "${classificationD}" | wc -l)
+	else
+		lengthD=0
+	fi
+	echo "Successfully fetched ${lengthD} package name(s) of Classification \$D\$ from the library (${originalLengthD}) and the local machine (${localDCount}). "
 else
 	classificationD=""
 	lengthD=0
@@ -659,13 +676,10 @@ fi
 commonConfigContent="{\"configVersion\":90,\"forceMountData\":true,\"templates\":{\"${blacklistName}\":{\"isWhitelist\":false,\"appList\":[${blacklistAppList}]},\"${whitelistName}\":{\"isWhitelist\":true,\"appList\":[${whitelistAppList}]}},"
 blacklistConfigContent="${commonConfigContent}\"scope\":{${blacklistScopeList}}}"
 whitelistConfigContent="${commonConfigContent}\"scope\":{${whitelistScopeList}}}"
-if [[ ! -d "${downloadFolderPath}" ]];
+mkdir -p "${downloadFolderPath}"
+if [[ $? -eq ${EXIT_SUCCESS} && -d "${downloadFolderPath}" ]];
 then
-	mkdir -p "${downloadFolderPath}"
-fi
-if [[ -d "${downloadFolderPath}" ]];
-then
-	echo "Successfully created the folder \"${downloadFolderPath}\". "
+	echo "Successfully prepared the folder \"${downloadFolderPath}\". "
 	echo -n "${blacklistConfigContent}" > "${blacklistConfigurationFilePath}"
 	if [[ $? -eq ${EXIT_SUCCESS} && -f "${blacklistConfigurationFilePath}" ]];
 	then
@@ -684,7 +698,7 @@ then
 	fi
 else
 	exitCode=$(expr ${exitCode} \| 2)
-	echo "Failed to create the folder \"${downloadFolderPath}\". "
+	echo "Failed to prepare the folder \"${downloadFolderPath}\". "
 fi
 if [[ -z "${blacklistAppList}" || -z "${blacklistScopeList}" || -z "${whitelistAppList}" || -z "${whitelistScopeList}" ]];
 then
@@ -817,12 +831,13 @@ readonly shamikoModuleId="zygisk_shamiko"
 readonly shamikoConfigurationFolderPath="${adbFolder}/shamiko"
 readonly shamikoWhitelistConfigurationFileName="whitelist"
 readonly shamikoWhitelistConfigurationFilePath="${shamikoConfigurationFolderPath}/${shamikoWhitelistConfigurationFileName}"
+readonly zygiskAssistantModuleId="zygisk-assistant"
 readonly noHelloModuleId="zygisk_nohello"
 readonly noHelloConfigurationFolderPath="${adbFolder}/nohello"
 readonly noHelloWhitelistConfigurationFileName="whitelist"
 readonly noHelloWhitelistConfigurationFilePath="${noHelloConfigurationFolderPath}/${noHelloWhitelistConfigurationFileName}"
-readonly neozygiskConfigurationFolderPath="${adbFolder}/neozygisk"
 readonly rezygiskConfigurationFolderPath="${adbFolder}/rezygisk"
+readonly neozygiskConfigurationFolderPath="${adbFolder}/neozygisk"
 readonly builtInZygiskFilePath="${adbFolder}/magisk/zygisk"
 
 if [[ "${ZYGISK_ENABLED}" == "1" ]];
@@ -842,24 +857,10 @@ then
 				then
 					echo "Please kindly acknowledge that the Shamiko module does not work with Apatch. "
 				fi
-				abortFlag=${EXIT_SUCCESS}
-				if [[ -d "${shamikoConfigurationFolderPath}" ]];
+				mkdir -p "${shamikoConfigurationFolderPath}"
+				if [[ $? -eq ${EXIT_SUCCESS} && -d "${shamikoConfigurationFolderPath}" ]];
 				then
-					echo "The Shamiko configuration folder was found at \"${shamikoConfigurationFolderPath}\". "
-				else
-					echo "The Shamiko configuration folder \"${shamikoConfigurationFolderPath}\" did not exist. "
-					mkdir -p "${shamikoConfigurationFolderPath}"
-					if [[ $? -eq ${EXIT_SUCCESS} && -d "${shamikoConfigurationFolderPath}" ]];
-					then
-						echo "Successfully created the Shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
-					else
-						exitCode=$(expr ${exitCode} \| 8)
-						abortFlag=${EXIT_FAILURE}
-						echo "Failed to create the Shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
-					fi
-				fi
-				if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
-				then
+					echo "Successfully prepared the Shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
 					if [[ -f "${shamikoWhitelistConfigurationFilePath}" ]];
 					then
 						echo "The Shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" already existed. "
@@ -874,12 +875,28 @@ then
 							echo "Failed to create the Shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\". "
 						fi
 					fi
+				else
+					echo "Failed to prepare the Shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
 				fi
 			else
 				echo "The Shamiko module was not installed. "
 				if [[ "${APATCH}" != "true" ]];
 				then
-					echo "Please consider using Zygisk Next (disable the denylist) + Shamiko (enable the whitelist) since you are not using Apatch. "
+					echo "Please consider using Zygisk Next (disable the denylist) + Shamiko (enable the whitelist mode) since you are not using Apatch. "
+				fi
+			fi
+			if isModuleInstalled "${zygiskAssistantModuleId}" > /dev/null;
+			then
+				toBeWritten="0"
+				if [[ "0" == "${toBeWritten}" ]];
+				then
+					echo "The Zygisk Assistant module was installed while the Shamiko module was installed. Please consider only using the Shamiko module with no applications configured in the denylist. "
+				else
+					echo "The Zygisk Assistant module was installed. "
+					if [[ -z "${APATCH}" ]];
+					then
+						echo "Please kindly acknowledge that the Shamiko module could be better than the Zygisk Assistant module when the rooting solution used is not Apatch. "
+					fi
 				fi
 			fi
 			if isModuleInstalled "${noHelloModuleId}" > /dev/null;
@@ -888,9 +905,11 @@ then
 				then
 					if [[ -z "${APATCH}" ]];
 					then
-						echo "The NoHello module was installed while the Shamiko module was installed. Please consider only using the Shamiko module even though the two are compatible. "
+						echo "The NoHello module was installed while the Shamiko or the Zygisk Assistant module was installed, which can cause compatibility issues. "
+						echo "Please consider only using the Shamiko module with no applications configured in the denylist. "
 					else
-						echo "The NoHello module was installed while the Shamiko module was installed. Please consider only using the NoHello module when the rooting solution used is Apatch, since the Shamiko module does not work in this situation. "
+						echo "The NoHello module was installed while the Shamiko or the Zygisk Assistant module was installed, which can cause compatibility issues. "
+						echo "Please consider only using the NoHello module when the rooting solution used is Apatch, since the Shamiko module does not work in this situation. "
 					fi
 				else
 					echo "The NoHello module was installed. "
@@ -900,24 +919,10 @@ then
 					fi
 				fi
 				toBeWritten="0"					
-				abortFlag=${EXIT_SUCCESS}
-				if [[ -d "${noHelloConfigurationFolderPath}" ]];
+				mkdir -p "${noHelloConfigurationFolderPath}"
+				if [[ $? -eq ${EXIT_SUCCESS} && -d "${noHelloConfigurationFolderPath}" ]];
 				then
-					echo "The NoHello configuration folder was found at \"${noHelloConfigurationFolderPath}\". "
-				else
-					echo "The NoHello configuration folder \"${noHelloConfigurationFolderPath}\" did not exist. "
-					mkdir -p "${noHelloConfigurationFolderPath}"
-					if [[ $? -eq ${EXIT_SUCCESS} && -d "${noHelloConfigurationFolderPath}" ]];
-					then
-						echo "Successfully created the NoHello configuration folder \"${noHelloConfigurationFolderPath}\". "
-					else
-						exitCode=$(expr ${exitCode} \| 8)
-						abortFlag=${EXIT_FAILURE}
-						echo "Failed to create the NoHello configuration folder \"${noHelloConfigurationFolderPath}\". "
-					fi
-				fi
-				if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
-				then
+					echo "Successfully prepared the NoHello configuration folder \"${noHelloConfigurationFolderPath}\". "
 					if [[ -f "${noHelloWhitelistConfigurationFilePath}" ]];
 					then
 						echo "The NoHello whitelist configuration file \"${noHelloWhitelistConfigurationFilePath}\" already existed. "
@@ -932,28 +937,16 @@ then
 							echo "Failed to create the NoHello whitelist configuration file \"${noHelloWhitelistConfigurationFilePath}\". "
 						fi
 					fi
+				else
+					echo "Failed to prepare the NoHello configuration folder \"${noHelloConfigurationFolderPath}\". "
 				fi
 			else
 				echo "The NoHello module was not installed. "
 			fi
-			abortFlag=${EXIT_SUCCESS}
-			if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
+			mkdir -p "${zygiskNextConfigurationFolderPath}"
+			if [[ $? -eq ${EXIT_SUCCESS} && -d "${zygiskNextConfigurationFolderPath}" ]];
 			then
-				echo "The Zygisk Next configuration folder was found at \"${zygiskNextConfigurationFolderPath}\". "
-			else
-				echo "The Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\" did not exist. "
-				mkdir -p "${zygiskNextConfigurationFolderPath}"
-				if [[ $? -eq ${EXIT_SUCCESS} && -d "${zygiskNextConfigurationFolderPath}" ]];
-				then
-					echo "Successfully created the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
-				else
-					exitCode=$(expr ${exitCode} \| 8)
-					abortFlag=${EXIT_FAILURE}
-					echo "Failed to create the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
-				fi
-			fi
-			if [[ ${EXIT_SUCCESS} -eq ${abortFlag} ]];
-			then
+				echo "Successfully prepared the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
 				if [[ -f "${zygiskNextDenylistConfigurationFilePath}" && "${toBeWritten}" == "$(cat "${zygiskNextDenylistConfigurationFilePath}")" ]];
 				then
 					echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" is already configured. "
@@ -968,14 +961,26 @@ then
 						echo "Failed to write \"${toBeWritten}\" to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
 					fi
 				fi
+			else
+				echo "Failed to prepare the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
+			fi
+			if [[ -d "${rezygiskConfigurationFolderPath}" ]];
+			then
+				echo "The ReZygisk configuration folder exists while the Zygisk Next is using. Please consider removing the ReZygisk configuration folder. "
 			fi
 			if [[ -d "${neozygiskConfigurationFolderPath}" ]];
 			then
 				echo "The NeoZygisk configuration folder exists while the Zygisk Next is using. Please consider removing the NeoZygisk configuration folder. "
 			fi
-			if [[ -d "${rezygiskConfigurationFolderPath}" ]];
+		elif [[ "ReZygisk" == "${zygiskSolutionModuleName}" ]];
+		then
+			if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
 			then
-				echo "The ReZygisk configuration folder exists while the Zygisk Next is using. Please consider removing the ReZygisk configuration folder. "
+				echo "The Zygisk Next configuration folder exists while the ReZygisk is using. Please consider removing the Zygisk Next configuration folder. "
+			fi
+			if [[ -d "${neozygiskConfigurationFolderPath}" ]];
+			then
+				echo "The NeoZygisk configuration folder exists while the ReZygisk is using. Please consider removing the NeoZygisk configuration folder. "
 			fi
 		elif [[ "NeoZygisk" == "${zygiskSolutionModuleName}" ]];
 		then
@@ -991,33 +996,14 @@ then
 			then
 				if [[ "${APATCH}" == "true" ]];
 				then
-					echo "The Shamiko module does not work with Apatch or NeoZygisk. Please consider removing this module. "
+					echo "The Shamiko module does not work with Apatch or NeoZygisk. Please consider removing this module and switching to ReZygisk + NeHello. "
 				else
 					echo "The Shamiko module does not work with NeoZygisk. Please consider either switching to Zygisk Next or removing this module. "
 				fi
 			fi
 			if isModuleInstalled "${noHelloModuleId}" > /dev/null;
 			then
-				echo "The NoHello module does not work with NeoZygisk. Please consider either switching to Zygisk Next/ReZygisk or removing this module. "
-			fi
-		elif [[ "ReZygisk" == "${zygiskSolutionModuleName}" ]];
-		then
-			if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
-			then
-				echo "The Zygisk Next configuration folder exists while the ReZygisk is using. Please consider removing the Zygisk Next configuration folder. "
-			fi
-			if [[ -d "${neozygiskConfigurationFolderPath}" ]];
-			then
-				echo "The NeoZygisk configuration folder exists while the ReZygisk is using. Please consider removing the NeoZygisk configuration folder. "
-			fi
-			if isModuleInstalled "${shamikoModuleId}" > /dev/null;
-			then
-				if [[ "${APATCH}" == "true" ]];
-				then
-					echo "The Shamiko module does not work with Apatch or ReZygisk. Please consider removing this module. "
-				else
-					echo "The Shamiko module does not work with ReZygisk. Please consider either switching to Zygisk Next or removing this module. "
-				fi
+				echo "The NoHello module does not work with NeoZygisk. Please consider either switching to ReZygisk or removing this module. "
 			fi
 		fi
 	elif [[ -f "${builtInZygiskFilePath}" ]]
@@ -1040,7 +1026,9 @@ readonly propertiesToExist="ro.boot.vbmeta.avb_version ro.boot.vbmeta.hash_alg r
 readonly propertiesToBeDeleted="persist.sys.vold_app_data_isolation_enabled persist.zygote.app_data_isolation"
 readonly persistentPropertyFilePath="/data/property/persistent_properties"
 readonly shellPackageName="com.android.shell"
-readonly plainUserExecution="$(echo -e "if [[ -n \"\${EXTERNAL_STORAGE}\" ]];\n\
+readonly plainUserExecution="$(echo -e "whoami\n\
+id\n\
+if [[ -n \"\${EXTERNAL_STORAGE}\" ]];\n\
 then\n\
 	readonly folders=\"/data/data /data/user/0 /data/user_de/0 \${EXTERNAL_STORAGE}/Android/data\"\n\
 else\n\
@@ -1068,6 +1056,8 @@ do\n\
 		fi\n\
 	done\n\
 done")"
+packageDetectionShellFileName=".packageDetection.sh"
+packageDetectionShellFilePath="${downloadFolderPath}/${packageDetectionShellFileName}"
 readonly sourceXmlFilePath="/etc/compatconfig/services-platform-compat-config.xml"
 readonly replacementEntry="system"
 readonly targetXmlFilePath="${replacementEntry}${sourceXmlFilePath}"
@@ -1162,16 +1152,27 @@ then
 		echo "Missing properties, please install the latest [VBMeta Fixer](https://github.com/reveny/Android-VBMeta-Fixer) module. "
 	fi
 fi
-echo "Checking the existence of applications in Classifications \$B\$ and \$C\$ as a plain user. "
-shellUserId=$(dumpsys package "${shellPackageName}" | grep userId | cut -d '=' -f2 | cut -d ' ' -f1 | uniq)
-if [[ $(echo "${shellUserId}" | wc -l) -eq 1 && -n "$(echo "${shellUserId}" | grep -E '^[0-9]+$')" ]];
-then
-	#su -g ${shellUserId} shell -c "${plainUserExecution}"
-	echo "Successfully checked the existence of applications in Classification \$B\$ as a plain user. "
-else
-	exitCode=$(expr ${exitCode} \| 16)
-	echo "Failed to check due to unknown shell user ID (\`\`${shellPackageName}\`\`). "
-fi
+#echo "Checking the existence of applications in Classifications \$B\$ and \$C\$ leaked by the specified folders as a plain user. "
+#shellUserId=$(dumpsys package "${shellPackageName}" | grep userId | cut -d '=' -f2 | cut -d ' ' -f1 | uniq)
+#if [[ $(echo "${shellUserId}" | wc -l) -eq 1 && -n "$(echo "${shellUserId}" | grep -E '^[0-9]+$')" ]];
+#then
+#	plainUserContent="$(su -g ${shellUserId} -Z "u:r:shell:s0" -d shell -c "${plainUserExecution}")"
+#	echo "${plainUserContent}"
+#	if [[ -n "${plainUserContent}" ]];
+#	then
+#		echo "Found $(echo "${plainUserContent}" | wc -l) issue(s) during checking the existence of applications in Classifications \$B\$ and \$C\$ leaked by the specified folders as a plain user. "
+#	else
+#		echo "Congratulations on no applications in Classifications \$B\$ and \$C\$ leaked by the specified folders. "
+#	fi
+#else
+#	exitCode=$(expr ${exitCode} \| 16)
+#	echo "Failed to check due to unknown shell user ID (\`\`${shellPackageName}\`\`). "
+#fi
+#echo "${plainUserExecution}" > "${packageDetectionShellFilePath}"
+#if [[ $? -eq ${EXIT_SUCCESS} && -f "${packageDetectionShellFilePath}" ]];
+#then
+#	echo "The package detection script \"${packageDetectionShellFilePath}\" has been generated, which can be executed as a plain user in the MT Manager to detect the existence of applications in Classifications \$B\$ and \$C\$. "
+#fi
 if [[ -s "${sourceXmlFilePath}" ]];
 then
 	if grep -q 'enableAfterTargetSdk="0" id="143937733"' "${sourceXmlFilePath}";
