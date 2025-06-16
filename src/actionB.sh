@@ -77,7 +77,7 @@ then
 	if [[ "${KSU}" == "true" ]];
 	then
 		echo "KSU (${KSU_VER_CODE}): Please "
-		echo "- deploy the latest SukiSU with only applications requiring root privileges configured and granted in the SukiSU Manager, "
+		echo "- deploy the latest SukiSU from the \`\`action\`\` tab of its GitHub repository with only applications requiring root privileges configured and granted in the SukiSU Manager, "
 		echo "- install the latest ReZygisk module from the \`\`action\`\` tab of its GitHub repository as a system module, "
 		echo "- install the latest SUSFS as a system module, "
 		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
