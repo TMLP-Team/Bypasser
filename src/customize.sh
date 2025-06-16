@@ -35,6 +35,10 @@ function setPermissions
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
+	if ! chown -R root:root ".";
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
 	return ${returnCode}
 }
 

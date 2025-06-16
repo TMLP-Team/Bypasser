@@ -27,13 +27,22 @@ function setPermissions
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
+	if ! chown -R root:root ".";
+	then
+		returnCode=${EXIT_FAILURE}
+	fi
 	return ${returnCode}
 }
 
 clearCaches &> /dev/null
 chmod 755 "${moduleFolderPath}" 2>/dev/null && cd "${moduleFolderPath}" 2>/dev/null
-setPermissions &> /dev/null
-
-setPermissions &> /dev/null 2>/dev/null && chmod 755 "${moduleFolderPath}" 2>/dev/null
+if [[ $? -eq ${EXIT_SUCCESS} && "$(basename "$(pwd)")" == "${moduleId}" ]];
+then
+	setPermissions &> /dev/null
+	# TODO #
+	setPermissions &> /dev/null 2>/dev/null && chmod 755 "${moduleFolderPath}" 2>/dev/null
+else
+	exit ${EXIT_FAILURE}
+fi
 clearCaches &> /dev/null
 exit ${EXIT_SUCCESS}
