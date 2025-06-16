@@ -12,12 +12,12 @@ This module will only take effect when users install it or click the ``action`` 
   - Disable sensitive applications automatically installed by Google. 
   - Remove sensitive policies. 
   - Handle properties. 
-  - Check the existence of applications in Classifications $B$ and $C$ as a plain user, which is under development due to plain user mounting issues. 
+  - Check the existence of applications in Classifications $B$ and $C$ as a plain user, which is under development due to plain user permission issues. 
   - Patch ``/etc/compatconfig/services-platform-compat-config.xml``
   - Enable the feature of hiding desktop icons on devices running Android 10 or above. 
 - Update (0bX00000): Perform regular dynamic updates for ``action.sh`` and the web UI (processed in the HMAL/HMA stage). Networks to GitHub are required. 
 
-Please kindly be aware that this module will only optimize the rooting and injection environments based on the current environments. It will not include or install any other modules or plugins. 
+Please kindly be aware that this module will only optimize the rooting and injection environments based on the current environments. It will not include, install, disable, or uninstall any other modules or plugins. 
 The implementation and bypassing of these environments should be challenging and complex procedures. Users should learn related knowledge before taking these actions. 
 Relying on one-key solutions or paying others for remote deployment without knowing the principles is incorrect. 
 

@@ -74,7 +74,7 @@ then
 	then
 		echo "KSU (${KSU_VER_CODE}): Please "
 		echo "- deploy the latest SukiSU with only applications requiring root privileges configured and granted in the SukiSU Manager, "
-		echo "- install the latest ReZygisk module as a system module, "
+		echo "- install the latest ReZygisk module from the \`\`action\`\` tab of its GitHub repository as a system module, "
 		echo "- install the latest SUSFS as a system module, "
 		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
 		echo "- install the latest Play Integrity Fix (PIF) module as a system module, "
@@ -93,7 +93,7 @@ then
 		echo "Apatch (${APATCH_VER_CODE}): Please "
 		echo "- deploy the latest Apatch from the \`\`action\`\` tab of its GitHub repository with only applications requiring root privileges configured and granted in the Apatch Manager, "
 		echo "- embed the latest Cherish Peekaboo as a kernel module, "
-		echo "- install the latest Zygisk Next module as a system module with the denylist disabled, "
+		echo "- install the latest ReZygisk module from the \`\`action\`\` tab of its GitHub repository as a system module, "
 		echo "- install the latest NoHello module as a system module with the whitelist mode enabled, "
 		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
 		echo "- install the latest Play Integrity Fix (PIF) module as a system module, "
@@ -197,7 +197,10 @@ then
 			echo "The Shamiko module was installed. "
 			if [[ "${APATCH}" == "true" ]];
 			then
-				echo "Please kindly acknowledge that the Shamiko module does not work with Apatch. "
+				echo "Please kindly acknowledge that the Shamiko module does not work with Apatch. Please consider using ReZygisk + NoHello in Apatch. "
+			elif [[ ${MAGISK_VER} == *-kitsune || ${MAGISK_VER} == *-delta ]];
+			then
+				echo "Please kindly acknowledge that the Shamiko module does not work with Magisk Delta. Please consider switching to Magisk Alpha or removing the Shamiko module. "
 			fi
 			mkdir -p "${shamikoConfigurationFolderPath}"
 			if [[ $? -eq ${EXIT_SUCCESS} && -d "${shamikoConfigurationFolderPath}" ]];
@@ -222,43 +225,36 @@ then
 			fi
 		else
 			echo "The Shamiko module was not installed. "
-			if [[ "${APATCH}" != "true" ]];
-			then
-				echo "Please consider using Zygisk Next (disable the denylist) + Shamiko (enable the whitelist mode) since you are not using Apatch. "
-			fi
 		fi
 		if isModuleInstalled "${zygiskAssistantModuleId}" > /dev/null;
 		then
-			toBeWritten="0"
 			if [[ "0" == "${toBeWritten}" ]];
 			then
-				echo "The Zygisk Assistant module was installed while the Shamiko module was installed. Please consider only using the Shamiko module with no applications configured in the denylist. "
+				if [[ "${APATCH}" != "true" && ${MAGISK_VER} != *-kitsune && ${MAGISK_VER} != *-delta ]];
+				then
+					echo "The Zygisk Assistant module was installed while the Shamiko module was installed. Please consider only using the Shamiko module in your environment. "
+				else
+					echo "The Zygisk Assistant module was installed while the Shamiko module was installed. Please consider only using the Zygisk Assistant module in your environment. "
+				fi
 			else
 				echo "The Zygisk Assistant module was installed. "
-				if [[ -z "${APATCH}" ]];
-				then
-					echo "Please kindly acknowledge that the Shamiko module could be better than the Zygisk Assistant module when the rooting solution used is not Apatch. "
-				fi
 			fi
+			toBeWritten="0"
+		else
+			echo "The Zygisk Assistant module was not installed. "
 		fi
 		if isModuleInstalled "${noHelloModuleId}" > /dev/null;
 		then
 			if [[ "0" == "${toBeWritten}" ]];
 			then
-				if [[ -z "${APATCH}" ]];
+				if [[ "${APATCH}" != "true" && ${MAGISK_VER} != *-kitsune && ${MAGISK_VER} != *-delta ]];
 				then
-					echo "The NoHello module was installed while the Shamiko or the Zygisk Assistant module was installed, which can cause compatibility issues. "
-					echo "Please consider only using the Shamiko module with no applications configured in the denylist. "
+					echo "The NoHello module was installed while the Shamiko or the Zygisk Assistant module was installed, which can cause compatibility issues. Please consider only using the Shamiko module in your environment. "
 				else
-					echo "The NoHello module was installed while the Shamiko or the Zygisk Assistant module was installed, which can cause compatibility issues. "
-					echo "Please consider only using the NoHello module when the rooting solution used is Apatch, since the Shamiko module does not work in this situation. "
+					echo "The NoHello module was installed while the Shamiko or the Zygisk Assistant module was installed, which can cause compatibility issues. Please consider only using the NoHello module in your environment. "
 				fi
 			else
 				echo "The NoHello module was installed. "
-				if [[ -z "${APATCH}" ]];
-				then
-					echo "Please kindly acknowledge that the Shamiko module could be better than the NoHello module when the rooting solution used is not Apatch. "
-				fi
 			fi
 			toBeWritten="0"					
 			mkdir -p "${noHelloConfigurationFolderPath}"
