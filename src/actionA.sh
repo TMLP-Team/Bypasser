@@ -15,6 +15,7 @@ readonly adbFolder="../.."
 readonly magiskFolder="${adbFolder}/magisk"
 readonly apatchFolder="${adbFolder}/ap"
 readonly startTime=$(date +%s%N)
+readonly magiskVulnerabilityVersion=27007
 exitCode=${EXIT_SUCCESS}
 
 function clearCaches
@@ -73,9 +74,8 @@ then
 	then
 		echo "KSU (${KSU_VER_CODE}): Please "
 		echo "- deploy the latest SukiSU with only applications requiring root privileges configured and granted in the SukiSU Manager, "
-		echo "- embed the latest SUSFS as a kernel module, "
-		echo "- install the latest Zygisk Next module as a system module with the denylist disabled, "
-		echo "- install the latest Shamiko module as a system module with the whitelist mode enabled, "
+		echo "- install the latest ReZygisk module as a system module, "
+		echo "- install the latest SUSFS as a system module, "
 		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
 		echo "- install the latest Play Integrity Fix (PIF) module as a system module, "
 		echo "- install the latest Tricky Store (TS) module as a system module with the correct configurations, and"
@@ -148,6 +148,10 @@ then
 				echo "- install the latest bindhosts or the built-in Systemless hosts module (optional), and "
 				echo "- activate the latest HMAL plugin from the \`\`action\`\` tab of its GitHub repository with the correct configurations. "
 			fi
+			if [[ ${MAGISK_VER_CODE} -lt ${magiskVulnerabilityVersion} ]];
+			then
+				echo "Magisk versions before ${magiskVulnerabilityVersion} can contain severe privilege escalation vulnerability. You are using Magisk ${MAGISK_VER_CODE}. Please update it as soon as possible. "
+			fi
 			if [[ -d "${apatchFolder}" ]];
 			then
 				echo "The Apatch folder exists while the Magisk is using. Please consider removing the Apatch folder. "
@@ -161,8 +165,204 @@ else
 fi
 echo ""
 
-# HMAL/HMA (0b0000X0) #
-echo "# HMAL/HMA (0b0000X0) #"
+# Zygisk Traces (0b0000X0) #
+echo "# Zygisk Traces (0b0000X0) #"
+readonly zygiskSolutionModuleId="zygisksu"
+readonly zygiskNextConfigurationFolderPath="${adbFolder}/zygisksu"
+readonly zygiskNextDenylistConfigurationFileName="denylist_enforce"
+readonly zygiskNextDenylistConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistConfigurationFileName}"
+readonly shamikoModuleId="zygisk_shamiko"
+readonly shamikoConfigurationFolderPath="${adbFolder}/shamiko"
+readonly shamikoWhitelistConfigurationFileName="whitelist"
+readonly shamikoWhitelistConfigurationFilePath="${shamikoConfigurationFolderPath}/${shamikoWhitelistConfigurationFileName}"
+readonly zygiskAssistantModuleId="zygisk-assistant"
+readonly noHelloModuleId="zygisk_nohello"
+readonly noHelloConfigurationFolderPath="${adbFolder}/nohello"
+readonly noHelloWhitelistConfigurationFileName="whitelist"
+readonly noHelloWhitelistConfigurationFilePath="${noHelloConfigurationFolderPath}/${noHelloWhitelistConfigurationFileName}"
+readonly rezygiskConfigurationFolderPath="${adbFolder}/rezygisk"
+readonly neozygiskConfigurationFolderPath="${adbFolder}/neozygisk"
+readonly builtInZygiskFilePath="${adbFolder}/magisk/zygisk"
+
+if [[ "${ZYGISK_ENABLED}" == "1" ]];
+then
+	zygiskSolutionModuleName="$(isModuleInstalled "${zygiskSolutionModuleId}")"
+	if [[ $? -eq ${EXIT_SUCCESS} ]];
+	then
+		echo "The Zygisk solution was implemented by ${zygiskSolutionModuleName}. "
+		toBeWritten="1"
+		if isModuleInstalled "${shamikoModuleId}" > /dev/null;
+		then
+			toBeWritten="0"
+			echo "The Shamiko module was installed. "
+			if [[ "${APATCH}" == "true" ]];
+			then
+				echo "Please kindly acknowledge that the Shamiko module does not work with Apatch. "
+			fi
+			mkdir -p "${shamikoConfigurationFolderPath}"
+			if [[ $? -eq ${EXIT_SUCCESS} && -d "${shamikoConfigurationFolderPath}" ]];
+			then
+				echo "Successfully prepared the Shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
+				if [[ -f "${shamikoWhitelistConfigurationFilePath}" ]];
+				then
+					echo "The Shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" already existed. "
+				else
+					echo "The Shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" did not exist. "
+					touch "${shamikoWhitelistConfigurationFilePath}"
+					if [[ $? -eq ${EXIT_SUCCESS} && -f "${shamikoWhitelistConfigurationFilePath}" ]];
+					then
+						echo "Successfully created the Shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\". "
+					else
+						exitCode=$(expr ${exitCode} \| 2)
+						echo "Failed to create the Shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\". "
+					fi
+				fi
+			else
+				echo "Failed to prepare the Shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
+			fi
+		else
+			echo "The Shamiko module was not installed. "
+			if [[ "${APATCH}" != "true" ]];
+			then
+				echo "Please consider using Zygisk Next (disable the denylist) + Shamiko (enable the whitelist mode) since you are not using Apatch. "
+			fi
+		fi
+		if isModuleInstalled "${zygiskAssistantModuleId}" > /dev/null;
+		then
+			toBeWritten="0"
+			if [[ "0" == "${toBeWritten}" ]];
+			then
+				echo "The Zygisk Assistant module was installed while the Shamiko module was installed. Please consider only using the Shamiko module with no applications configured in the denylist. "
+			else
+				echo "The Zygisk Assistant module was installed. "
+				if [[ -z "${APATCH}" ]];
+				then
+					echo "Please kindly acknowledge that the Shamiko module could be better than the Zygisk Assistant module when the rooting solution used is not Apatch. "
+				fi
+			fi
+		fi
+		if isModuleInstalled "${noHelloModuleId}" > /dev/null;
+		then
+			if [[ "0" == "${toBeWritten}" ]];
+			then
+				if [[ -z "${APATCH}" ]];
+				then
+					echo "The NoHello module was installed while the Shamiko or the Zygisk Assistant module was installed, which can cause compatibility issues. "
+					echo "Please consider only using the Shamiko module with no applications configured in the denylist. "
+				else
+					echo "The NoHello module was installed while the Shamiko or the Zygisk Assistant module was installed, which can cause compatibility issues. "
+					echo "Please consider only using the NoHello module when the rooting solution used is Apatch, since the Shamiko module does not work in this situation. "
+				fi
+			else
+				echo "The NoHello module was installed. "
+				if [[ -z "${APATCH}" ]];
+				then
+					echo "Please kindly acknowledge that the Shamiko module could be better than the NoHello module when the rooting solution used is not Apatch. "
+				fi
+			fi
+			toBeWritten="0"					
+			mkdir -p "${noHelloConfigurationFolderPath}"
+			if [[ $? -eq ${EXIT_SUCCESS} && -d "${noHelloConfigurationFolderPath}" ]];
+			then
+				echo "Successfully prepared the NoHello configuration folder \"${noHelloConfigurationFolderPath}\". "
+				if [[ -f "${noHelloWhitelistConfigurationFilePath}" ]];
+				then
+					echo "The NoHello whitelist configuration file \"${noHelloWhitelistConfigurationFilePath}\" already existed. "
+				else
+					echo "The NoHello whitelist configuration file \"${noHelloWhitelistConfigurationFilePath}\" did not exist. "
+					touch "${noHelloWhitelistConfigurationFilePath}"
+					if [[ $? -eq ${EXIT_SUCCESS} && -f "${noHelloWhitelistConfigurationFilePath}" ]];
+					then
+						echo "Successfully created the NoHello whitelist configuration file \"${noHelloWhitelistConfigurationFilePath}\". "
+					else
+						exitCode=$(expr ${exitCode} \| 2)
+						echo "Failed to create the NoHello whitelist configuration file \"${noHelloWhitelistConfigurationFilePath}\". "
+					fi
+				fi
+			else
+				echo "Failed to prepare the NoHello configuration folder \"${noHelloConfigurationFolderPath}\". "
+			fi
+		else
+			echo "The NoHello module was not installed. "
+		fi
+		if [[ "Zygisk Next" == "${zygiskSolutionModuleName}" ]];
+		then
+			mkdir -p "${zygiskNextConfigurationFolderPath}"
+			if [[ $? -eq ${EXIT_SUCCESS} && -d "${zygiskNextConfigurationFolderPath}" ]];
+			then
+				echo "Successfully prepared the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
+				if [[ -f "${zygiskNextDenylistConfigurationFilePath}" && "${toBeWritten}" == "$(cat "${zygiskNextDenylistConfigurationFilePath}")" ]];
+				then
+					echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" is already configured. "
+				else
+					echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" was not configured. "
+					echo -n "${toBeWritten}" > "${zygiskNextDenylistConfigurationFilePath}"
+					if [[ $? -eq ${EXIT_SUCCESS} && -f "${zygiskNextDenylistConfigurationFilePath}" ]];
+					then
+						echo "Successfully wrote \"${toBeWritten}\" to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+					else
+						exitCode=$(expr ${exitCode} \| 2)
+						echo "Failed to write \"${toBeWritten}\" to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+					fi
+				fi
+			else
+				echo "Failed to prepare the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
+			fi
+			if [[ -d "${rezygiskConfigurationFolderPath}" ]];
+			then
+				echo "The ReZygisk configuration folder exists while the Zygisk Next is using. Please consider removing the ReZygisk configuration folder. "
+			fi
+			if [[ -d "${neozygiskConfigurationFolderPath}" ]];
+			then
+				echo "The NeoZygisk configuration folder exists while the Zygisk Next is using. Please consider removing the NeoZygisk configuration folder. "
+			fi
+		elif [[ "ReZygisk" == "${zygiskSolutionModuleName}" ]];
+		then
+			if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
+			then
+				echo "The Zygisk Next configuration folder exists while the ReZygisk is using. Please consider removing the Zygisk Next configuration folder. "
+			fi
+			if [[ -d "${neozygiskConfigurationFolderPath}" ]];
+			then
+				echo "The NeoZygisk configuration folder exists while the ReZygisk is using. Please consider removing the NeoZygisk configuration folder. "
+			fi
+		elif [[ "NeoZygisk" == "${zygiskSolutionModuleName}" ]];
+		then
+			if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
+			then
+				echo "The Zygisk Next configuration folder exists while the NeoZygisk is using. Please consider removing the Zygisk Next configuration folder. "
+			fi
+			if [[ -d "${rezygiskConfigurationFolderPath}" ]];
+			then
+				echo "The ReZygisk configuration folder exists while the NeoZygisk is using. Please consider removing the ReZygisk configuration folder. "
+			fi
+			if isModuleInstalled "${shamikoModuleId}" > /dev/null;
+			then
+				if [[ "${APATCH}" == "true" ]];
+				then
+					echo "The Shamiko module does not work with Apatch or NeoZygisk. Please consider removing this module and switching to ReZygisk + NeHello. "
+				else
+					echo "The Shamiko module does not work with NeoZygisk. Please consider either switching to Zygisk Next or removing this module. "
+				fi
+			fi
+			if isModuleInstalled "${noHelloModuleId}" > /dev/null;
+			then
+				echo "The NoHello module does not work with NeoZygisk. Please consider either switching to ReZygisk or removing this module. "
+			fi
+		fi
+	elif [[ -f "${builtInZygiskFilePath}" ]]
+	then
+		echo "The Zygisk solution was implemented by Magisk built-in Zygisk. "
+	else
+		echo "The Zygisk was enabled but the implementation was unknown. "
+	fi
+else
+	echo "The Zygisk was not enabled. "
+fi
+echo ""
+
+# HMAL/HMA (0b000X00) #
+echo "# HMAL/HMA (0b000X00) #"
 readonly webrootName="webroot"
 readonly webrootFolderPath="${webrootName}"
 readonly webrootFilePath="${webrootName}.zip"
@@ -197,7 +397,8 @@ function getClassification
 			if [[ -f "${classificationFilePath}" ]];
 			then
 				arr="$(cat "${classificationFilePath}")"
-				if [[ $? -eq ${EXIT_SUCCESS} && -n "${arr}" ]];
+				returnCode=$?
+				if [[ ${returnCode} -eq ${EXIT_SUCCESS} && -n "${arr}" ]];
 				then
 					arr="$(echo -n ${arr} | sort | uniq)"
 					echoFlag=0
@@ -216,7 +417,7 @@ function getClassification
 					done
 					return ${EXIT_SUCCESS}
 				else
-					return $?
+					return ${returnCode}
 				fi
 			else
 				return ${EOF}
@@ -685,7 +886,7 @@ then
 	then
 		echo "Successfully generated the configuration file \"${blacklistConfigurationFilePath}\". "
 	else
-		exitCode=$(expr ${exitCode} \| 2)
+		exitCode=$(expr ${exitCode} \| 4)
 		echo "Failed to generate the configuration file \"${blacklistConfigurationFilePath}\". "
 	fi
 	echo -n "${whitelistConfigContent}" > "${whitelistConfigurationFilePath}"
@@ -693,11 +894,11 @@ then
 	then
 		echo "Successfully generated the configuration file \"${whitelistConfigurationFilePath}\". "
 	else
-		exitCode=$(expr ${exitCode} \| 2)
+		exitCode=$(expr ${exitCode} \| 4)
 		echo "Failed to generate the configuration file \"${whitelistConfigurationFilePath}\". "
 	fi
 else
-	exitCode=$(expr ${exitCode} \| 2)
+	exitCode=$(expr ${exitCode} \| 4)
 	echo "Failed to prepare the folder \"${downloadFolderPath}\". "
 fi
 if [[ -z "${blacklistAppList}" || -z "${blacklistScopeList}" || -z "${whitelistAppList}" || -z "${whitelistScopeList}" ]];
@@ -706,8 +907,8 @@ then
 fi
 echo ""
 
-# Tricky Store (0b000X00) #
-echo "# Tricky Store (0b000X00) #"
+# Tricky Store (0b00X000) #
+echo "# Tricky Store (0b00X000) #"
 readonly trickyStoreModuleId="tricky_store"
 readonly trickyStoreConfigurationFolderPath="${adbFolder}/tricky_store"
 readonly trickyStoreTargetFileName="target.txt"
@@ -748,7 +949,7 @@ then
 		then
 			echo "Successfully wrote \"${patchContent}\" to \"${trickyStoreSecurityPatchFilePath}\". "
 		else
-			exitCode=$(expr ${exitCode} \| 4)
+			exitCode=$(expr ${exitCode} \| 8)
 			echo "Failed to write \"${patchContent}\" to \"${trickyStoreSecurityPatchFilePath}\". "
 		fi
 		abortFlag=${EXIT_SUCCESS}
@@ -805,11 +1006,11 @@ then
 				then
 					echo "Successfully verified \"${trickyStoreTargetFilePath}\" (${cnt} <= ${expectedCount} = ${lengthS} + ${lengthB} + ${lengthC} + ${lengthD} + ${lengthL}). "
 				else
-					exitCode=$(expr ${exitCode} \| 4)
+					exitCode=$(expr ${exitCode} \| 8)
 					echo "Failed to verify \"${trickyStoreTargetFilePath}\" (${cnt} > ${expectedCount} = ${lengthS} + ${lengthB} + ${lengthC} + ${lengthD} + ${lengthL}). "
 				fi
 			else
-				exitCode=$(expr ${exitCode} \| 4)
+				exitCode=$(expr ${exitCode} \| 8)
 				echo "Failed to write to \"${trickyStoreTargetFilePath}\". "
 			fi
 		fi
@@ -818,202 +1019,6 @@ then
 	fi
 else
 	echo "The Tricky Store module was not installed. "
-fi
-echo ""
-
-# Zygisk Traces (0b00X000) #
-echo "# Zygisk Traces (0b00X000) #"
-readonly zygiskSolutionModuleId="zygisksu"
-readonly zygiskNextConfigurationFolderPath="${adbFolder}/zygisksu"
-readonly zygiskNextDenylistConfigurationFileName="denylist_enforce"
-readonly zygiskNextDenylistConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistConfigurationFileName}"
-readonly shamikoModuleId="zygisk_shamiko"
-readonly shamikoConfigurationFolderPath="${adbFolder}/shamiko"
-readonly shamikoWhitelistConfigurationFileName="whitelist"
-readonly shamikoWhitelistConfigurationFilePath="${shamikoConfigurationFolderPath}/${shamikoWhitelistConfigurationFileName}"
-readonly zygiskAssistantModuleId="zygisk-assistant"
-readonly noHelloModuleId="zygisk_nohello"
-readonly noHelloConfigurationFolderPath="${adbFolder}/nohello"
-readonly noHelloWhitelistConfigurationFileName="whitelist"
-readonly noHelloWhitelistConfigurationFilePath="${noHelloConfigurationFolderPath}/${noHelloWhitelistConfigurationFileName}"
-readonly rezygiskConfigurationFolderPath="${adbFolder}/rezygisk"
-readonly neozygiskConfigurationFolderPath="${adbFolder}/neozygisk"
-readonly builtInZygiskFilePath="${adbFolder}/magisk/zygisk"
-
-if [[ "${ZYGISK_ENABLED}" == "1" ]];
-then
-	zygiskSolutionModuleName="$(isModuleInstalled "${zygiskSolutionModuleId}")"
-	if [[ $? -eq ${EXIT_SUCCESS} ]];
-	then
-		echo "The Zygisk solution was implemented by ${zygiskSolutionModuleName}. "
-		if [[ "Zygisk Next" == "${zygiskSolutionModuleName}" ]];
-		then
-			toBeWritten="1"
-			if isModuleInstalled "${shamikoModuleId}" > /dev/null;
-			then
-				toBeWritten="0"
-				echo "The Shamiko module was installed. "
-				if [[ "${APATCH}" == "true" ]];
-				then
-					echo "Please kindly acknowledge that the Shamiko module does not work with Apatch. "
-				fi
-				mkdir -p "${shamikoConfigurationFolderPath}"
-				if [[ $? -eq ${EXIT_SUCCESS} && -d "${shamikoConfigurationFolderPath}" ]];
-				then
-					echo "Successfully prepared the Shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
-					if [[ -f "${shamikoWhitelistConfigurationFilePath}" ]];
-					then
-						echo "The Shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" already existed. "
-					else
-						echo "The Shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\" did not exist. "
-						touch "${shamikoWhitelistConfigurationFilePath}"
-						if [[ $? -eq ${EXIT_SUCCESS} && -f "${shamikoWhitelistConfigurationFilePath}" ]];
-						then
-							echo "Successfully created the Shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\". "
-						else
-							exitCode=$(expr ${exitCode} \| 8)
-							echo "Failed to create the Shamiko whitelist configuration file \"${shamikoWhitelistConfigurationFilePath}\". "
-						fi
-					fi
-				else
-					echo "Failed to prepare the Shamiko configuration folder \"${shamikoConfigurationFolderPath}\". "
-				fi
-			else
-				echo "The Shamiko module was not installed. "
-				if [[ "${APATCH}" != "true" ]];
-				then
-					echo "Please consider using Zygisk Next (disable the denylist) + Shamiko (enable the whitelist mode) since you are not using Apatch. "
-				fi
-			fi
-			if isModuleInstalled "${zygiskAssistantModuleId}" > /dev/null;
-			then
-				toBeWritten="0"
-				if [[ "0" == "${toBeWritten}" ]];
-				then
-					echo "The Zygisk Assistant module was installed while the Shamiko module was installed. Please consider only using the Shamiko module with no applications configured in the denylist. "
-				else
-					echo "The Zygisk Assistant module was installed. "
-					if [[ -z "${APATCH}" ]];
-					then
-						echo "Please kindly acknowledge that the Shamiko module could be better than the Zygisk Assistant module when the rooting solution used is not Apatch. "
-					fi
-				fi
-			fi
-			if isModuleInstalled "${noHelloModuleId}" > /dev/null;
-			then
-				if [[ "0" == "${toBeWritten}" ]];
-				then
-					if [[ -z "${APATCH}" ]];
-					then
-						echo "The NoHello module was installed while the Shamiko or the Zygisk Assistant module was installed, which can cause compatibility issues. "
-						echo "Please consider only using the Shamiko module with no applications configured in the denylist. "
-					else
-						echo "The NoHello module was installed while the Shamiko or the Zygisk Assistant module was installed, which can cause compatibility issues. "
-						echo "Please consider only using the NoHello module when the rooting solution used is Apatch, since the Shamiko module does not work in this situation. "
-					fi
-				else
-					echo "The NoHello module was installed. "
-					if [[ -z "${APATCH}" ]];
-					then
-						echo "Please kindly acknowledge that the Shamiko module could be better than the NoHello module when the rooting solution used is not Apatch. "
-					fi
-				fi
-				toBeWritten="0"					
-				mkdir -p "${noHelloConfigurationFolderPath}"
-				if [[ $? -eq ${EXIT_SUCCESS} && -d "${noHelloConfigurationFolderPath}" ]];
-				then
-					echo "Successfully prepared the NoHello configuration folder \"${noHelloConfigurationFolderPath}\". "
-					if [[ -f "${noHelloWhitelistConfigurationFilePath}" ]];
-					then
-						echo "The NoHello whitelist configuration file \"${noHelloWhitelistConfigurationFilePath}\" already existed. "
-					else
-						echo "The NoHello whitelist configuration file \"${noHelloWhitelistConfigurationFilePath}\" did not exist. "
-						touch "${noHelloWhitelistConfigurationFilePath}"
-						if [[ $? -eq ${EXIT_SUCCESS} && -f "${noHelloWhitelistConfigurationFilePath}" ]];
-						then
-							echo "Successfully created the NoHello whitelist configuration file \"${noHelloWhitelistConfigurationFilePath}\". "
-						else
-							exitCode=$(expr ${exitCode} \| 8)
-							echo "Failed to create the NoHello whitelist configuration file \"${noHelloWhitelistConfigurationFilePath}\". "
-						fi
-					fi
-				else
-					echo "Failed to prepare the NoHello configuration folder \"${noHelloConfigurationFolderPath}\". "
-				fi
-			else
-				echo "The NoHello module was not installed. "
-			fi
-			mkdir -p "${zygiskNextConfigurationFolderPath}"
-			if [[ $? -eq ${EXIT_SUCCESS} && -d "${zygiskNextConfigurationFolderPath}" ]];
-			then
-				echo "Successfully prepared the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
-				if [[ -f "${zygiskNextDenylistConfigurationFilePath}" && "${toBeWritten}" == "$(cat "${zygiskNextDenylistConfigurationFilePath}")" ]];
-				then
-					echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" is already configured. "
-				else
-					echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" was not configured. "
-					echo -n "${toBeWritten}" > "${zygiskNextDenylistConfigurationFilePath}"
-					if [[ $? -eq ${EXIT_SUCCESS} && -f "${zygiskNextDenylistConfigurationFilePath}" ]];
-					then
-						echo "Successfully wrote \"${toBeWritten}\" to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
-					else
-						exitCode=$(expr ${exitCode} \| 8)
-						echo "Failed to write \"${toBeWritten}\" to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
-					fi
-				fi
-			else
-				echo "Failed to prepare the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
-			fi
-			if [[ -d "${rezygiskConfigurationFolderPath}" ]];
-			then
-				echo "The ReZygisk configuration folder exists while the Zygisk Next is using. Please consider removing the ReZygisk configuration folder. "
-			fi
-			if [[ -d "${neozygiskConfigurationFolderPath}" ]];
-			then
-				echo "The NeoZygisk configuration folder exists while the Zygisk Next is using. Please consider removing the NeoZygisk configuration folder. "
-			fi
-		elif [[ "ReZygisk" == "${zygiskSolutionModuleName}" ]];
-		then
-			if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
-			then
-				echo "The Zygisk Next configuration folder exists while the ReZygisk is using. Please consider removing the Zygisk Next configuration folder. "
-			fi
-			if [[ -d "${neozygiskConfigurationFolderPath}" ]];
-			then
-				echo "The NeoZygisk configuration folder exists while the ReZygisk is using. Please consider removing the NeoZygisk configuration folder. "
-			fi
-		elif [[ "NeoZygisk" == "${zygiskSolutionModuleName}" ]];
-		then
-			if [[ -d "${zygiskNextConfigurationFolderPath}" ]];
-			then
-				echo "The Zygisk Next configuration folder exists while the NeoZygisk is using. Please consider removing the Zygisk Next configuration folder. "
-			fi
-			if [[ -d "${rezygiskConfigurationFolderPath}" ]];
-			then
-				echo "The ReZygisk configuration folder exists while the NeoZygisk is using. Please consider removing the ReZygisk configuration folder. "
-			fi
-			if isModuleInstalled "${shamikoModuleId}" > /dev/null;
-			then
-				if [[ "${APATCH}" == "true" ]];
-				then
-					echo "The Shamiko module does not work with Apatch or NeoZygisk. Please consider removing this module and switching to ReZygisk + NeHello. "
-				else
-					echo "The Shamiko module does not work with NeoZygisk. Please consider either switching to Zygisk Next or removing this module. "
-				fi
-			fi
-			if isModuleInstalled "${noHelloModuleId}" > /dev/null;
-			then
-				echo "The NoHello module does not work with NeoZygisk. Please consider either switching to ReZygisk or removing this module. "
-			fi
-		fi
-	elif [[ -f "${builtInZygiskFilePath}" ]]
-	then
-		echo "The Zygisk solution was implemented by Magisk built-in Zygisk. "
-	else
-		echo "The Zygisk was enabled but the implementation was unknown. "
-	fi
-else
-	echo "The Zygisk was not enabled. "
 fi
 echo ""
 
