@@ -167,6 +167,7 @@ echo ""
 
 # Zygisk Traces (0b0000X0) #
 echo "# Zygisk Traces (0b0000X0) #"
+readonly magiskModuleFolder="${adbFolder}/modules"
 readonly zygiskSolutionModuleId="zygisksu"
 readonly zygiskNextConfigurationFolderPath="${adbFolder}/zygisksu"
 readonly zygiskNextDenylistConfigurationFileName="denylist_enforce"
@@ -183,6 +184,25 @@ readonly noHelloWhitelistConfigurationFilePath="${noHelloConfigurationFolderPath
 readonly rezygiskConfigurationFolderPath="${adbFolder}/rezygisk"
 readonly neozygiskConfigurationFolderPath="${adbFolder}/neozygisk"
 readonly builtInZygiskFilePath="${adbFolder}/magisk/zygisk"
+
+function isModuleInstalled
+{
+	moduleInstallationFolderPath="${magiskModuleFolder}/$1"
+	if [[ -d "${moduleInstallationFolderPath}" ]];
+	then
+		modulePropFileName="module.prop"
+		modulePropFilePath="${moduleInstallationFolderPath}/${modulePropFileName}"
+		if [[ -f "${modulePropFilePath}" ]];
+		then
+			if grep -q "^id=$1\$" "${modulePropFilePath}";
+			then
+				grep "^name=" "${modulePropFilePath}" | cut -d '=' -f2
+				return ${EXIT_SUCCESS}
+			fi
+		fi
+	fi
+	return ${EXIT_FAILURE}
+}
 
 if [[ "${ZYGISK_ENABLED}" == "1" ]];
 then
@@ -914,25 +934,6 @@ readonly trickyStoreSecurityPatchFilePath="${trickyStoreConfigurationFolderPath}
 readonly classificationS="$(echo -e -n "com.google.android.gsf\ncom.google.android.gms\ncom.android.vending")"
 readonly lengthS=$(echo "${classificationS}" | wc -l)
 readonly patchContent="$(date +%Y%m01)"
-
-function isModuleInstalled
-{
-	moduleInstallationFolderPath="${adbFolder}/modules/$1"
-	if [[ -d "${moduleInstallationFolderPath}" ]];
-	then
-		modulePropFileName="module.prop"
-		modulePropFilePath="${moduleInstallationFolderPath}/${modulePropFileName}"
-		if [[ -f "${modulePropFilePath}" ]];
-		then
-			if grep -q "^id=$1\$" "${modulePropFilePath}";
-			then
-				grep "^name=" "${modulePropFilePath}" | cut -d '=' -f2
-				return ${EXIT_SUCCESS}
-			fi
-		fi
-	fi
-	return ${EXIT_FAILURE}
-}
 
 if isModuleInstalled "${trickyStoreModuleId}" > /dev/null;
 then

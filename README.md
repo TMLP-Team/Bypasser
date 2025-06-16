@@ -5,9 +5,9 @@ This is a developing Magisk module for bypassing Android environment detection r
 This module will only take effect when users install it or click the ``action`` button. The current supported features are as follows. 
 
 - Welcome (0b00000X): Perform built-in configurations for this module. 
-- HMAL/HMA (0b0000X0): Generate HMAL/HMA configurations based on cloud libraries (along with the web UI updating) and local packages. Users are required to manually import the configurations via HMAL/HMA. Networks to GitHub are optional. 
-- Tricky Store (0b000X00): Generate Tricky Store configurations directly based on cloud libraries and local packages. The configurations will be written to the Tricky Store configuration folder directly. Networks to GitHub are optional. 
-- Zygisk Traces (0b00X000): Deploy correct configurations for different Zygisk solutions according to the Zygisk implementation, Shamiko, NoHello, and Zygisk Assistant modules used. 
+- Zygisk Traces (0b0000X0): Deploy correct configurations for different Zygisk solutions according to the Zygisk implementation, Shamiko, NoHello, and Zygisk Assistant modules used. 
+- HMAL/HMA (0b000X00): Generate HMAL/HMA configurations based on cloud libraries (along with the web UI updating) and local packages. Users are required to manually import the configurations via HMAL/HMA. Networks to GitHub are optional. 
+- Tricky Store (0b00X000): Generate Tricky Store configurations directly based on cloud libraries and local packages. The configurations will be written to the Tricky Store configuration folder directly. Networks to GitHub are optional. 
 - Shell (0b0X0000): Perform some shell commands. Please check ``actionA.sh`` for details. 
   - Disable sensitive applications automatically installed by Google. 
   - Remove sensitive policies. 
