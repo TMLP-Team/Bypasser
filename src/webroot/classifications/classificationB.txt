@@ -476,6 +476,7 @@ lzlnb.cnm.hook
 ma.wanam.youtubeadaway
 master.alarmshell.android
 me.bingyue.IceCore
+me.bingyue.fuckbiliads
 me.bmax.apatch
 me.documenthook
 me.garfieldhan.apatch.next

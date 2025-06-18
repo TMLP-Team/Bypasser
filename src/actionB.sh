@@ -1062,8 +1062,9 @@ do\n\
 		fi\n\
 	done\n\
 done")"
-packageDetectionShellFileName=".packageDetection.sh"
-packageDetectionShellFilePath="${downloadFolderPath}/${packageDetectionShellFileName}"
+readonly packageDetectionShellFileName=".packageDetection.sh"
+readonly packageDetectionShellFilePath="${downloadFolderPath}/${packageDetectionShellFileName}"
+readonly bannedSubStrings="-AICP -arter97 -blu_spark -CAF -cm- -crDroid -crdroid -CyanogenMod -Deathly -EAS- -eas- -ElementalX -Elite -franco -hadesKernel -Lineage- -lineage- -LineageOS -lineageos -mokee -MoRoKernel -Noble -Optimus -SlimRoms -Sultan -sultan"
 readonly sourceXmlFilePath="/etc/compatconfig/services-platform-compat-config.xml"
 readonly replacementEntry="system"
 readonly targetXmlFilePath="${replacementEntry}${sourceXmlFilePath}"
@@ -1179,6 +1180,21 @@ fi
 #then
 #	echo "The package detection script \"${packageDetectionShellFilePath}\" has been generated, which can be executed as a plain user in the MT Manager to detect the existence of applications in Classifications \$B\$ and \$C\$. "
 #fi
+bannedSubStringFoundFlag=${EXIT_SUCCESS}
+releaseVersion="$(uname -r)"
+for bannedSubString in ${bannedSubStrings}
+do
+	if [[ "${releaseVersion}" == *"${bannedSubString}"* ]];
+	then
+		bannedSubStringFoundFlag=${EXIT_FAILURE}
+		echo "Found the banned substring \"${bannedSubString}\" in the current release version \"${releaseVersion}\". "
+		break
+	fi
+done
+if [[ ${bannedSubStringFoundFlag} -eq ${EXIT_SUCCESS} ]];
+then
+	echo "No banned substrings were found in the current release version \"${releaseVersion}\". "
+fi
 if [[ -s "${sourceXmlFilePath}" ]];
 then
 	if grep -q 'enableAfterTargetSdk="0" id="143937733"' "${sourceXmlFilePath}";

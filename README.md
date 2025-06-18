@@ -13,6 +13,7 @@ This module will only take effect when users install it or click the ``action`` 
   - Remove sensitive policies. 
   - Handle properties. 
   - Check the existence of applications in Classifications $B$ and $C$ as a plain user, which is under development due to plain user permission issues. 
+  - Check whether the system release version has been banned. 
   - Patch ``/etc/compatconfig/services-platform-compat-config.xml``
   - Enable the feature of hiding desktop icons on devices running Android 10 or above. 
 - Update (0bX00000): Perform regular dynamic updates for ``action.sh`` and the web UI (processed in the HMAL/HMA stage). Networks to GitHub are required. 
