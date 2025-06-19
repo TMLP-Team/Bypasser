@@ -77,13 +77,13 @@ then
 	if [[ "${KSU}" == "true" ]];
 	then
 		echo "KSU (${KSU_VER_CODE}): Please "
-		echo "- deploy the latest SukiSU from the \`\`action\`\` tab of its GitHub repository with only applications requiring root privileges configured and granted in the SukiSU Manager, "
-		echo "- install the latest ReZygisk module from the \`\`action\`\` tab of its GitHub repository as a system module, "
+		echo "- deploy the latest SukiSU from the \`\`Actions\`\` tab of its GitHub repository with only applications requiring root privileges configured and granted in the SukiSU Manager, "
+		echo "- install the latest ReZygisk module from the \`\`Actions\`\` tab of its GitHub repository as a system module, "
 		echo "- install the latest SUSFS as a system module, "
-		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
+		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
 		echo "- install the latest Play Integrity Fix (PIF) module as a system module, "
 		echo "- install the latest Tricky Store (TS) module as a system module with the correct configurations, and"
-		echo "- activate the latest HMAL plugin from the \`\`action\`\` tab of its GitHub repository with the correct configurations. "
+		echo "- activate the latest HMAL plugin from the \`\`Actions\`\` tab of its GitHub repository with the correct configurations. "
 		if [[ -d "${magiskFolder}" ]];
 		then
 			echo "The Magisk folder exists while the KSU / KSU Next / SukiSU is using. Please consider removing the Magisk folder. "
@@ -95,14 +95,14 @@ then
 	elif [[ "${APATCH}" == "true" ]];
 	then
 		echo "Apatch (${APATCH_VER_CODE}): Please "
-		echo "- deploy the latest Apatch from the \`\`action\`\` tab of its GitHub repository with only applications requiring root privileges configured and granted in the Apatch Manager, "
+		echo "- deploy the latest Apatch from the \`\`Actions\`\` tab of its GitHub repository with only applications requiring root privileges configured and granted in the Apatch Manager, "
 		echo "- embed the latest Cherish Peekaboo as a kernel module, "
-		echo "- install the latest ReZygisk module from the \`\`action\`\` tab of its GitHub repository as a system module, "
+		echo "- install the latest ReZygisk module from the \`\`Actions\`\` tab of its GitHub repository as a system module, "
 		echo "- install the latest NoHello module as a system module with the whitelist mode enabled, "
-		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
+		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
 		echo "- install the latest Play Integrity Fix (PIF) module as a system module, "
 		echo "- install the latest Tricky Store (TS) module as a system module with the correct configurations, and"
-		echo "- activate the latest HMAL plugin from the \`\`action\`\` tab of its GitHub repository with the correct configurations. "
+		echo "- activate the latest HMAL plugin from the \`\`Actions\`\` tab of its GitHub repository with the correct configurations. "
 		if [[ -d "${magiskFolder}" ]];
 		then
 			echo "The Magisk folder exists while the Apatch is using. Please consider removing the Magisk folder. "
@@ -122,11 +122,11 @@ then
 			then
 				echo "Magisk Delta (${MAGISK_VER_CODE}): Please "
 				echo "- deploy the latest Magisk Delta with the built-in Zygisk enabled, the whitelist mode enabled, and only applications requiring root privileges configured and granted in the Magisk Delta Manager, "
-				echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
+				echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
 				echo "- install the latest Play Integrity Fix (PIF) module, "
 				echo "- install the latest Tricky Store (TS) module with the correct configurations, "
 				echo "- install the latest bindhosts or the built-in Systemless hosts module (optional), and "
-				echo "- activate the latest HMAL plugin from the \`\`action\`\` tab of its GitHub repository with the correct configurations. "
+				echo "- activate the latest HMAL plugin from the \`\`Actions\`\` tab of its GitHub repository with the correct configurations. "
 				echo "Please consider switching to the latest Magisk Alpha if possible. "
 			else
 				if [[ ${MAGISK_VER} == *-alpha ]];
@@ -146,11 +146,11 @@ then
 				echo "- execute applications requiring root privileges with root privileges granted, "
 				echo "- install the latest Zygisk Next module with the denylist disabled, "
 				echo "- install the latest Shamiko module with the whitelist mode enabled, "
-				echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`action\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
+				echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
 				echo "- install the latest Play Integrity Fix (PIF) module, "
 				echo "- install the latest Tricky Store (TS) module with the correct configurations, "
 				echo "- install the latest bindhosts or the built-in Systemless hosts module (optional), and "
-				echo "- activate the latest HMAL plugin from the \`\`action\`\` tab of its GitHub repository with the correct configurations. "
+				echo "- activate the latest HMAL plugin from the \`\`Actions\`\` tab of its GitHub repository with the correct configurations. "
 			fi
 			if [[ ${MAGISK_VER_CODE} -lt ${magiskVulnerabilityVersion} ]];
 			then
