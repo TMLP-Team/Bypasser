@@ -813,9 +813,9 @@ then
 				if rm -rf "${oldPath}";
 				then
 					removedOldConfigurationFolderCount=$(expr ${removedOldConfigurationFolderCount} + 1)
-					echo "[${removedOldConfigurationFolderCount}/${oldConfigurationFolderCount}] Successfully removed \"${oldPath}\". "
+					echo "[${removedOldConfigurationFolderCount}/${oldConfigurationFolderCount}] Successfully removed \"${oldPath}\" (L). "
 				else
-					echo "[${removedOldConfigurationFolderCount}/${oldConfigurationFolderCount}] Failed to remove \"${oldPath}\". "
+					echo "[${removedOldConfigurationFolderCount}/${oldConfigurationFolderCount}] Failed to remove \"${oldPath}\" (L). "
 				fi
 			fi
 		done
@@ -827,9 +827,9 @@ then
 				if rm -rf "${oldPath}";
 				then
 					removedOldConfigurationFolderCount=$(expr ${removedOldConfigurationFolderCount} + 1)
-					echo "[${removedOldConfigurationFolderCount}/${oldConfigurationFolderCount}] Successfully removed \"${oldPath}\". "
+					echo "[${removedOldConfigurationFolderCount}/${oldConfigurationFolderCount}] Successfully removed \"${oldPath}\" (S). "
 				else
-					echo "[${removedOldConfigurationFolderCount}/${oldConfigurationFolderCount}] Failed to remove \"${oldPath}\". "
+					echo "[${removedOldConfigurationFolderCount}/${oldConfigurationFolderCount}] Failed to remove \"${oldPath}\" (S). "
 				fi
 			fi
 		done
