@@ -211,8 +211,8 @@ def gitPush(filePathA:str, filePathB:str, encoding:str = "utf-8") -> bool:
 	else:
 		commandlines = [																			\
 			"find . -type d -exec chmod 755 {} \\;", 														\
-			"find . ! -name \"LICENSE\" ! -name \"build.sh\" ! -name \"*.sha512\" -type f -exec chmod 644 {} \\;", 	\
-			"find . -name \"*.sha512\" -type f -exec chmod 444 {} \\;", 										\
+			"find . -type f ! -name \"LICENSE\" ! -name \"build.sh\" ! -name \"*.sha512\" -exec chmod 644 {} \\;", 	\
+			"find . -type f -name \"*.sha512\" -exec chmod 444 {} \\;", 										\
 			"chmod 444 \"LICENSE\"", 																\
 			"chmod 744 \"build.sh\"", 																\
 			"find . -name \"*.sh\" -exec bash -n {} \\;"													\

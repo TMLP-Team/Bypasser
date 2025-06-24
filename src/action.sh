@@ -29,11 +29,11 @@ function setPermissions
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
-	if [[ -n "$(find . ! -name "*.sh" -type f -exec chmod 444 {} \; 2>&1)" ]];
+	if [[ -n "$(find . -type f ! -name "*.sh" -exec chmod 444 {} \; 2>&1)" ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
-	if [[ -n "$(find . -name "*.sh" -type f -exec chmod 544 {} \; 2>&1)" ]];
+	if [[ -n "$(find . -type f -name "*.sh" -exec chmod 544 {} \; 2>&1)" ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi

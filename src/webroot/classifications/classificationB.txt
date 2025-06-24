@@ -353,6 +353,7 @@ com.yotagit.xfucker
 com.yuanwofei.cardemulator.pro
 com.yubyf.quotelockx
 com.yunzia.hyperstar
+com.yuuki.automtp
 com.yuuki.betterbar
 com.yuuki.puresatusbar
 com.yxer.compo.module

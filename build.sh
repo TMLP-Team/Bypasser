@@ -15,11 +15,11 @@ function setPermissions
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
-	if [[ -n "$(find . ! -name "*.sha512" ! -name "LICENSE" ! -name "build.sh" -type f -exec chmod 644 {} \; 2>&1)" ]];
+	if [[ -n "$(find . -type f ! -name "*.sha512" ! -name "LICENSE" ! -name "build.sh" -exec chmod 644 {} \; 2>&1)" ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
-	if [[ -n "$(find . -name "*.sha512" -type f -exec chmod 444 {} \; 2>&1)" ]];
+	if [[ -n "$(find . -type f -name "*.sha512" -exec chmod 444 {} \; 2>&1)" ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi

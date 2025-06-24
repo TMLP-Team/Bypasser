@@ -31,11 +31,11 @@ function setPermissions
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
-	if [[ -n "$(find . ! -name "*.sh" -type f -exec chmod 444 {} \; 2>&1)" ]];
+	if [[ -n "$(find . -type f ! -name "*.sh" -exec chmod 444 {} \; 2>&1)" ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
-	if [[ -n "$(find . -name "*.sh" -type f -exec chmod 544 {} \; 2>&1)" ]];
+	if [[ -n "$(find . -type f -name "*.sh" -exec chmod 544 {} \; 2>&1)" ]];
 	then
 		returnCode=${EXIT_FAILURE}
 	fi
@@ -83,7 +83,7 @@ then
 		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
 		echo "- install the latest Play Integrity Fix (PIF) module as a system module, "
 		echo "- install the latest Tricky Store (TS) module as a system module with the correct configurations, and"
-		echo "- activate the latest HMAL plugin from the \`\`Actions\`\` tab of its GitHub repository with the correct configurations. "
+		echo "- activate the latest HMA plugin from https://t.me/HideMyApplist with the correct configurations. "
 		if [[ -d "${magiskFolder}" ]];
 		then
 			echo "The Magisk folder exists while the KSU / KSU Next / SukiSU is using. Please consider removing the Magisk folder. "
@@ -102,7 +102,7 @@ then
 		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
 		echo "- install the latest Play Integrity Fix (PIF) module as a system module, "
 		echo "- install the latest Tricky Store (TS) module as a system module with the correct configurations, and"
-		echo "- activate the latest HMAL plugin from the \`\`Actions\`\` tab of its GitHub repository with the correct configurations. "
+		echo "- activate the latest HMA plugin from https://t.me/HideMyApplist with the correct configurations. "
 		if [[ -d "${magiskFolder}" ]];
 		then
 			echo "The Magisk folder exists while the Apatch is using. Please consider removing the Magisk folder. "
@@ -126,7 +126,7 @@ then
 				echo "- install the latest Play Integrity Fix (PIF) module, "
 				echo "- install the latest Tricky Store (TS) module with the correct configurations, "
 				echo "- install the latest bindhosts or the built-in Systemless hosts module (optional), and "
-				echo "- activate the latest HMAL plugin from the \`\`Actions\`\` tab of its GitHub repository with the correct configurations. "
+				echo "- activate the latest HMA plugin from https://t.me/HideMyApplist with the correct configurations. "
 				echo "Please consider switching to the latest Magisk Alpha if possible. "
 			else
 				if [[ ${MAGISK_VER} == *-alpha ]];
@@ -150,7 +150,7 @@ then
 				echo "- install the latest Play Integrity Fix (PIF) module, "
 				echo "- install the latest Tricky Store (TS) module with the correct configurations, "
 				echo "- install the latest bindhosts or the built-in Systemless hosts module (optional), and "
-				echo "- activate the latest HMAL plugin from the \`\`Actions\`\` tab of its GitHub repository with the correct configurations. "
+				echo "- activate the latest HMA plugin from https://t.me/HideMyApplist with the correct configurations. "
 			fi
 			if [[ ${MAGISK_VER_CODE} -lt ${magiskVulnerabilityVersion} ]];
 			then
@@ -381,8 +381,8 @@ else
 fi
 echo ""
 
-# HMAL/HMA (0b000X00) #
-echo "# HMAL/HMA (0b000X00) #"
+# HMA(L) (0b000X00) #
+echo "# HMA(L) (0b000X00) #"
 readonly webrootName="webroot"
 readonly webrootFolderPath="${webrootName}"
 readonly webrootFilePath="${webrootName}.zip"
@@ -391,7 +391,8 @@ readonly webrootDigestUrl="https://raw.githubusercontent.com/TMLP-Team/Bypasser/
 readonly classificationFolderName="classifications"
 readonly classificationFolderPath="${webrootFolderPath}/${classificationFolderName}"
 readonly dataAppFolder="/data/app"
-readonly hmalHmaScanningScope="/data"
+readonly largerOldScanningScope="/data"
+readonly smallerOldScanningScope="/data/misc"
 readonly blacklistName="Blacklist"
 readonly whitelistName="Whitelist"
 if [[ -n "${EXTERNAL_STORAGE}" ]];
@@ -400,9 +401,9 @@ then
 else
 	readonly downloadFolderPath="/sdcard/Download"
 fi
-readonly blacklistConfigurationFileName=".HMAL_Blacklist_Config.json"
+readonly blacklistConfigurationFileName=".HMA(L)_Blacklist_Config.json"
 readonly blacklistConfigurationFilePath="${downloadFolderPath}/${blacklistConfigurationFileName}"
-readonly whitelistConfigurationFileName=".HMAL_Whitelist_Config.json"
+readonly whitelistConfigurationFileName=".HMA(L)_Whitelist_Config.json"
 readonly whitelistConfigurationFilePath="${downloadFolderPath}/${whitelistConfigurationFileName}"
 readonly reportLink="https://github.com/TMLP-Team/Bypasser"
 gapTime=0
@@ -664,7 +665,7 @@ else
 fi
 if [[ $(expr ${exitCode} \& 32) -ne ${EXIT_SUCCESS} ]];
 then
-	echo "The updating of the classifications might fail. This will use the classification cache files to generate the HMAL/HMA configurations. "
+	echo "The updating of the classifications might fail. This will use the classification cache files to generate the HMA(L) configurations. "
 fi
 classificationB="$(getClassification "B")"
 returnCodeB=$?
@@ -801,31 +802,45 @@ then
 			lengthB=0
 		fi
 		echo "Successfully fetched ${lengthB} package name(s) of Classification \$B\$ from the library (${originalLengthB}) and the local machine (${localBCount}). "
-		oldHmalHmaConfigurationFolderCount=0
-		removedHmalHmaConfigurationFolderCount=0
-		echo "Removing old HMAL/HMA configuration directories. "
-		for hmalHmaPath in $(find "${hmalHmaScanningScope}" -type d -name "*hmal*" -name "*hml*" -name "h_m_a_l*" -name "hide_my_applist*" -name "hma1*")
+		oldConfigurationFolderCount=0
+		removedOldConfigurationFolderCount=0
+		echo "Removing old HMA(L) configuration directories. "
+		for oldPath in $(find "${largerOldScanningScope}" -type d -and \( -name "*h_m_a_l*" -or -name "*hma*" -or -name "*hma1*" -or -name "hmal*" \))
 		do
-			if [[ -e "${hmalHmaPath}/config.json" && -d "${hmalHmaPath}/log" ]];
+			if [[ -e "${oldPath}/config.json" && -d "${oldPath}/log" ]];
 			then
-				oldHmalHmaConfigurationFolderCount=$(expr ${oldHmalHmaConfigurationFolderCount} + 1)
-				if rm -rf "${hmalHmaPath}";
+				oldConfigurationFolderCount=$(expr ${oldConfigurationFolderCount} + 1)
+				if rm -rf "${oldPath}";
 				then
-					removedHmalHmaConfigurationFolderCount=$(expr ${removedHmalHmaConfigurationFolderCount} + 1)
-					echo "[${removedHmalHmaConfigurationFolderCount}/${oldHmalHmaConfigurationFolderCount}] Successfully removed \"${hmalHmaPath}\". "
+					removedOldConfigurationFolderCount=$(expr ${removedOldConfigurationFolderCount} + 1)
+					echo "[${removedOldConfigurationFolderCount}/${oldConfigurationFolderCount}] Successfully removed \"${oldPath}\". "
 				else
-					echo "[${removedHmalHmaConfigurationFolderCount}/${oldHmalHmaConfigurationFolderCount}] Failed to remove \"${hmalHmaPath}\". "
+					echo "[${removedOldConfigurationFolderCount}/${oldConfigurationFolderCount}] Failed to remove \"${oldPath}\". "
 				fi
 			fi
 		done
-		if [[ ${oldHmalHmaConfigurationFolderCount} -ge 2 ]];
+		for oldPath in $(find "${smallerOldScanningScope}" -mindepth 2 -type d -and \( -name "*h_m_a_l*" -or -name "*hma*" -or -name "*hma1*" -or -name "hmal*" \))
+		do
+			if [[ -z "$(ls -A "${oldPath}")" ]];
+			then
+				oldConfigurationFolderCount=$(expr ${oldConfigurationFolderCount} + 1)
+				if rm -rf "${oldPath}";
+				then
+					removedOldConfigurationFolderCount=$(expr ${removedOldConfigurationFolderCount} + 1)
+					echo "[${removedOldConfigurationFolderCount}/${oldConfigurationFolderCount}] Successfully removed \"${oldPath}\". "
+				else
+					echo "[${removedOldConfigurationFolderCount}/${oldConfigurationFolderCount}] Failed to remove \"${oldPath}\". "
+				fi
+			fi
+		done
+		if [[ ${oldConfigurationFolderCount} -ge 2 ]];
 		then
-			echo "Found ${oldHmalHmaConfigurationFolderCount} old HMAL/HMA configuration directories in the \"${hmalHmaScanningScope}\" directory, with ${removedHmalHmaConfigurationFolderCount} removed successfully. "
-		elif [[ ${oldHmalHmaConfigurationFolderCount} -eq 1 ]];
+			echo "Found ${oldConfigurationFolderCount} old HMA(L) configuration directories in the \"${largerOldScanningScope}\" directory, with ${removedOldConfigurationFolderCount} removed successfully. "
+		elif [[ ${oldConfigurationFolderCount} -eq 1 ]];
 		then
-			echo "Found 1 old HMAL/HMA configuration directory in the \"${hmalHmaScanningScope}\" directory, with ${removedHmalHmaConfigurationFolderCount} removed successfully. "
+			echo "Found 1 old HMA(L) configuration directory in the \"${largerOldScanningScope}\" directory, with ${removedOldConfigurationFolderCount} removed successfully. "
 		else
-			echo "No old HMAL/HMA configuration folders were found. "
+			echo "No old HMA(L) configuration folders were found. "
 		fi
 	fi
 else
