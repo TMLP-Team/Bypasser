@@ -1052,8 +1052,10 @@ id\n\
 if [[ -n \"\${EXTERNAL_STORAGE}\" ]];\n\
 then\n\
 	readonly folders=\"/data/data /data/user/0 /data/user_de/0 \${EXTERNAL_STORAGE}/Android/data\"\n\
+	readonly wxDownloadFolderPath=\"\${EXTERNAL_STORAGE}/Download/WechatXposed\"\n\
 else\n\
 	readonly folders=\"/data/data /data/user/0 /data/user_de/0 /sdcard/Android/data\"\n\
+	readonly wxDownloadFolderPath=\"/sdcard/Download/WechatXposed\"\n\
 fi\n\
 for packageName in \$(cat \"${classificationFolderPath}/classificationB.txt\")\n\
 do\n\
@@ -1076,7 +1078,8 @@ do\n\
 			echo \"- Found \\\"\${leakedPath}\\\" (Classification \\\$C\\\$). \"\n\
 		fi\n\
 	done\n\
-done")"
+done\n\
+[[ -e \"\${wxDownloadFolderPath}\"]] && echo \"- Found \\\"\${wxDownloadFolderPath}\\\". ")"
 readonly packageDetectionShellFileName=".packageDetection.sh"
 readonly packageDetectionShellFilePath="${downloadFolderPath}/${packageDetectionShellFileName}"
 readonly bannedSubStrings="-AICP -arter97 -blu_spark -CAF -cm- -crDroid -crdroid -CyanogenMod -Deathly -EAS- -eas- -ElementalX -Elite -franco -hadesKernel -Lineage- -lineage- -LineageOS -lineageos -mokee -MoRoKernel -Noble -Optimus -SlimRoms -Sultan -sultan"
