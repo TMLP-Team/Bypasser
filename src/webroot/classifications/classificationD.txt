@@ -1,4 +1,3 @@
-com.heytap.market
 app.earn.money.online.bharat.cash
 app.imps.unity
 chuxin.shimo.shimowendang
@@ -16,7 +15,6 @@ com.adityabirlacapitaldigital.OneApp
 com.alibaba.aliyun
 com.alibaba.android.rimet
 com.amazon.appmanager
-com.android.vending
 com.anqmobileapp
 com.asw.moneyback
 com.authy.authy
@@ -58,6 +56,7 @@ com.hdfcbank.payzapp
 com.heytap.browser
 com.heytap.health
 com.heytap.htms
+com.heytap.market
 com.heytap.vip
 com.hicorenational.antifraud
 com.hike.rush

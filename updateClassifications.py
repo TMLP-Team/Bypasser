@@ -89,8 +89,8 @@ class Classification:
 		else:
 			print("The parameters passed are in wrong types. ")
 			return False
-	def configureUrl(self:object, url:str, updateSwitch:bool = True) -> bool:
-		if isinstance(url, str) and isinstance(updateSwitch, bool):
+	def configureUrl(self:object, url:str, isDesktop:bool = False, updateSwitch:bool = True) -> bool:
+		if isinstance(url, str) and isinstance(isDesktop, bool) and isinstance(updateSwitch, bool):
 			status, content = self.__getUrl(url)
 			if status:
 				if not updateSwitch:
@@ -103,13 +103,22 @@ class Classification:
 						if isinstance(v, dict) and "name" in v:
 							self.__s.update(findall(self.__pattern, v["name"]))
 				elif isinstance(vector, dict) and "Detectors" in vector and isinstance(vector["Detectors"], list):
-					for v in vector["Detectors"]:
-						if isinstance(v, dict) and "packageName" in v and "sourceStatus" in v and "D" not in v["sourceStatus"] and "developingPurpose" in v and "D" not in v["developingPurpose"]:
-							if isinstance(v["packageName"], (tuple, list, set)):
-								for pkg in v["packageName"]:
-									self.__s.update(findall(self.__pattern, pkg))
-							else:
-								self.__s.update(findall(self.__pattern, v["packageName"]))
+					if isDesktop:
+						for v in vector["Detectors"]:
+							if isinstance(v, dict) and "packageName" in v and "sourceStatus" in v and "D" in v["sourceStatus"] and "developingPurpose" in v and "D" in v["developingPurpose"]:
+								if isinstance(v["packageName"], (tuple, list, set)):
+									for pkg in v["packageName"]:
+										self.__s.update(findall(self.__pattern, pkg))
+								else:
+									self.__s.update(findall(self.__pattern, v["packageName"]))
+					else:
+						for v in vector["Detectors"]:
+							if isinstance(v, dict) and "packageName" in v and "sourceStatus" in v and "D" not in v["sourceStatus"] and "developingPurpose" in v and "D" not in v["developingPurpose"]:
+								if isinstance(v["packageName"], (tuple, list, set)):
+									for pkg in v["packageName"]:
+										self.__s.update(findall(self.__pattern, pkg))
+								else:
+									self.__s.update(findall(self.__pattern, v["packageName"]))
 				else:
 					print("Failed to update from the URL \"{0}\" due to the unrecognized data structure. ".format(url))
 					return False
@@ -249,7 +258,7 @@ def main() -> int:
 	fileNameB, fileNameC, fileNameD = "classificationB.txt", "classificationC.txt", "classificationD.txt"
 	filePathB, filePathC, filePathD = os.path.join(folderPath, fileNameB), os.path.join(folderPath, fileNameC), os.path.join(folderPath, fileNameD)
 	urlB = "https://modules.lsposed.org/modules.json"
-	urlC = "https://raw.githubusercontent.com/TMLP-Team/TMLP-Detectors-and-Bypassers/main/Detectors/README.json"
+	urlCD = "https://raw.githubusercontent.com/TMLP-Team/TMLP-Detectors-and-Bypassers/main/Detectors/README.json"
 	srcFolderPath = "src"
 	webrootName = "webroot"
 	webrootFolderPath = os.path.join(srcFolderPath, webrootName)
@@ -267,11 +276,15 @@ def main() -> int:
 	
 	# Update $C$ #
 	bRet = classificationC.configureFile(filePathC) and bRet
-	bRet = classificationC.configureUrl(urlC) and bRet
+	bRet = classificationC.configureUrl(urlCD, isDesktop = False) and bRet
 	bRet = classificationC.writeTo(filePathC) and bRet
 	
+	# Update $D$ #
+	bRet = classificationD.configureFile(filePathD) and bRet
+	bRet = classificationD.configureUrl(urlCD, isDesktop = True) and bRet
+	bRet = classificationD.writeTo(filePathD) and bRet
+	
 	# Compute Intersections #
-	bRet = classificationD.configureFile(filePathD)
 	setBC = classificationB.intersection(classificationC)
 	setBD = classificationB.intersection(classificationD)
 	setCD = classificationC.intersection(classificationD)
