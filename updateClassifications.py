@@ -22,18 +22,43 @@ EXIT_FAILURE = 1
 EOF = (-1)
 
 
+class SortedUniqueList(list):
+	def __init__(self:object, s:object = None, exclusion:object = {"com.google.android.gsf", "com.google.android.gms", "com.android.vending"}) -> object:
+		super().__init__()
+		self.__exclusion = set(exclusion) if isinstance(exclusion, (tuple, list, set, str, SortedUniqueList)) else set()
+		if isinstance(s, (tuple, list, set, str, SortedUniqueList)):
+			for value in s:
+				if value not in self and value not in self.__exclusion:
+					super().append(value)
+			self.sort()
+	def add(self, value:object) -> None:
+		return self.append(value)
+	def append(self, value:object) -> None:
+		if value not in self and value not in self.__exclusion:
+			super().append(value)
+		self.sort()
+	def extend(self, s:object) -> None:
+		if isinstance(s, (tuple, list, set, str, SortedUniqueList)):
+			for value in s:
+				if value not in self and value not in self.__exclusion:
+					super().append(value)
+		self.sort()
+	def update(self:object, s:object) -> object:
+		if isinstance(s, (tuple, list, set, str, SortedUniqueList)):
+			return self.extend(s)
+	def intersection(self:object, other:object) -> object:
+		if isinstance(other, (tuple, list, set, str, SortedUniqueList)):
+			return set(self).intersection(other)
+
 class Classification:
-	def __init__(self:object, s:tuple|list|set|None = None) -> object:
-		self.__s = set(s) if isinstance(s, (tuple, list, set)) else set()
+	urlCache = {}
+	def __init__(self:object, name:str = 'S', s:object = None, exclusion:object = {"com.google.android.gsf", "com.google.android.gms", "com.android.vending"}) -> object:
+		if isinstance(s, (tuple, list, set, str, SortedUniqueList)):
+			self.__s = SortedUniqueList(s, exclusion = exclusion if isinstance(exclusion, (tuple, list, set, str, SortedUniqueList)) else None)
+		else:
+			self.__s = SortedUniqueList(exclusion = exclusion if isinstance(exclusion, (tuple, list, set, str, SortedUniqueList)) else None)
+		self.__name = name if isinstance(name, str) and len(name) == 1 and ('A' <= name <= 'Z' or 'a' <= name <= 'z') else 'S'
 		self.__pattern = "^[A-Za-z][A-Za-z0-9_]*(?:\\.[A-Za-z][A-Za-z0-9_]*)+$"
-		self.__exclusionList = ["com.google.android.gsf", "com.google.android.gms", "com.android.vending"]
-	def __exclude(self:object) -> int:
-		cnt = 0
-		for package in self.__exclusionList:
-			if package in self.__s:
-				self.__s.remove(package)
-				cnt += 1
-		return cnt
 	def __getTxt(self:object, filePath:str) -> str|None: # get ``*.txt`` content
 		for coding in ("utf-8", "ANSI", "utf-16", "gbk"): # codings (add more codings here if necessary)
 			try:
@@ -45,23 +70,30 @@ class Classification:
 			except:
 				return None
 		return None
-	def __getUrl(self:object, url:str) -> tuple: # get URL content
-		try:
-			r = get(url)
-			if r is None:
-				return (False, "The ``get`` is currently unavailable. ")
+	def __getUrl(self:object, url:str, forceUpdate:bool = False) -> tuple: # get URL content
+		if isinstance(url, str) and isinstance(forceUpdate, bool):
+			if forceUpdate or url not in Classification.urlCache:
+				try:
+					r = get(url)
+					if r is None:
+						return (False, "The ``get`` is currently unavailable. ")
+					elif 200 == r.status_code:
+						Classification.urlCache[url] = r.text
+						return (True, r.text)
+					else:
+						return (False, r)
+				except BaseException as e:
+					return (False, str(e))
 			else:
-				return (True, r.text)
-		except BaseException as e:
-			return (False, str(e))
+				return (True, Classification.urlCache[url])
+		else:
+			return (False, "At least one of the parameters passed is invalid. ")
 	def configureSet(self:object, s:set|tuple|list, updateSwitch:bool = True) -> bool:
 		if isinstance(s, (set, tuple, list)) and isinstance(updateSwitch, bool):
 			if not updateSwitch:
 				self.__s.clear()
-			self.__exclude()
 			originalSize = len(self.__s)
 			self.__s.update(s)
-			self.__exclude()
 			currentSize = len(self.__s)
 			sizeDelta = currentSize - originalSize
 			print("Successfully updated {0} package name(s). ".format(sizeDelta))
@@ -75,17 +107,15 @@ class Classification:
 			if isinstance(content, str):
 				if not updateSwitch:
 					self.__s.clear()
-				self.__exclude()
 				originalSize = len(self.__s)
 				for line in content.splitlines():
 					self.__s.update(findall(self.__pattern, line))
-				self.__exclude()
 				currentSize = len(self.__s)
 				sizeDelta = currentSize - originalSize
-				print("Successfully updated {0} package name(s) from the file \"{1}\". ".format(sizeDelta, filePath))
+				print("Successfully updated {0} package name(s) for Classification ${1}$ from the file \"{2}\". ".format(sizeDelta, self.__name, filePath))
 				return True
 			else:
-				print("Failed to update from the file \"{0}\". ".format(filePath))
+				print("Failed to update for Classification ${0}$ from the file \"{1}\" due to file reading failures. ".format(self.__name, filePath))
 		else:
 			print("The parameters passed are in wrong types. ")
 			return False
@@ -95,7 +125,6 @@ class Classification:
 			if status:
 				if not updateSwitch:
 					self.__s.clear()
-				self.__exclude()
 				originalSize = len(self.__s)
 				vector = loads(content)
 				if isinstance(vector, list):
@@ -122,13 +151,12 @@ class Classification:
 				else:
 					print("Failed to update from the URL \"{0}\" due to the unrecognized data structure. ".format(url))
 					return False
-				self.__exclude()
 				currentSize = len(self.__s)
 				sizeDelta = currentSize - originalSize
-				print("Successfully updated {0} package name(s) from the URL \"{1}\". ".format(sizeDelta, url))
+				print("Successfully updated {0} package name(s) for Classification ${1}$ from the URL \"{2}\". ".format(sizeDelta, self.__name, url))
 				return True
 			else:
-				print("Failed to update from the URL \"{0}\". Details are as follows. \n\t{1}".format(url, content))
+				print("Failed to update for Classification ${0}$ from the URL \"{1}\". Details are as follows. \n\t{2}".format(self.__name, url, content))
 				return False
 		else:
 			print("The parameters passed are in wrong types. ")
@@ -139,10 +167,10 @@ class Classification:
 		try:
 			with open(filePath, "w", encoding = encoding) as f:
 				f.write(str(self))
-			print("Successfully wrote {0} lines to the file \"{1}\". ".format(len(self), filePath))
+			print("Successfully wrote {0} lines to the file \"{1}\" for Classification ${2}$. ".format(len(self), filePath, self.__name))
 			return True
 		except BaseException as e:
-			print("Failed to write to the file \"{0}\" due to exceptions. Details are as follows. \n\t{1}".format(filePath, e))
+			print("Failed to write to the file \"{0}\" for Classification ${1}$ due to exceptions. Details are as follows. \n\t{2}".format(filePath, self.__name, e))
 			return False
 	def __len__(self:object) -> int:
 		return len(self.__s)
@@ -269,7 +297,7 @@ def main() -> int:
 	bRet = True
 	
 	# Update $B$ #
-	classificationB, classificationC, classificationD = Classification(), Classification(), Classification()
+	classificationB, classificationC, classificationD = Classification('B'), Classification('C'), Classification('D')
 	bRet = classificationB.configureFile(filePathB) and bRet
 	bRet = classificationB.configureUrl(urlB) and bRet
 	bRet = classificationB.writeTo(filePathB) and bRet
