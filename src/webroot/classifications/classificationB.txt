@@ -185,7 +185,6 @@ com.hchen.switchfreeform
 com.hd.hdtool
 com.hello.world
 com.hentai.q
-com.heytap.market
 com.hhvvg.anydebug
 com.hhvvg.anytext
 com.hhvvg.ecm
