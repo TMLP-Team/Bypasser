@@ -245,6 +245,7 @@ com.mln.momoxposed
 com.modisk.dawn
 com.my.televip
 com.neko.helsirootbypass
+com.niki.breeno.openai
 com.nnnen.plusne
 com.nxdxfg.GoldenVipHook
 com.oosl.colorostool
@@ -420,6 +421,7 @@ io.github.brucezhang1993.warp_loves_play_store
 io.github.chipppppppppp.binnosoko
 io.github.chipppppppppp.lime
 io.github.chsbuffer.miuihelper
+io.github.chsbuffer.revancedxposed
 io.github.cloudburst.messengerex
 io.github.dixtdf.oplus.display
 io.github.duzhaokun123.darkaischedule
@@ -478,6 +480,7 @@ master.alarmshell.android
 me.bingyue.IceCore
 me.bingyue.fuckbiliads
 me.bmax.apatch
+me.build
 me.documenthook
 me.garfieldhan.apatch.next
 me.hd.hookgg
@@ -528,6 +531,7 @@ org.lsposed.manager
 org.matrix.chromext
 org.strawing.customiuizermod
 org.swiftapps.swiftbackup
+org.torproject.torbrowser
 org.zwanoo.android.speedtest
 pansong291.xposed.quickenergy
 pansong291.xposed.quickenergy.qiufeng
