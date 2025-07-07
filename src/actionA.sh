@@ -79,7 +79,7 @@ then
 		echo "KSU (${KSU_VER_CODE}): Please "
 		echo "- deploy the latest SukiSU from the \`\`Actions\`\` tab of its GitHub repository with only applications requiring root privileges configured and granted in the SukiSU Manager, "
 		echo "- install the latest ReZygisk module from the \`\`Actions\`\` tab of its GitHub repository as a system module, "
-		echo "- install the latest SUSFS as a system module, "
+		echo "- embed or install the latest SUSFS as a kernel or system module, "
 		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
 		echo "- install the latest Play Integrity Fix (PIF) module as a system module, "
 		echo "- install the latest Tricky Store (TS) module as a system module with the correct configurations, and"
@@ -1177,6 +1177,9 @@ then
 fi
 if su shell -c "[[ -w \"${directoryForTesting}\" && -x \"${directoryForTesting}\" && -r \"${directoryForTesting}\" ]]";
 then
+	echo "The current console session may not support temporarily discarding root privileges. "
+	echo "Skip checking for the existence of applications in Classifications \$B\$ and \$C\$ that are leaked by the specified folders as a non-root user. "
+else
 	echo "Checking the existence of applications in Classifications \$B\$ and \$C\$ leaked by the specified folders as a non-root user. "
 	plainUserContent="$(su shell -c "${plainUserExecution}")"
 	echo "${plainUserContent}"
@@ -1186,8 +1189,6 @@ then
 	else
 		echo "Congratulations on no applications in Classifications \$B\$ and \$C\$ leaked by the specified folders. "
 	fi
-else
-	echo "The current session may not support downgrade operations, skipping the check for the existence of applications in Classifications \$B\$ and \$C\$ that are leaked by the specified folders as a non-root user. "
 fi
 bannedSubStringFoundFlag=${EXIT_SUCCESS}
 releaseVersion="$(uname -r)"
