@@ -1046,7 +1046,7 @@ readonly propertiesToBeSet="ro.boot.vbmeta.device_state:locked ro.boot.verifiedb
 readonly propertiesToExist="ro.boot.vbmeta.avb_version ro.boot.vbmeta.hash_alg ro.boot.vbmeta.size ro.boot.vbmeta.digest"
 readonly propertiesToBeDeleted="persist.sys.vold_app_data_isolation_enabled persist.zygote.app_data_isolation"
 readonly persistentPropertyFilePath="/data/property/persistent_properties"
-readonly shellPackageName="com.android.shell"
+readonly directoryForTesting="/data"
 readonly plainUserExecution="$(echo -e "whoami\n\
 id\n\
 if [[ -n \"\${EXTERNAL_STORAGE}\" ]];\n\
@@ -1080,8 +1080,6 @@ do\n\
 	done\n\
 done\n\
 [[ -e \"\${wxDownloadFolderPath}\"]] && echo \"- Found \\\"\${wxDownloadFolderPath}\\\". ")"
-readonly packageDetectionShellFileName=".packageDetection.sh"
-readonly packageDetectionShellFilePath="${downloadFolderPath}/${packageDetectionShellFileName}"
 readonly bannedSubStrings="-AICP -arter97 -blu_spark -CAF -cm- -crDroid -crdroid -CyanogenMod -Deathly -EAS- -eas- -ElementalX -Elite -franco -hadesKernel -Lineage- -lineage- -LineageOS -lineageos -mokee -MoRoKernel -Noble -Optimus -SlimRoms -Sultan -sultan"
 readonly sourceXmlFilePath="/etc/compatconfig/services-platform-compat-config.xml"
 readonly replacementEntry="system"
@@ -1177,27 +1175,20 @@ then
 		echo "Missing properties, please install the latest [VBMeta Fixer](https://github.com/reveny/Android-VBMeta-Fixer) module. "
 	fi
 fi
-#echo "Checking the existence of applications in Classifications \$B\$ and \$C\$ leaked by the specified folders as a plain user. "
-#shellUserId=$(dumpsys package "${shellPackageName}" | grep userId | cut -d '=' -f2 | cut -d ' ' -f1 | uniq)
-#if [[ $(echo "${shellUserId}" | wc -l) -eq 1 && -n "$(echo "${shellUserId}" | grep -E '^[0-9]+$')" ]];
-#then
-#	plainUserContent="$(su -g ${shellUserId} -Z "u:r:shell:s0" -d shell -c "${plainUserExecution}")"
-#	echo "${plainUserContent}"
-#	if [[ -n "${plainUserContent}" ]];
-#	then
-#		echo "Found $(echo "${plainUserContent}" | wc -l) issue(s) during checking the existence of applications in Classifications \$B\$ and \$C\$ leaked by the specified folders as a plain user. "
-#	else
-#		echo "Congratulations on no applications in Classifications \$B\$ and \$C\$ leaked by the specified folders. "
-#	fi
-#else
-#	exitCode=$(expr ${exitCode} \| 16)
-#	echo "Failed to check due to unknown shell user ID (\`\`${shellPackageName}\`\`). "
-#fi
-#echo "${plainUserExecution}" > "${packageDetectionShellFilePath}"
-#if [[ $? -eq ${EXIT_SUCCESS} && -f "${packageDetectionShellFilePath}" ]];
-#then
-#	echo "The package detection script \"${packageDetectionShellFilePath}\" has been generated, which can be executed as a plain user in the MT Manager to detect the existence of applications in Classifications \$B\$ and \$C\$. "
-#fi
+if su shell -c "[[ -w \"${directoryForTesting}\" && -x \"${directoryForTesting}\" && -r \"${directoryForTesting}\" ]]";
+then
+	echo "Checking the existence of applications in Classifications \$B\$ and \$C\$ leaked by the specified folders as a non-root user. "
+	plainUserContent="$(su shell -c "${plainUserExecution}")"
+	echo "${plainUserContent}"
+	if [[ -n "${plainUserContent}" ]];
+	then
+		echo "Found $(echo "${plainUserContent}" | wc -l) issue(s) during checking the existence of applications in Classifications \$B\$ and \$C\$ leaked by the specified folders as a plain user. "
+	else
+		echo "Congratulations on no applications in Classifications \$B\$ and \$C\$ leaked by the specified folders. "
+	fi
+else
+	echo "The current session may not support downgrade operations, skipping the check for the existence of applications in Classifications \$B\$ and \$C\$ that are leaked by the specified folders as a non-root user. "
+fi
 bannedSubStringFoundFlag=${EXIT_SUCCESS}
 releaseVersion="$(uname -r)"
 for bannedSubString in ${bannedSubStrings}

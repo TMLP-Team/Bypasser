@@ -251,6 +251,7 @@ com.nxdxfg.GoldenVipHook
 com.oosl.colorostool
 com.overlook.android.fing
 com.owo233.fuckmarketads
+com.owo233.tcqt
 com.padi.hook.hookqq
 com.parallelc.micts
 com.pic.catcher
@@ -479,6 +480,7 @@ ma.wanam.youtubeadaway
 master.alarmshell.android
 me.bingyue.IceCore
 me.bingyue.fuckbiliads
+me.bingyue.fuckqishui
 me.bmax.apatch
 me.build
 me.documenthook
