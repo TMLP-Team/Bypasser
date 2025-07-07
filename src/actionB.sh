@@ -1047,9 +1047,7 @@ readonly propertiesToExist="ro.boot.vbmeta.avb_version ro.boot.vbmeta.hash_alg r
 readonly propertiesToBeDeleted="persist.sys.vold_app_data_isolation_enabled persist.zygote.app_data_isolation"
 readonly persistentPropertyFilePath="/data/property/persistent_properties"
 readonly directoryForTesting="/data"
-readonly plainUserExecution="$(echo -e "whoami\n\
-id\n\
-if [[ -n \"\${EXTERNAL_STORAGE}\" ]];\n\
+readonly plainUserExecution="$(echo -e "if [[ -n \"\${EXTERNAL_STORAGE}\" ]];\n\
 then\n\
 	readonly folders=\"/data/data /data/user/0 /data/user_de/0 \${EXTERNAL_STORAGE}/Android/data\"\n\
 	readonly wxDownloadFolderPath=\"\${EXTERNAL_STORAGE}/Download/WechatXposed\"\n\
@@ -1086,12 +1084,17 @@ readonly replacementEntry="system"
 readonly targetXmlFilePath="${replacementEntry}${sourceXmlFilePath}"
 
 echo "The sensitive applications are being handled. "
+sensitiveApplicationCount=0
+disabledSensitiveApplicationCount=0
+packageList="$(pm list packages)"
 for sensitiveApplication in ${sensitiveApplications}
 do
-	if pm list packages | grep -q "${sensitiveApplication}";
+	if echo "${packageList}" | grep -qF "${sensitiveApplication}";
 	then
+		sensitiveApplicationCount=$(expr ${sensitiveApplicationCount} + 1)
 		if pm disable "${sensitiveApplication}" &> /dev/null;
 		then
+			disabledSensitiveApplicationCount=$(expr ${disabledSensitiveApplicationCount} + 1)
 			echo "- The sensitive application \"${sensitiveApplication}\" was detected, which has been disabled. "
 		else
 			exitCode=$(expr ${exitCode} \| 16)
@@ -1099,10 +1102,15 @@ do
 		fi
 	fi
 done
+if [[ ${sensitiveApplicationCount} -le 1 ]];
+then
+	echo "Successfully disabled ${disabledSensitiveApplicationCount} / ${sensitiveApplicationCount} sensitive application(s). "
+else
+	echo "No sensitive applications were found. "
+fi
 echo "The policies are being handled. "
 for policyToBeDeleted in ${policiesToBeDeleted}
 do
-
 	executionContent="$(settings delete global ${policyToBeDeleted})"
 	if [[ $? -eq ${EXIT_SUCCESS} && "${executionContent}" == "Deleted 0 rows" ]];
 	then
