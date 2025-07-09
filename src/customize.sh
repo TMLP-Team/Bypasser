@@ -177,25 +177,25 @@ function getTheKeyPressed
 	pressCode=$?
 	if [[ ${EXIT_SUCCESS} == ${pressCode} ]];
 	then
-		if echo "${pressString}" | grep -q "KEY_VOLUMEUP";
+		if [[ "${pressString}" == *KEY_VOLUMEUP* ]];
 		then
 			echo "The [+] was pressed. "
 			return ${VK_UP}
-		elif echo "${pressString}" | grep -q "KEY_VOLUMEDOWN";
+		elif [[ "${pressString}" == *KEY_VOLUMEDOWN* ]];
 		then
 			echo "The [-] was pressed. "
 			return ${VK_DOWN}
-		elif echo "${pressString}" | grep -q "KEY_POWER";
+		elif [[ "${pressString}" == *KEY_POWER* ]];
 		then
 			echo "The power key was pressed. "
 			return ${VK_POWER}
-		elif echo "${pressString}" | grep -q "ABS_MT_TRACKING_ID";
+		elif [[ "${pressString}" == *ABS_MT_TRACKING_ID* ]];
 		then
 			echo "The screen was pressed. "
 			return ${VK_SCREEN}
 		else
 			echo "The following unknown event occurred. "
-			echo "${pressString}"
+			echo "${pressString}" | sed 's/^/\t/'
 			return ${EXIT_FAILURE}
 		fi
 	else

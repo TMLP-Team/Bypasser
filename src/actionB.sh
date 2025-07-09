@@ -463,25 +463,25 @@ function getTheKeyPressed
 	pressCode=$?
 	if [[ ${EXIT_SUCCESS} == ${pressCode} ]];
 	then
-		if echo "${pressString}" | grep -q "KEY_VOLUMEUP";
+		if [[ "${pressString}" == *KEY_VOLUMEUP* ]];
 		then
 			echo "The [+] was pressed. "
 			return ${VK_UP}
-		elif echo "${pressString}" | grep -q "KEY_VOLUMEDOWN";
+		elif [[ "${pressString}" == *KEY_VOLUMEDOWN* ]];
 		then
 			echo "The [-] was pressed. "
 			return ${VK_DOWN}
-		elif echo "${pressString}" | grep -q "KEY_POWER";
+		elif [[ "${pressString}" == *KEY_POWER* ]];
 		then
 			echo "The power key was pressed. "
 			return ${VK_POWER}
-		elif echo "${pressString}" | grep -q "ABS_MT_TRACKING_ID";
+		elif [[ "${pressString}" == *ABS_MT_TRACKING_ID* ]];
 		then
 			echo "The screen was pressed. "
 			return ${VK_SCREEN}
 		else
 			echo "The following unknown event occurred. "
-			echo "${pressString}"
+			echo "${pressString}" | sed 's/^/\t/'
 			return ${EXIT_FAILURE}
 		fi
 	else
@@ -1046,7 +1046,7 @@ readonly propertiesToBeSet="ro.boot.vbmeta.device_state:locked ro.boot.verifiedb
 readonly propertiesToExist="ro.boot.vbmeta.avb_version ro.boot.vbmeta.hash_alg ro.boot.vbmeta.size ro.boot.vbmeta.digest"
 readonly propertiesToBeDeleted="persist.sys.vold_app_data_isolation_enabled persist.zygote.app_data_isolation"
 readonly persistentPropertyFilePath="/data/property/persistent_properties"
-readonly directoryForTesting="/data"
+readonly directoryForTesting="/data/data/com.android.settings"
 readonly plainUserExecution="$(echo -e "if [[ -n \"\${EXTERNAL_STORAGE}\" ]];\n\
 then\n\
 	readonly folders=\"/data/data /data/user/0 /data/user_de/0 \${EXTERNAL_STORAGE}/Android/data\"\n\
@@ -1077,7 +1077,7 @@ do\n\
 		fi\n\
 	done\n\
 done\n\
-[[ -e \"\${wxDownloadFolderPath}\"]] && echo \"- Found \\\"\${wxDownloadFolderPath}\\\". ")"
+test -e \"\${wxDownloadFolderPath}\" && echo \"- Found \\\"\${wxDownloadFolderPath}\\\". ")"
 readonly bannedSubStrings="-AICP -arter97 -blu_spark -CAF -cm- -crDroid -crdroid -CyanogenMod -Deathly -EAS- -eas- -ElementalX -Elite -franco -hadesKernel -Lineage- -lineage- -LineageOS -lineageos -mokee -MoRoKernel -Noble -Optimus -SlimRoms -Sultan -sultan"
 readonly sourceXmlFilePath="/etc/compatconfig/services-platform-compat-config.xml"
 readonly replacementEntry="system"
@@ -1183,19 +1183,23 @@ then
 		echo "Missing properties, please install the latest [VBMeta Fixer](https://github.com/reveny/Android-VBMeta-Fixer) module. "
 	fi
 fi
-if su shell -c "[[ -w \"${directoryForTesting}\" && -x \"${directoryForTesting}\" && -r \"${directoryForTesting}\" ]]";
+if su -Z u:r:untrusted_app:s0 shell -c "test -e \"${directoryForTesting}\"";
 then
-	echo "The current console session may not support temporarily discarding root privileges. "
-	echo "Skip checking for the existence of applications in Classifications \$B\$ and \$C\$ that are leaked by the specified folders as a non-root user. "
+	echo "Skipped checking the existence of applications in Classifications \$B\$ and \$C\$ that are leaked by the specified folders as a non-root user due to the unsupported environments. "
 else
 	echo "Checking the existence of applications in Classifications \$B\$ and \$C\$ leaked by the specified folders as a non-root user. "
-	plainUserContent="$(su shell -c "${plainUserExecution}")"
-	echo "${plainUserContent}"
-	if [[ -n "${plainUserContent}" ]];
+	plainUserContent="$(su -Z u:r:untrusted_app:s0 shell -c "${plainUserExecution}")"
+	if [[ $? -eq ${EOF} ]];
 	then
-		echo "Found $(echo "${plainUserContent}" | wc -l) issue(s) during checking the existence of applications in Classifications \$B\$ and \$C\$ leaked by the specified folders as a plain user. "
+		echo "Could not check the existence of applications in Classifications \$B\$ and \$C\$ that are leaked by the specified folders as a non-root user due to the EOF signal. "
 	else
-		echo "Congratulations on no applications in Classifications \$B\$ and \$C\$ leaked by the specified folders. "
+		echo "${plainUserContent}"
+		if [[ -n "${plainUserContent}" ]];
+		then
+			echo "Found $(echo "${plainUserContent}" | wc -l) issue(s) during checking the existence of applications in Classifications \$B\$ and \$C\$ leaked by the specified folders as a plain user. "
+		else
+			echo "Congratulations on no applications in Classifications \$B\$ and \$C\$ leaked by the specified folders. "
+		fi
 	fi
 fi
 bannedSubStringFoundFlag=${EXIT_SUCCESS}
@@ -1215,7 +1219,7 @@ then
 fi
 if [[ -s "${sourceXmlFilePath}" ]];
 then
-	if grep -q 'enableAfterTargetSdk="0" id="143937733"' "${sourceXmlFilePath}";
+	if grep -qF 'enableAfterTargetSdk="0" id="143937733"' "${sourceXmlFilePath}";
 	then
 		echo "The current \"${sourceXmlFilePath}\" is already a replaced one. "
 	else
