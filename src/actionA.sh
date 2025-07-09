@@ -1183,7 +1183,9 @@ then
 		echo "Missing properties, please install the latest [VBMeta Fixer](https://github.com/reveny/Android-VBMeta-Fixer) module. "
 	fi
 fi
-if su -Z u:r:untrusted_app:s0 shell -c "test -e \"${directoryForTesting}\"";
+su -Z u:r:untrusted_app:s0 shell -c "test -e \"${directoryForTesting}\""
+returnCode=$?
+if [[ ${returnCode} -eq ${EXIT_SUCCESS} || ${returnCode} -eq ${EOF} ]];
 then
 	echo "Skipped checking the existence of applications in Classifications \$B\$ and \$C\$ that are leaked by the specified folders as a non-root user due to the unsupported environments. "
 else
