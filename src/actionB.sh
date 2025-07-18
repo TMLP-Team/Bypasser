@@ -909,7 +909,7 @@ else
 	whitelistAppList=""
 	blacklistScopeList=""
 fi
-commonConfigContent="{\"configVersion\":90,\"forceMountData\":true,\"templates\":{\"${blacklistName}\":{\"isWhitelist\":false,\"appList\":[${blacklistAppList}]},\"${whitelistName}\":{\"isWhitelist\":true,\"appList\":[${whitelistAppList}]}},"
+commonConfigContent="{\"configVersion\":92,\"detailLog\":true,\"maxLogSize\":1024,\"forceMountData\":true,\"aggressiveFilter\":true,\"templates\":{\"${blacklistName}\":{\"isWhitelist\":false,\"appList\":[${blacklistAppList}]},\"${whitelistName}\":{\"isWhitelist\":true,\"appList\":[${whitelistAppList}]}},"
 blacklistConfigContent="${commonConfigContent}\"scope\":{${blacklistScopeList}}}"
 whitelistConfigContent="${commonConfigContent}\"scope\":{${whitelistScopeList}}}"
 mkdir -p "${downloadFolderPath}"
