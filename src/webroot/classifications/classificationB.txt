@@ -14,6 +14,7 @@ app.revanced.manager.flutter
 balti.xposed.pixelifygooglephotos
 be.mygod.oplus.batterywaster
 be.mygod.unmeteredvpn
+bilibili.helper
 bin.mt.plus
 bin.mt.termex
 cat.app.bicleaner
