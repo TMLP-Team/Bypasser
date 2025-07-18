@@ -1102,7 +1102,7 @@ do
 		fi
 	fi
 done
-if [[ ${sensitiveApplicationCount} -le 1 ]];
+if [[ ${sensitiveApplicationCount} -ge 1 ]];
 then
 	echo "Successfully disabled ${disabledSensitiveApplicationCount} / ${sensitiveApplicationCount} sensitive application(s). "
 else
