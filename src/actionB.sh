@@ -1183,7 +1183,7 @@ then
 		echo "Missing properties, please install the latest [VBMeta Fixer](https://github.com/reveny/Android-VBMeta-Fixer) module. "
 	fi
 fi
-if "$(getenforce)" == "enforcing";
+if [[ "$(getenforce)" == "enforcing" ]];
 then
 	echo "SELinux is already enforcing. "
 else
