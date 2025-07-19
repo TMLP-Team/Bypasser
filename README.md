@@ -12,6 +12,7 @@ This module will only take effect when users install it or click the ``action`` 
   - Disable sensitive applications automatically installed by Google. 
   - Remove sensitive policies. 
   - Handle properties. 
+  - Enforce SELinux. 
   - Check the existence of applications in Classifications $B$ and $C$ as a non-root user. 
   - Check whether the system release version has been banned. 
   - Patch ``/etc/compatconfig/services-platform-compat-config.xml``

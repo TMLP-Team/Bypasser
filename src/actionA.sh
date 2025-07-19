@@ -1183,6 +1183,17 @@ then
 		echo "Missing properties, please install the latest [VBMeta Fixer](https://github.com/reveny/Android-VBMeta-Fixer) module. "
 	fi
 fi
+if "$(getenforce)" == "enforcing";
+then
+	echo "SELinux is already enforcing. "
+else
+	if setenforce enforcing;
+	then
+		echo "SELinux was not enforcing, which has been set to enforcing. "
+	else
+		echo "SELinux is not enforcing and cannot be set to enforcing. "
+	fi
+fi
 su -Z u:r:untrusted_app:s0 shell -c "test -e \"${directoryForTesting}\""
 returnCode=$?
 if [[ ${returnCode} -eq ${EXIT_SUCCESS} || ${returnCode} -eq ${EOF} ]];
