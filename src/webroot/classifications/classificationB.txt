@@ -150,6 +150,7 @@ com.follow.clash
 com.fuck.android.rimet
 com.fuck.snotes
 com.fuckcoolapk
+com.fun.camerahook
 com.fun.mtp
 com.function.mtp
 com.game.reschange
@@ -247,6 +248,7 @@ com.modisk.dawn
 com.my.televip
 com.neko.helsirootbypass
 com.niki.breeno.openai
+com.niki914.qqmail.cleaner
 com.nnnen.plusne
 com.nxdxfg.GoldenVipHook
 com.oosl.colorostool
@@ -257,6 +259,7 @@ com.padi.hook.hookqq
 com.parallelc.micts
 com.pic.catcher
 com.plus.boy
+com.polyhook.modules
 com.programminghoch10.cameracontrol
 com.programminghoch10.mobileiconchanger
 com.programminghoch10.securedisplay
@@ -284,6 +287,7 @@ com.shatyuka.zhiliao
 com.silverlabtm.app.deviceidchanger.free
 com.simo.ssl.killer
 com.simo.tgramhooks
+com.skirky.fuck.motoroal.update
 com.sky.xposed.rimet
 com.skyhand.ppxxphelper
 com.skyhand.redbookhelper
@@ -331,6 +335,7 @@ com.w2016.sensorfilter
 com.w311ang.disable_flag_keep_screen_on
 com.weverses.modempro
 com.wizpizz.onepluspluslauncher
+com.wizpizz.reddidnt
 com.wmods.wppenhacer
 com.wmods.wppenhacer.w4b
 com.wovow.youtubehelper
@@ -345,6 +350,7 @@ com.xiaoniu.zuiyouhook
 com.xposed.miuiime
 com.xtaolabs.fuck_huaya
 com.xunflash.setMiPad5Pointer
+com.yanghy.fkdy
 com.yifeplayte.logrequestmanager
 com.yifeplayte.maxfreeform
 com.yifeplayte.maxmipadinput
@@ -371,6 +377,7 @@ com.zhufucdev.motion_emulator
 com.zhufucdev.ws_plugin
 com.zidongdianji
 com.zitan.eternalseniahook
+com.znliang.fuck.soul
 com.ztc1997.fakedcbacklight
 com.ztc1997.mockbluetoothdevice
 com.zuiyou.adfree
@@ -381,6 +388,7 @@ de.buttercookie.optionsmenufix
 de.buttercookie.rocketplayerdefuser
 dev.arktic.installerrestrictor
 dev.coderpwh.fuck_shake
+dev.device.emulator
 dev.lackluster.mihelper
 dev.rushii.xspoofsignatures
 dev.sora.extractor
@@ -415,6 +423,7 @@ io.dixtdf.ocar
 io.github.Retmon403.oppotheme
 io.github.a13e300.ksuwebui
 io.github.a13e300.tools.stethox
+io.github.ahmedmani.pairipfix
 io.github.alexdonh.noaccessibilityservices
 io.github.auag0.disableaudiofocus
 io.github.auag0.hidemocklocation
@@ -461,6 +470,7 @@ io.github.tehcneko.telespeed
 io.github.vvb2060.callrecording
 io.github.vvb2060.magisk
 io.github.wzhy.xaudiocapture
+io.github.xyy.noad
 io.github.yagiyuu.linextra
 io.github.yangyiyu08.taplusext
 io.kazutoiris.infinite.illusion
@@ -504,6 +514,7 @@ me.sleep.vip
 me.teble.xposed.autodaily
 me.timschneeberger.onyxtweaks
 me.weishu.kernelsu
+me.xmbest.hyper
 me.zhenxin.thisreallylite
 miko.client
 ml.pyshivam.imeimasker
@@ -516,6 +527,7 @@ moe.lyniko.replacecursor
 moe.lz233.mitranslator
 moe.shizuku.privileged.api
 moe.xzr.oplushidezoomwindow
+moe.zl.freeshare
 mufanc.tools.applock
 name.caiyao.sporteditor
 name.mikanoshi.customiuizer
