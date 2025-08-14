@@ -333,6 +333,7 @@ com.veo.hook.bili.speed
 com.vivian8421.mipushenhance
 com.w2016.sensorfilter
 com.w311ang.disable_flag_keep_screen_on
+com.wecom.padbridge
 com.weverses.modempro
 com.wizpizz.onepluspluslauncher
 com.wizpizz.reddidnt
