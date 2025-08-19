@@ -95,6 +95,7 @@ com.berdik.macsposed
 com.bit747.clipboardfilter
 com.bit747.smobajump
 com.blanke.diaomao163
+com.bubiu.counter
 com.bug.gamehook
 com.bug.hookvip
 com.bug.zqq
