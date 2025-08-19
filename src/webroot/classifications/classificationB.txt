@@ -203,6 +203,7 @@ com.hujiayucc.rpointer
 com.hx.fanqie
 com.jakting.duolingo
 com.janking.viewperf
+com.jiguro.wonderless
 com.jj.hidenavbar
 com.jozein.xedgepro
 com.js.deepsleep
@@ -402,6 +403,7 @@ fansirsqi.xposed.sesame
 fer.amiya.amiyahooks
 foss.coolest.fucker
 fr.netstat.locationindicatorwhitelist
+fr.xenorf.affranchi
 fuck.location
 fucking.internet.tile
 fuckinginput.coloros.baidu
@@ -582,6 +584,7 @@ sb.firefds.s.firefdskit
 sb.firefds.t.firefdskit
 sb.firefds.u.firefdskit
 space.aioilight.tsubonofuta
+sqz.wenku8.bg
 ss.colytitse.fuckdmzj
 ss.colytitse.setappfull
 star.sky.voyager
