@@ -101,6 +101,7 @@ com.bug.hookvip
 com.bug.zqq
 com.byyoung.setting
 com.cataclysm.i
+com.catsmoker.app
 com.ceco.oreo.gravitybox
 com.ceco.pie.gravitybox
 com.ceco.q.gravitybox
@@ -255,6 +256,7 @@ com.nnnen.plusne
 com.nxdxfg.GoldenVipHook
 com.oosl.colorostool
 com.overlook.android.fing
+com.owl.auxiliary
 com.owo233.fuckmarketads
 com.owo233.tcqt
 com.padi.hook.hookqq
@@ -612,6 +614,7 @@ vn.kwaiching.tao
 vn.kwaiching.yauyin
 wx.myfriends
 wx.repair.tool
+wx.veil
 xdc.destinyImm
 xeed.xposed.cbppmod
 xmnh.soulfrog
