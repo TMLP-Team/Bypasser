@@ -121,6 +121,7 @@ com.tencent.mobileqq
 com.tencent.token
 com.tencent.wemeet.app
 com.tencent.wework
+com.tmri.app.main
 com.transitfe
 com.ubercab.driver
 com.unionpay.tsmservice
@@ -135,6 +136,7 @@ com.xunmeng.pinduoduo
 com.yiban.app
 com.yitong.mbank.psbc
 com.yuurewards.app
+com.zeptolab.ctr.ads
 com.zwfw.YueZhengYi
 hk.gov.immd.contactless
 hk.gov.immd.mobileapps

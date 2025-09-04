@@ -224,6 +224,7 @@ com.kgg.hhvideo
 com.kgg.hlddz
 com.king250.fightoppoinstaller
 com.kooritea.fcmfix
+com.ldgz.sankuai
 com.ldq.connect
 com.leo.xposed.xradiant
 com.lexa.fakegps
@@ -500,6 +501,7 @@ me.bingyue.fuckbiliads
 me.bingyue.fuckqishui
 me.bmax.apatch
 me.build
+me.colinxu2020.rollingskyhack
 me.documenthook
 me.garfieldhan.apatch.next
 me.hd.hookgg
@@ -521,6 +523,7 @@ me.teble.xposed.autodaily
 me.timschneeberger.onyxtweaks
 me.weishu.kernelsu
 me.xmbest.hyper
+me.yxp.qfun
 me.zhenxin.thisreallylite
 miko.client
 ml.pyshivam.imeimasker
