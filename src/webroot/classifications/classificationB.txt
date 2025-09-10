@@ -124,6 +124,7 @@ com.darkeyes.tricks
 com.daxiaamu.op7mutools
 com.demo.serendipity
 com.demo.tl_ing
+com.dergoogler.mmrl.wx
 com.dingda.adfree
 com.dingtalk.recall
 com.dorian15.greendothide
@@ -327,6 +328,7 @@ com.trump.myxposed
 com.tsng.fuckdmzj
 com.tsng.hidemyapplist
 com.twifucker.hachidori
+com.txy.anywhere
 com.unexpected.capture.uc
 com.unexpected.hook.disable.security.windows
 com.upbad.apps.opgo
@@ -510,6 +512,7 @@ me.hd.nullavatar
 me.hd.wauxv
 me.hoshino.novpndetect
 me.iacn.biliroaming
+me.itejo443.bindhosts
 me.jsonet.jshook
 me.kofua.qmhelper
 me.kyuubiran.akinatorhelper
