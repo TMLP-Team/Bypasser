@@ -124,6 +124,7 @@ com.tencent.wework
 com.tmri.app.main
 com.transitfe
 com.ubercab.driver
+com.unionpay
 com.unionpay.tsmservice
 com.vnpay.vpbankonline
 com.webank.wemoney

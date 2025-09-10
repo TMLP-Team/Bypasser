@@ -25,6 +25,7 @@ cc.aoeiuv020.iamnotdisabled.hook
 cc.godhook
 cc.hicore.qtool
 chili.xposed.chimi
+cl.coders.faketraveler
 club.youppgd.adhook
 cn.ac.lz233.tarnhelm
 cn.amamiya.douyurepeat
@@ -228,6 +229,7 @@ com.kooritea.fcmfix
 com.ldgz.sankuai
 com.ldq.connect
 com.leo.xposed.xradiant
+com.lerist.fakelocation
 com.lexa.fakegps
 com.ljlvink.formhook
 com.ljlvink.stylusplus.xposed
@@ -255,6 +257,7 @@ com.neko.helsirootbypass
 com.niki.breeno.openai
 com.niki914.qqmail.cleaner
 com.nnnen.plusne
+com.noobexon.xposedfakelocation
 com.nxdxfg.GoldenVipHook
 com.oosl.colorostool
 com.overlook.android.fing
