@@ -112,6 +112,7 @@ com.chacha.matrixrain
 com.chacha.notigif
 com.chacha.samsungmusiccustomiser
 com.chacha.smessagescustom
+com.chenyue404.gboardhook
 com.chrxw.justenablednotification
 com.chrxw.purenga
 com.close.hook.ads
@@ -163,6 +164,7 @@ com.gauravssnl.bypassrootcheck.pro
 com.gauravssnl.mobileradioadaway
 com.gauravssnl.radiobox
 com.gauravssnl.simpleradioadaway
+com.ghhccghk.xiaomibluetoothdiy
 com.github.dan.nostoragerestrict
 com.github.droserasprout.lockscreencamera
 com.github.hank9999.chargeprotectsetter
@@ -260,6 +262,7 @@ com.nnnen.plusne
 com.noobexon.xposedfakelocation
 com.nxdxfg.GoldenVipHook
 com.oosl.colorostool
+com.op.lspdoze
 com.overlook.android.fing
 com.owl.auxiliary
 com.owo233.fuckmarketads
@@ -303,8 +306,10 @@ com.skyhand.redbookhelper
 com.skyhand.sinahelper
 com.softwarebakery.drivedroid
 com.somebody.vipFucker
+com.sotap.module
 com.souleven.photosfix
 com.strawing.alwaysthemedicon
+com.strawing.duckdevicepolicy
 com.strawing.fuckdevicepolicy
 com.suisho.disablescreenshotsound
 com.suisho.pixelposed
@@ -341,9 +346,11 @@ com.variable.apkhook
 com.varuns2002.disable_flag_secure
 com.veo.hook.bili.speed
 com.vivian8421.mipushenhance
+com.w2016.fuckRealmeOTG
 com.w2016.sensorfilter
 com.w311ang.disable_flag_keep_screen_on
 com.wecom.padbridge
+com.wengui.hook
 com.weverses.modempro
 com.wizpizz.onepluspluslauncher
 com.wizpizz.reddidnt
@@ -441,11 +448,14 @@ io.github.auag0.disableaudiofocus
 io.github.auag0.hidemocklocation
 io.github.auag0.imnotadeveloper
 io.github.brucezhang1993.warp_loves_play_store
+io.github.cctyl.coolmarkhook
 io.github.chipppppppppp.binnosoko
 io.github.chipppppppppp.lime
 io.github.chsbuffer.miuihelper
 io.github.chsbuffer.revancedxposed
 io.github.cloudburst.messengerex
+io.github.cpatcher
+io.github.dixtdf.key.forward
 io.github.dixtdf.oplus.display
 io.github.duzhaokun123.darkaischedule
 io.github.duzhaokun123.fuckcainiao
@@ -508,6 +518,7 @@ me.bmax.apatch
 me.build
 me.colinxu2020.rollingskyhack
 me.documenthook
+me.feimeng.vip
 me.garfieldhan.apatch.next
 me.hd.hookgg
 me.hd.hookwzry
@@ -589,6 +600,7 @@ ru.mike.rootobywatel
 ru.mike.sidestories
 ru.mike.updatelocker
 ru.mike.wallettweaks
+sama.october.FuckTapVerify
 sb.firefds.pie.firefdskit
 sb.firefds.q.firefdskit
 sb.firefds.r.firefdskit
