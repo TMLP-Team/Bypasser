@@ -209,6 +209,7 @@ com.hujiayucc.rpointer
 com.hx.fanqie
 com.jakting.duolingo
 com.janking.viewperf
+com.jiguro.kuaisnap
 com.jiguro.wonderless
 com.jj.hidenavbar
 com.jozein.xedgepro
@@ -646,3 +647,4 @@ xyz.cirno.unfuckzui
 xyz.xfqlittlefan.ciwong.hello
 xyz.xfqlittlefan.notdeveloper
 yep.python.hook
+yuu.xposed
