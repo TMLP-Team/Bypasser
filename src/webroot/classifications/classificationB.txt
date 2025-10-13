@@ -578,6 +578,7 @@ org.zwanoo.android.speedtest
 pansong291.xposed.quickenergy
 pansong291.xposed.quickenergy.qiufeng
 pansong291.xposed.quickenergy.repair
+pers.ketikai.lsp.mywebview
 pm.rnxhg.rhl.sn
 pokego.pip
 ps.reso.instaeclipse

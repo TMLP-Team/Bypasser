@@ -174,8 +174,10 @@ echo "# Zygisk Traces (0b0000X0) #"
 readonly magiskModuleFolder="${adbFolder}/modules"
 readonly zygiskSolutionModuleId="zygisksu"
 readonly zygiskNextConfigurationFolderPath="${adbFolder}/zygisksu"
-readonly zygiskNextDenylistConfigurationFileName="denylist_enforce"
-readonly zygiskNextDenylistConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistConfigurationFileName}"
+readonly zygiskNextDenylistEnforceConfigurationFileName="denylist_enforce"
+readonly zygiskNextDenylistEnforceConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistEnforceConfigurationFileName}"
+readonly zygiskNextDenylistPolicyConfigurationFileName="denylist_policy"
+readonly zygiskNextDenylistPolicyConfigurationFilePath="${zygiskNextConfigurationFolderPath}/${zygiskNextDenylistPolicyConfigurationFileName}"
 readonly shamikoModuleId="zygisk_shamiko"
 readonly shamikoConfigurationFolderPath="${adbFolder}/shamiko"
 readonly shamikoWhitelistConfigurationFileName="whitelist"
@@ -214,7 +216,7 @@ then
 	if [[ $? -eq ${EXIT_SUCCESS} ]];
 	then
 		echo "The Zygisk solution was implemented by ${zygiskSolutionModuleName}. "
-		toBeWritten="1"
+		toBeWritten="2"
 		if isModuleInstalled "${shamikoModuleId}" > /dev/null;
 		then
 			toBeWritten="0"
@@ -263,7 +265,6 @@ then
 			else
 				echo "The Zygisk Assistant module was installed. "
 			fi
-			toBeWritten="0"
 		else
 			echo "The Zygisk Assistant module was not installed. "
 		fi
@@ -280,7 +281,6 @@ then
 			else
 				echo "The NoHello module was installed. "
 			fi
-			toBeWritten="0"					
 			mkdir -p "${noHelloConfigurationFolderPath}"
 			if [[ $? -eq ${EXIT_SUCCESS} && -d "${noHelloConfigurationFolderPath}" ]];
 			then
@@ -311,18 +311,32 @@ then
 			if [[ $? -eq ${EXIT_SUCCESS} && -d "${zygiskNextConfigurationFolderPath}" ]];
 			then
 				echo "Successfully prepared the Zygisk Next configuration folder \"${zygiskNextConfigurationFolderPath}\". "
-				if [[ -f "${zygiskNextDenylistConfigurationFilePath}" && "${toBeWritten}" == "$(cat "${zygiskNextDenylistConfigurationFilePath}")" ]];
+				if [[ -f "${zygiskNextDenylistPolicyConfigurationFilePath}" && "1" == "$(cat "${zygiskNextDenylistPolicyConfigurationFilePath}")" ]];
 				then
-					echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" is already configured. "
+					echo "The Zygisk Next denylist policy configuration file \"${zygiskNextDenylistPolicyConfigurationFilePath}\" is already configured. "
 				else
-					echo "The Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\" was not configured. "
-					echo -n "${toBeWritten}" > "${zygiskNextDenylistConfigurationFilePath}"
-					if [[ $? -eq ${EXIT_SUCCESS} && -f "${zygiskNextDenylistConfigurationFilePath}" ]];
+					echo "The Zygisk Next denylist policy configuration file \"${zygiskNextDenylistPolicyConfigurationFilePath}\" was not configured. "
+					echo -n "1" > "${zygiskNextDenylistPolicyConfigurationFilePath}"
+					if [[ $? -eq ${EXIT_SUCCESS} && -f "${zygiskNextDenylistPolicyConfigurationFilePath}" ]];
 					then
-						echo "Successfully wrote \"${toBeWritten}\" to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+						echo "Successfully wrote \"1\" to the Zygisk Next denylist policy configuration file \"${zygiskNextDenylistPolicyConfigurationFilePath}\". "
 					else
 						exitCode=$(expr ${exitCode} \| 2)
-						echo "Failed to write \"${toBeWritten}\" to the Zygisk Next denylist configuration file \"${zygiskNextDenylistConfigurationFilePath}\". "
+						echo "Failed to write \"1\" to the Zygisk Next denylist policy configuration file \"${zygiskNextDenylistPolicyConfigurationFilePath}\". "
+					fi
+				fi
+				if [[ -f "${zygiskNextDenylistEnforceConfigurationFilePath}" && "${toBeWritten}" == "$(cat "${zygiskNextDenylistEnforceConfigurationFilePath}")" ]];
+				then
+					echo "The Zygisk Next denylist enforce configuration file \"${zygiskNextDenylistEnforceConfigurationFilePath}\" is already configured. "
+				else
+					echo "The Zygisk Next denylist enforce configuration file \"${zygiskNextDenylistEnforceConfigurationFilePath}\" was not configured. "
+					echo -n "${toBeWritten}" > "${zygiskNextDenylistEnforceConfigurationFilePath}"
+					if [[ $? -eq ${EXIT_SUCCESS} && -f "${zygiskNextDenylistEnforceConfigurationFilePath}" ]];
+					then
+						echo "Successfully wrote \"${toBeWritten}\" to the Zygisk Next denylist enforce configuration file \"${zygiskNextDenylistEnforceConfigurationFilePath}\". "
+					else
+						exitCode=$(expr ${exitCode} \| 2)
+						echo "Failed to write \"${toBeWritten}\" to the Zygisk Next denylist enforce configuration file \"${zygiskNextDenylistEnforceConfigurationFilePath}\". "
 					fi
 				fi
 			else
