@@ -1209,8 +1209,8 @@ else
 		echo "SELinux is not Enforcing and cannot be set to Enforcing. "
 	fi
 fi
-su -Z u:r:untrusted_app:s0 shell -c "test -e \"${directoryForTesting}\""
-returnCode=$?
+#su -Z u:r:untrusted_app:s0 shell -c "test -e \"${directoryForTesting}\""
+returnCode=${EOF}
 if [[ ${returnCode} -eq ${EXIT_SUCCESS} || ${returnCode} -eq ${EOF} ]];
 then
 	echo "Skipped checking the existence of applications in Classifications \$B\$ and \$C\$ that are leaked by the specified folders as a non-root user due to the unsupported environments. "

@@ -40,6 +40,7 @@ com.csam.icici.bank.imobile
 com.digilocker.android
 com.digitalgd.dgyss
 com.disney.wheresmywater2_goo
+com.dragon.read
 com.edkey.quicktakes
 com.eg.android.AlipayGphone
 com.feiyu.carrot3.nearme.gamecenter
@@ -62,6 +63,7 @@ com.heytap.vip
 com.hicorenational.antifraud
 com.hike.rush
 com.hike.speedludo
+com.huawei.hwid
 com.icbc
 com.icicibank.m2i
 com.icicibank.m2iEuropenew
@@ -72,6 +74,7 @@ com.kotak.neo
 com.kreditpe.android.app
 com.legendsec.sslvpn
 com.leiting.aobi
+com.leiting.aobi.huawei
 com.leiting.aobi.nearme.gamecenter
 com.lgeha.nuts
 com.lite.lanxin
@@ -101,17 +104,20 @@ com.parknshop.parknshopapp
 com.phonepe.app
 com.popclub.android
 com.prudential.iiqe
+com.pupumall.customer
 com.pv.scr.pancardreader
 com.revolut.revolut
 com.rovio.angrybirdsspace.ads
 com.samsung.android.sm.devicesecurity
 com.samsung.knox.securefolder
 com.sankuai.meituan
+com.sankuai.meituan.takeoutnew
 com.sbi.lotusintouch
 com.secure.secid
 com.smp.musicspeed
 com.softin.copydata
 com.sraoss.dmrc
+com.ss.android.ugc.aweme.lite
 com.taobao.taobao
 com.tastegourmetgroup.app
 com.tatadigital.tcp

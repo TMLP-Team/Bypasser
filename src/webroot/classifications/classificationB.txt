@@ -4,6 +4,7 @@ Fuck.RollingSky.Pay
 Hook.JiuWu.Xp
 It.dhd.oxygencustomizer
 Telegram.Speed.Hook
+XP.fuck.MI
 admin.vsetting
 ai.noads.ozon
 akhil.alltrans
@@ -60,6 +61,7 @@ cn.wankkoree.xposed.enablewebviewdebugging
 cn.wankkoree.xposed.portrait2landscape
 cn.wwl.xposed.hook
 cn.xihan.qdds
+cn.xyner.tools
 cn.yhfcn.mipushfaker
 cn.yhfcn.samsung_clockfix
 coloros.pagelimits.mod
@@ -87,6 +89,7 @@ com.android.patch
 com.android.shell
 com.android1500.androidfaker
 com.android1500.gpssetter
+com.api.yandexmusicxposed
 com.app.catsmoker
 com.asameer.killappnow
 com.asdf51.friend
@@ -209,6 +212,8 @@ com.hujiayucc.rpointer
 com.hx.fanqie
 com.jakting.duolingo
 com.janking.viewperf
+com.jiguro.bettervia
+com.jiguro.fuckgoogle
 com.jiguro.kuaisnap
 com.jiguro.wonderless
 com.jj.hidenavbar
@@ -231,6 +236,7 @@ com.king250.fightoppoinstaller
 com.kooritea.fcmfix
 com.ldgz.sankuai
 com.ldq.connect
+com.lenerd46.spotifyplus
 com.leo.xposed.xradiant
 com.lerist.fakelocation
 com.lexa.fakegps
@@ -247,6 +253,7 @@ com.luigivampa92.xlogger
 com.ma.bitchgiveitbackrunningservices
 com.ma.juicesshbypass
 com.makino.cslyric
+com.maxkiller.xposedhook
 com.metris.xposed.bluetoothtoolkitfree
 com.metris.xposed.castenabler
 com.metris.xposed.pmods
@@ -282,6 +289,7 @@ com.qingyu.mi5g
 com.qqlittleice.ironbridge
 com.queallytech.disablelogrequest
 com.queallytech.omapi
+com.radius.optimization
 com.raincat.dolby_beta
 com.rdstory.miuiperfsaver
 com.rel.languager
@@ -309,6 +317,7 @@ com.softwarebakery.drivedroid
 com.somebody.vipFucker
 com.sotap.module
 com.souleven.photosfix
+com.ss.android.ugc.aweme.removeblindwatermark
 com.strawing.alwaysthemedicon
 com.strawing.duckdevicepolicy
 com.strawing.fuckdevicepolicy
@@ -353,6 +362,7 @@ com.w311ang.disable_flag_keep_screen_on
 com.wecom.padbridge
 com.wengui.hook
 com.weverses.modempro
+com.winnersonx.sslbypass
 com.wizpizz.onepluspluslauncher
 com.wizpizz.reddidnt
 com.wmods.wppenhacer
@@ -369,6 +379,7 @@ com.xiaoniu.zuiyouhook
 com.xposed.miuiime
 com.xtaolabs.fuck_huaya
 com.xunflash.setMiPad5Pointer
+com.y7.fingerpay
 com.yanghy.fkdy
 com.yifeplayte.logrequestmanager
 com.yifeplayte.maxfreeform
@@ -443,6 +454,7 @@ io.dixtdf.ocar
 io.github.Retmon403.oppotheme
 io.github.a13e300.ksuwebui
 io.github.a13e300.tools.stethox
+io.github.achyuki.folddevtools
 io.github.ahmedmani.pairipfix
 io.github.alexdonh.noaccessibilityservices
 io.github.auag0.disableaudiofocus
@@ -532,10 +544,13 @@ me.jsonet.jshook
 me.kofua.qmhelper
 me.kyuubiran.akinatorhelper
 me.kyuubiran.qqcleaner
+me.neko.lotus
 me.neversleep.plusplus
 me.plusne
 me.rhunk.snapenhance
 me.simplehook
+me.siowu.OplusKeyHook
+me.siowu.RamInfoShow
 me.sleep.vip
 me.teble.xposed.autodaily
 me.timschneeberger.onyxtweaks
