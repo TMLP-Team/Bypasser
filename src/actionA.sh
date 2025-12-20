@@ -12,6 +12,7 @@ readonly moduleId="bypasser"
 readonly defaultTimeout=5
 readonly actionFolderPath="$(dirname "$0")"
 readonly adbFolder="../.."
+readonly ksuFolder="${adbFolder}/ksu"
 readonly magiskFolder="${adbFolder}/magisk"
 readonly apatchFolder="${adbFolder}/ap"
 readonly startTime=$(date +%s%N)
@@ -46,7 +47,7 @@ function setPermissions
 	return ${returnCode}
 }
 
-echo "Welcome to the \`\`action.sh\`\` of the ${moduleName} Magisk Module! "
+echo "Welcome to the \`\`action.sh\`\` of the rooting-layer system module ${moduleName}! "
 echo "The absolute path to this script slot is \"$(cd "$(dirname "$0")" && pwd)/$(basename "$0")\". "
 clearCaches
 if [[ $? -eq ${EXIT_SUCCESS} ]];
@@ -77,35 +78,39 @@ then
 	if [[ "${KSU}" == "true" ]];
 	then
 		echo "KSU (${KSU_VER_CODE}): Please "
-		echo "- deploy the latest SukiSU from the \`\`Actions\`\` tab of its GitHub repository with only applications requiring root privileges configured and granted in the SukiSU Manager, "
-		echo "- install the latest ReZygisk module from the \`\`Actions\`\` tab of its GitHub repository as a system module, "
-		echo "- embed or install the latest SUSFS as a kernel or system module, "
-		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
+		echo "- patch the kernel to support SukiSU-Ultra and SUSFS, "
+		echo "- deploy the latest SukiSU-Ultra from the \`\`Actions\`\` tab of its GitHub repository with only applications requiring root privileges configured and granted in the SukiSU-Ultra Manager, "
+		echo "- install the latest susfs4ksu module as a system module, "
+		echo "- install the latest Zygisk Next module as a system module with Denylist Policy set to Unmount Only, "
+		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository as a system module with logging disabled and the narrowest scope configured for each plugin, "
 		echo "- install the latest Play Integrity Fix (PIF) module as a system module, "
 		echo "- install the latest Tricky Store (TS) module as a system module with the correct configurations, and"
 		echo "- activate the latest HMA plugin from https://t.me/HideMyApplist with the correct configurations. "
-		if [[ -d "${magiskFolder}" ]];
-		then
-			echo "The Magisk folder exists while the KSU / KSU Next / SukiSU is using. Please consider removing the Magisk folder. "
-		fi
 		if [[ -d "${apatchFolder}" ]];
 		then
 			echo "The Apatch folder exists while the KSU / KSU Next is using. Please consider removing the Apatch folder. "
+		fi
+		if [[ -d "${magiskFolder}" ]];
+		then
+			echo "The Magisk folder exists while the KSU / KSU Next / SukiSU-Ultra is using. Please consider removing the Magisk folder. "
 		fi
 	elif [[ "${APATCH}" == "true" ]];
 	then
 		echo "Apatch (${APATCH_VER_CODE}): Please "
 		echo "- deploy the latest Apatch from the \`\`Actions\`\` tab of its GitHub repository with only applications requiring root privileges configured and granted in the Apatch Manager, "
 		echo "- embed the latest Cherish Peekaboo as a kernel module, "
-		echo "- install the latest ReZygisk module from the \`\`Actions\`\` tab of its GitHub repository as a system module, "
-		echo "- install the latest NoHello module as a system module with the whitelist mode enabled, "
-		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
+		echo "- install the latest Zygisk Next module as a system module with Denylist Policy set to Unmount Only, "
+		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository as a system module with logging disabled and the narrowest scope configured for each plugin, "
 		echo "- install the latest Play Integrity Fix (PIF) module as a system module, "
 		echo "- install the latest Tricky Store (TS) module as a system module with the correct configurations, and"
 		echo "- activate the latest HMA plugin from https://t.me/HideMyApplist with the correct configurations. "
 		if [[ -d "${magiskFolder}" ]];
 		then
 			echo "The Magisk folder exists while the Apatch is using. Please consider removing the Magisk folder. "
+		fi
+		if [[ -d "${ksuFolder}" ]];
+		then
+			echo "The KSU folder exists while the Apatch is using. Please consider removing the KSU folder. "
 		fi
 	else
 		if [[ -z "${MAGISK_VER_CODE}" ]];
@@ -144,9 +149,8 @@ then
 				echo "(${MAGISK_VER_CODE}): Please "
 				echo "- deploy the latest Magisk Alpha with the built-in Zygisk and denylist disabled, "
 				echo "- execute applications requiring root privileges with root privileges granted, "
-				echo "- install the latest Zygisk Next module with the denylist disabled, "
-				echo "- install the latest Shamiko module with the whitelist mode enabled, "
-				echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
+				echo "- install the latest Zygisk Next module with Denylist Policy set to Unmount Only, "
+				echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository with logging disabled and the narrowest scope configured for each plugin, "
 				echo "- install the latest Play Integrity Fix (PIF) module, "
 				echo "- install the latest Tricky Store (TS) module with the correct configurations, "
 				echo "- install the latest bindhosts or the built-in Systemless hosts module (optional), and "
@@ -159,6 +163,10 @@ then
 			if [[ -d "${apatchFolder}" ]];
 			then
 				echo "The Apatch folder exists while the Magisk is using. Please consider removing the Apatch folder. "
+			fi
+			if [[ -d "${ksuFolder}" ]];
+			then
+				echo "The KSU folder exists while the Magisk is using. Please consider removing the KSU folder. "
 			fi
 		else
 			echo "Unknown: The rooting solution used is unknown. "
