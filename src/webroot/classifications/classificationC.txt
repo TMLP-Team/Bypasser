@@ -28,3 +28,4 @@ ml.w568w.checkxposed
 org.akanework.checker
 rikka.safetynetchecker
 wu.Rookie.Detector
+com.studio.duckdetector

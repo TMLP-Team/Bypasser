@@ -664,3 +664,4 @@ xyz.xfqlittlefan.ciwong.hello
 xyz.xfqlittlefan.notdeveloper
 yep.python.hook
 yuu.xposed
+sh.siava.pixelxpert

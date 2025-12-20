@@ -1,7 +1,7 @@
 id=bypasser
 name=Bypasser
-version=v2025070916
-versionCode=2025070916
-author=TMLP Team
-description=This is a developing Magisk module for bypassing Android environment detection related to TMLP. The abbreviation "TMLP" stands for anything related to TWRP, Magisk, LSPosed, and Plugins. 
-updateJson=https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Update.json
+version=v2025122017
+versionCode=2025122017
+author=LRFP Team
+description=This is a developing rooting-layer system module for systematically bypassing environment detection related to LRFP for Android devices, where the abbreviation "LRFP" stands for Low-level, Rooting, Frameworks, and Plugins. 
+updateJson=https://raw.githubusercontent.com/LRFP-Team/Bypasser/main/Update.json

@@ -1,6 +1,6 @@
 # Bypasser
 
-This is a developing Magisk module for bypassing Android environment detection related to TMLP. The abbreviation "TMLP" stands for anything related to TWRP, Magisk, LSPosed, and Plugins. 
+This is a developing rooting-layer module for systematically bypassing environment detection related to LRFP for Android devices, where the abbreviation "LRFP" stands for Low-level, Rooting, Frameworks, and Plugins. 
 
 This module will only take effect when users install it or click the ``action`` button. The current supported features are as follows. 
 
@@ -33,12 +33,16 @@ Submit modifications via a pull request (PR) if you wish to.
 
 ## Acknowledgement
 
-Here, we express our sincere gratitude to [@pumPCin](https://github.com/pumPCin) for providing old HMA(L) configuration folders in [https://github.com/pumPCin/HMAL/issues/50](https://github.com/pumPCin/HMAL/issues/50). 
+Here, we express our faithful gratitude to all the LRFP-related developers, especially the developers of the rooting solutions and the detailed guidelines for rooting-layer system module development. 
+
+We also sincerely thank [@pumPCin](https://github.com/pumPCin) for providing old HMA(L) configuration folders in [https://github.com/pumPCin/HMAL/issues/50](https://github.com/pumPCin/HMAL/issues/50). 
 
 ## Licensing
 
-This project is under the ``GPL-3.0`` license. You can also regard this project as a Magisk module template or a template GitHub repository for Magisk module development. The A/B architecture is implemented for the dynamic updating of ``action``. 
+This repository is under the ``GPL-3.0`` license. You can also regard this repository as an alternative rooting-layer system module template or a template GitHub repository for rooting-layer system module development. The A/B architecture is implemented for the dynamic updating of ``action``. 
 
 ## Warning
 
 Since the project is still developing, please do not install the module here until this warning is removed in the future. 
+
+We are rearranging the name of the team and the classifications of the applications. Please keep up with us until January 2026. 

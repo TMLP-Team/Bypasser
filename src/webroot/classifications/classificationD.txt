@@ -43,6 +43,8 @@ com.disney.wheresmywater2_goo
 com.dragon.read
 com.edkey.quicktakes
 com.eg.android.AlipayGphone
+com.feiyu.carrot3
+com.feiyu.carrot3.huawei
 com.feiyu.carrot3.nearme.gamecenter
 com.finshell.wallet
 com.flipkart.android
@@ -173,3 +175,7 @@ ph.com.gotyme
 us.zoom.videomeetings
 windinfo.android
 youqu.android.todesk
+com.feiyu.luobo4
+com.feiyu.luobo4.nearme.gamecenter
+com.feiyu.luobo4.huawei
+com.xunmeng.pinduoduo

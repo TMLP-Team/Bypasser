@@ -91,9 +91,9 @@ readonly propContent="id=${moduleId}\n\
 name=${moduleName}\n\
 version=v${moduleVersion}\n\
 versionCode=${moduleVersion}\n\
-author=TMLP Team\n\
-description=This is a developing Magisk module for bypassing Android environment detection related to TMLP. The abbreviation \"TMLP\" stands for anything related to TWRP, Magisk, LSPosed, and Plugins. \n\
-updateJson=https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/Update.json"
+author=LRFP Team\n\
+description=This is a developing rooting-layer system module for systematically bypassing environment detection related to LRFP for Android devices, where the abbreviation \"LRFP\" stands for Low-level, Rooting, Frameworks, and Plugins. \n\
+updateJson=https://raw.githubusercontent.com/LRFP-Team/Bypasser/main/Update.json"
 readonly zipFolderPath="Release"
 readonly zipFileName="${moduleName}_v${moduleVersion}.zip"
 readonly zipFilePath="${zipFolderPath}/${zipFileName}"
@@ -230,8 +230,8 @@ readonly updateFilePath="${updateFolderPath}/${updateFileName}"
 readonly updateContent="{\n\
 	\"version\":\"v${moduleVersion}\", \n\
 	\"versionCode\":${moduleVersion}, \n\
-	\"zipUrl\":\"https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/${zipFilePath}\", \n\
-	\"changelog\":\"https://raw.githubusercontent.com/TMLP-Team/Bypasser/main/${changelogFilePath}\"\n\
+	\"zipUrl\":\"https://raw.githubusercontent.com/LRFP-Team/Bypasser/main/${zipFilePath}\", \n\
+	\"changelog\":\"https://raw.githubusercontent.com/LRFP-Team/Bypasser/main/${changelogFilePath}\"\n\
 }"
 
 if [[ ! -d "${updateFolderPath}" ]]; then
