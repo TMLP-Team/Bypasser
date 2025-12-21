@@ -287,7 +287,7 @@ def main() -> int:
 	fileNameB, fileNameC, fileNameD = "classificationB.txt", "classificationC.txt", "classificationD.txt"
 	filePathB, filePathC, filePathD = os.path.join(folderPath, fileNameB), os.path.join(folderPath, fileNameC), os.path.join(folderPath, fileNameD)
 	urlB = "https://modules.lsposed.org/modules.json"
-	urlCD = "https://raw.githubusercontent.com/TMLP-Team/TMLP-Detectors-and-Bypassers/main/Detectors/README.json"
+	urlCD = "https://raw.githubusercontent.com/LRFP-Team/LRFP-Detectors-and-Bypassers/main/Detectors/README.json"
 	srcFolderPath = "src"
 	webrootName = "webroot"
 	webrootFolderPath = os.path.join(srcFolderPath, webrootName)
