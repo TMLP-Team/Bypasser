@@ -52,6 +52,7 @@ class SortedUniqueList(list):
 
 class Classification:
 	urlCache = {}
+	timeout = 10
 	def __init__(self:object, name:str = 'S', s:object = None, exclusion:object = {"com.google.android.gsf", "com.google.android.gms", "com.android.vending"}) -> object:
 		if isinstance(s, (tuple, list, set, str, SortedUniqueList)):
 			self.__s = SortedUniqueList(s, exclusion = exclusion if isinstance(exclusion, (tuple, list, set, str, SortedUniqueList)) else None)
@@ -74,7 +75,7 @@ class Classification:
 		if isinstance(url, str) and isinstance(forceUpdate, bool):
 			if forceUpdate or url not in Classification.urlCache:
 				try:
-					r = get(url)
+					r = get(url, timeout = Classification.timeout)
 					if r is None:
 						return (False, "The ``get`` is currently unavailable. ")
 					elif 200 == r.status_code:

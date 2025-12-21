@@ -974,7 +974,6 @@ readonly trickyStoreTargetFilePath="${trickyStoreConfigurationFolderPath}/${tric
 readonly trickyStoreSecurityPatchFilePath="${trickyStoreConfigurationFolderPath}/${trickyStoreSecurityPatchFileName}"
 readonly classificationS="$(echo -e -n "com.google.android.gsf\ncom.google.android.gms\ncom.android.vending")"
 readonly lengthS=$(echo "${classificationS}" | wc -l)
-readonly patchContent="$(date +%Y%m01)"
 
 if isModuleInstalled "${trickyStoreModuleId}" > /dev/null;
 then
@@ -982,13 +981,16 @@ then
 	if [[ -d "${trickyStoreConfigurationFolderPath}" ]];
 	then
 		echo "The Tricky Store configuration folder was found at \"${trickyStoreConfigurationFolderPath}\". "
-		echo "${patchContent}" > "${trickyStoreSecurityPatchFilePath}"
-		if [[ $? -eq ${EXIT_SUCCESS} && -f "${trickyStoreSecurityPatchFilePath}" ]];
+		if [[ -f "${trickyStoreSecurityPatchFilePath}" ]];
 		then
-			echo "Successfully wrote \"${patchContent}\" to \"${trickyStoreSecurityPatchFilePath}\". "
-		else
-			exitCode=$(expr ${exitCode} \| 8)
-			echo "Failed to write \"${patchContent}\" to \"${trickyStoreSecurityPatchFilePath}\". "
+			echo "Found security patch file at \"${trickyStoreSecurityPatchFilePath}\". "
+			if mv "${trickyStoreSecurityPatchFilePath}" "${trickyStoreSecurityPatchFilePath}.bak";
+			then
+				echo "Successfully removed \"${trickyStoreSecurityPatchFilePath}\" by renaming to \`\`${trickyStoreSecurityPatchFileName}.bak\`\`. "
+			else
+				exitCode=$(expr ${exitCode} \| 8)
+				echo "Failed to remove \"${trickyStoreSecurityPatchFilePath}\" by renaming to \`\`${trickyStoreSecurityPatchFileName}.bak\`\`. "
+			fi
 		fi
 		abortFlag=${EXIT_SUCCESS}
 		if [[ -f "${trickyStoreTargetFilePath}" ]];
@@ -1066,7 +1068,7 @@ readonly sensitiveApplications="com.google.android.safetycore com.google.android
 readonly policiesToBeDeleted="hidden_api_policy hidden_api_policy_p_apps hidden_api_policy_pre_p_apps hidden_api_blacklist_exemptions"
 readonly propertiesToBeSet="ro.boot.vbmeta.device_state:locked ro.boot.verifiedbootstate:green vendor.boot.secboot:enabled"
 readonly propertiesToExist="ro.boot.vbmeta.avb_version ro.boot.vbmeta.hash_alg ro.boot.vbmeta.size ro.boot.vbmeta.digest"
-readonly propertiesToBeDeleted="persist.sys.vold_app_data_isolation_enabled persist.zygote.app_data_isolation"
+readonly propertiesToBeDeleted="persist.sys.vold_app_data_isolation_enabled persist.zygote.app_data_isolation ro.oem_unlock_supported"
 readonly persistentPropertyFilePath="/data/property/persistent_properties"
 readonly directoryForTesting="/data/data/com.android.settings"
 readonly plainUserExecution="$(echo -e "if [[ -n \"\${EXTERNAL_STORAGE}\" ]];\n\
@@ -1239,19 +1241,19 @@ else
 	fi
 fi
 bannedSubStringFoundFlag=${EXIT_SUCCESS}
-releaseVersion="$(uname -r)"
+kernelVersion="$(uname -r)"
 for bannedSubString in ${bannedSubStrings}
 do
-	if [[ "${releaseVersion}" == *"${bannedSubString}"* ]];
+	if [[ "${kernelVersion}" == *"${bannedSubString}"* ]];
 	then
 		bannedSubStringFoundFlag=${EXIT_FAILURE}
-		echo "Found the banned substring \"${bannedSubString}\" in the current release version \"${releaseVersion}\". "
+		echo "Found the banned substring \"${bannedSubString}\" in the kernel version \"${kernelVersion}\". "
 		break
 	fi
 done
 if [[ ${bannedSubStringFoundFlag} -eq ${EXIT_SUCCESS} ]];
 then
-	echo "No banned substrings were found in the current release version \"${releaseVersion}\". "
+	echo "No banned substrings were found in the kernel version \"${kernelVersion}\". "
 fi
 if [[ -s "${sourceXmlFilePath}" ]];
 then

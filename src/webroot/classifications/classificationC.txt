@@ -7,6 +7,7 @@ com.henrikherzig.playintegritychecker
 com.lingqing.detector
 com.reveny.nativecheck
 com.sefu.vmessfree
+com.studio.duckdetector
 com.thend.integritychecker
 com.tsng.applistdetector
 com.zhenxi.hunter
@@ -28,4 +29,3 @@ ml.w568w.checkxposed
 org.akanework.checker
 rikka.safetynetchecker
 wu.Rookie.Detector
-com.studio.duckdetector

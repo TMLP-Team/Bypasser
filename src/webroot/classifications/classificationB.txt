@@ -89,6 +89,7 @@ com.android.patch
 com.android.shell
 com.android1500.androidfaker
 com.android1500.gpssetter
+com.anony.keyguardrotation
 com.api.yandexmusicxposed
 com.app.catsmoker
 com.asameer.killappnow
@@ -138,6 +139,7 @@ com.dr8.xposed.saax
 com.droserasprout.healergram
 com.dualguard
 com.duolingo.kill
+com.easy.tgPlus
 com.emanuelef.remote_capture
 com.example.installhook
 com.example.ourom
@@ -154,6 +156,7 @@ com.fastmo.xhs
 com.fkzhang.qqxposed
 com.fkzhang.wechatxposed
 com.fkzhang.wxencoder
+com.flass.layoutinspect
 com.follow.clash
 com.fuck.android.rimet
 com.fuck.snotes
@@ -203,6 +206,7 @@ com.hhvvg.launcher3customizer
 com.hiiro.fuckddvip
 com.hiwechart.translate
 com.hook.fuckmimarket
+com.hook.xblauncherxposedhook
 com.houvven.impad
 com.houvven.olocalnstall
 com.htetz.monopatch
@@ -216,6 +220,7 @@ com.jiguro.bettervia
 com.jiguro.fuckgoogle
 com.jiguro.kuaisnap
 com.jiguro.wonderless
+com.jingyu233.miuiquickopenhook
 com.jj.hidenavbar
 com.jozein.xedgepro
 com.js.deepsleep
@@ -263,10 +268,12 @@ com.miui.break.sim
 com.mln.momoxposed
 com.modisk.dawn
 com.my.televip
+com.n8.xmsflogbypass
 com.neko.helsirootbypass
 com.niki.breeno.openai
 com.niki914.qqmail.cleaner
 com.nnnen.plusne
+com.nnnen.tool
 com.noobexon.xposedfakelocation
 com.nxdxfg.GoldenVipHook
 com.oosl.colorostool
@@ -362,6 +369,7 @@ com.w311ang.disable_flag_keep_screen_on
 com.wecom.padbridge
 com.wengui.hook
 com.weverses.modempro
+com.winnersonx.httpinterceptor
 com.winnersonx.sslbypass
 com.wizpizz.onepluspluslauncher
 com.wizpizz.reddidnt
@@ -391,6 +399,7 @@ com.yotagit.xfucker
 com.yuanwofei.cardemulator.pro
 com.yubyf.quotelockx
 com.yunzia.hyperstar
+com.yureitzk.nophotopickerapi
 com.yuuki.automtp
 com.yuuki.betterbar
 com.yuuki.puresatusbar
@@ -413,6 +422,7 @@ com.ztc1997.mockbluetoothdevice
 com.zuiyou.adfree
 com.zwk.xintent
 com.zxl.bfunhelper
+cum.xiaoji.egggame
 de.buttercookie.disabletargetapiblock
 de.buttercookie.optionsmenufix
 de.buttercookie.rocketplayerdefuser
@@ -426,6 +436,8 @@ dialog.box
 es.chiteroman.bootloaderspoofer
 es.rafagale.biometricbypass
 eu.faircode.xlua
+eu.hxreborn.gboardmaterialexpressiveblack
+eu.hxreborn.remembermysort
 eu.rafareborn.biometricbypass
 fansirsqi.xposed.sesame
 fer.amiya.amiyahooks
@@ -451,6 +463,7 @@ im.hoho.alipayinstallb
 im.mingxi.miko
 inc.whew.android.fakegapps
 io.dixtdf.ocar
+io.github.MarsGao.speed
 io.github.Retmon403.oppotheme
 io.github.a13e300.ksuwebui
 io.github.a13e300.tools.stethox
@@ -486,6 +499,7 @@ io.github.jqssun.seaccess
 io.github.lamprose.mi_ultra
 io.github.liusj5257
 io.github.lsposed.disableflagsecure
+io.github.lsposed.disabletgscreenshot
 io.github.lzghzr.biliveinvisible
 io.github.lzghzr.xperiaservicemenu
 io.github.lzghzr.xperiaupdatecenter
@@ -530,6 +544,7 @@ me.bingyue.fuckqishui
 me.bmax.apatch
 me.build
 me.colinxu2020.rollingskyhack
+me.dannyit.wechat.chum
 me.documenthook
 me.feimeng.vip
 me.garfieldhan.apatch.next
@@ -599,6 +614,7 @@ pokego.pip
 ps.reso.instaeclipse
 pub.chara.disablealttab
 pub.chara.miuipadmeta
+re.limus.timas
 rikka.riru
 ru.bluecat.alfabankpatcher
 ru.bluecat.android.xposed.mods.appsettings
@@ -624,6 +640,7 @@ sb.firefds.r.firefdskit
 sb.firefds.s.firefdskit
 sb.firefds.t.firefdskit
 sb.firefds.u.firefdskit
+sh.siava.pixelxpert
 space.aioilight.tsubonofuta
 sqz.wenku8.bg
 ss.colytitse.fuckdmzj
@@ -636,9 +653,11 @@ tn.amin.mpro2
 tn.amin.phantom_mic
 tn.payoneer.loukious
 top.canyie.settingsfirewall
+top.galqq
 top.hookvip.pro
 top.hookvip.wxtablet
 top.ltfan.notdeveloper
+top.rainfall.kernelsuext
 top.sacz.timtool
 top.trangle.mbga
 top.weixiansen574.alarmshell
@@ -664,4 +683,3 @@ xyz.xfqlittlefan.ciwong.hello
 xyz.xfqlittlefan.notdeveloper
 yep.python.hook
 yuu.xposed
-sh.siava.pixelxpert
