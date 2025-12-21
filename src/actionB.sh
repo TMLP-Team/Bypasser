@@ -84,7 +84,8 @@ then
 		echo "- install the latest Zygisk Next module as a system module with Denylist Policy set to Unmount Only, "
 		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository as a system module with logging disabled and the narrowest scope configured for each plugin, "
 		echo "- install the latest Play Integrity Fix (PIF) module as a system module, "
-		echo "- install the latest Tricky Store (TS) module as a system module with the correct configurations, and"
+		echo "- install the latest Tricky Store (TS) module as a system module with the correct configurations, "
+		echo "- install the latest Audit Patch module as a system module, and"
 		echo "- activate the latest HMA plugin from https://t.me/HideMyApplist with the correct configurations. "
 		if [[ -d "${apatchFolder}" ]];
 		then
@@ -102,7 +103,8 @@ then
 		echo "- install the latest Zygisk Next module as a system module with Denylist Policy set to Unmount Only, "
 		echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository as a system module with logging disabled and the narrowest scope configured for each plugin, "
 		echo "- install the latest Play Integrity Fix (PIF) module as a system module, "
-		echo "- install the latest Tricky Store (TS) module as a system module with the correct configurations, and"
+		echo "- install the latest Tricky Store (TS) module as a system module with the correct configurations, "
+		echo "- install the latest Audit Patch module as a system module, and"
 		echo "- activate the latest HMA plugin from https://t.me/HideMyApplist with the correct configurations. "
 		if [[ -d "${magiskFolder}" ]];
 		then
@@ -130,6 +132,7 @@ then
 				echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository as a system module with the narrowest scope configured for each plugin, "
 				echo "- install the latest Play Integrity Fix (PIF) module, "
 				echo "- install the latest Tricky Store (TS) module with the correct configurations, "
+				echo "- install the latest Audit Patch module, "
 				echo "- install the latest bindhosts or the built-in Systemless hosts module (optional), and "
 				echo "- activate the latest HMA plugin from https://t.me/HideMyApplist with the correct configurations. "
 				echo "Please consider switching to the latest Magisk Alpha if possible. "
@@ -153,6 +156,7 @@ then
 				echo "- install the latest \`\`Jing Matrix\`\` branch of the LSPosed module from the \`\`Actions\`\` tab of its GitHub repository with logging disabled and the narrowest scope configured for each plugin, "
 				echo "- install the latest Play Integrity Fix (PIF) module, "
 				echo "- install the latest Tricky Store (TS) module with the correct configurations, "
+				echo "- install the latest Audit Patch module, "
 				echo "- install the latest bindhosts or the built-in Systemless hosts module (optional), and "
 				echo "- activate the latest HMA plugin from https://t.me/HideMyApplist with the correct configurations. "
 			fi
