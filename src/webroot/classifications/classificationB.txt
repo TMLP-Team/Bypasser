@@ -130,6 +130,7 @@ com.darkeyes.tricks
 com.daxiaamu.op7mutools
 com.demo.serendipity
 com.demo.tl_ing
+com.dergoogler.mmrl
 com.dergoogler.mmrl.wx
 com.dingda.adfree
 com.dingtalk.recall
@@ -164,6 +165,7 @@ com.fuckcoolapk
 com.fun.camerahook
 com.fun.mtp
 com.function.mtp
+com.fzer0x.flatequalizerhook
 com.game.reschange
 com.garyodernichts.downgrader
 com.gauravssnl.bypassrootcheck.pro
@@ -220,6 +222,7 @@ com.jiguro.bettervia
 com.jiguro.fuckgoogle
 com.jiguro.kuaisnap
 com.jiguro.wonderless
+com.jingyu233.bluetoothhook
 com.jingyu233.miuiquickopenhook
 com.jj.hidenavbar
 com.jozein.xedgepro
@@ -268,6 +271,7 @@ com.miui.break.sim
 com.mln.momoxposed
 com.modisk.dawn
 com.my.televip
+com.mymod.playspoofer
 com.n8.xmsflogbypass
 com.neko.helsirootbypass
 com.niki.breeno.openai
@@ -437,6 +441,7 @@ es.chiteroman.bootloaderspoofer
 es.rafagale.biometricbypass
 eu.faircode.xlua
 eu.hxreborn.gboardmaterialexpressiveblack
+eu.hxreborn.qsboundlesstiles
 eu.hxreborn.remembermysort
 eu.rafareborn.biometricbypass
 fansirsqi.xposed.sesame
@@ -465,6 +470,7 @@ inc.whew.android.fakegapps
 io.dixtdf.ocar
 io.github.MarsGao.speed
 io.github.Retmon403.oppotheme
+io.github.a13e300.fusefixer
 io.github.a13e300.ksuwebui
 io.github.a13e300.tools.stethox
 io.github.achyuki.folddevtools
@@ -494,6 +500,7 @@ io.github.icepony.alwaysbatterysaver
 io.github.icepony.alwayscreateuser
 io.github.invalidsudo.nocharginganimation
 io.github.jeffshee.nekumorimod
+io.github.jhl337.oplushook
 io.github.jqssun.gpssetter
 io.github.jqssun.seaccess
 io.github.lamprose.mi_ultra
@@ -546,6 +553,7 @@ me.build
 me.colinxu2020.rollingskyhack
 me.dannyit.wechat.chum
 me.documenthook
+me.eternal.purrfectsnap
 me.feimeng.vip
 me.garfieldhan.apatch.next
 me.hd.hookgg
@@ -664,6 +672,7 @@ top.weixiansen574.alarmshell
 top.weixiansen574.fuckadjump
 top.weixiansen574.fuckunknownsourcesrestrictions
 tw.idv.palatis.xappdebug
+via.fuckcustomtab.frisk
 vn.kwaiching.anantaryamarga
 vn.kwaiching.dj
 vn.kwaiching.live
