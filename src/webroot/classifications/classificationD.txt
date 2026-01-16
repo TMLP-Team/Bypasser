@@ -59,6 +59,7 @@ com.google.android.gm
 com.google.android.googlequicksearchbox
 com.google.android.safetycore
 com.google.android.youtube
+com.happyelements.AndroidAnimal
 com.hdfcbank.payzapp
 com.heytap.browser
 com.heytap.health
