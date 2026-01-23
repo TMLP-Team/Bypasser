@@ -69,6 +69,7 @@ com.heytap.vip
 com.hicorenational.antifraud
 com.hike.rush
 com.hike.speedludo
+com.huawei.appmarket
 com.huawei.hwid
 com.icbc
 com.icicibank.m2i
