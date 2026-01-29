@@ -71,6 +71,7 @@ com.hike.rush
 com.hike.speedludo
 com.huawei.appmarket
 com.huawei.hwid
+com.huitouche.android.app
 com.icbc
 com.icicibank.m2i
 com.icicibank.m2iEuropenew
